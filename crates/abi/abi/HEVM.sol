@@ -110,6 +110,7 @@ expectSafeMemoryCall(uint64,uint64)
 
 getCode(string)
 getDeployedCode(string)
+getDeployedCode(string,bytes32[])
 label(address,string)
 getLabel(address)(string)
 assume(bool)

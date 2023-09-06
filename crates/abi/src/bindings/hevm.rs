@@ -2138,6 +2138,28 @@ pub mod hevm {
                             constant: ::core::option::Option::None,
                             state_mutability: ::ethers_core::abi::ethabi::StateMutability::NonPayable,
                         },
+                        ::ethers_core::abi::ethabi::Function {
+                            name: ::std::borrow::ToOwned::to_owned("getDeployedCode"),
+                            inputs: ::std::vec![
+                                ::ethers_core::abi::ethabi::Param {
+                                    name: ::std::string::String::new(),
+                                    kind: ::ethers_core::abi::ethabi::ParamType::String,
+                                    internal_type: ::core::option::Option::None,
+                                },
+                                ::ethers_core::abi::ethabi::Param {
+                                    name: ::std::string::String::new(),
+                                    kind: ::ethers_core::abi::ethabi::ParamType::Array(
+                                        ::std::boxed::Box::new(
+                                            ::ethers_core::abi::ethabi::ParamType::FixedBytes(32usize),
+                                        ),
+                                    ),
+                                    internal_type: ::core::option::Option::None,
+                                },
+                            ],
+                            outputs: ::std::vec![],
+                            constant: ::core::option::Option::None,
+                            state_mutability: ::ethers_core::abi::ethabi::StateMutability::NonPayable,
+                        },
                     ],
                 ),
                 (
@@ -6183,12 +6205,22 @@ pub mod hevm {
                 .expect("method not found (this should never happen)")
         }
         ///Calls the contract's `getDeployedCode` (0x3ebf73b4) function
-        pub fn get_deployed_code(
+        pub fn get_deployed_code_0(
             &self,
             p0: ::std::string::String,
         ) -> ::ethers_contract::builders::ContractCall<M, ()> {
             self.0
                 .method_hash([62, 191, 115, 180], p0)
+                .expect("method not found (this should never happen)")
+        }
+        ///Calls the contract's `getDeployedCode` (0x4b848e77) function
+        pub fn get_deployed_code_1(
+            &self,
+            p0: ::std::string::String,
+            p1: ::std::vec::Vec<[u8; 32]>,
+        ) -> ::ethers_contract::builders::ContractCall<M, ()> {
+            self.0
+                .method_hash([75, 132, 142, 119], (p0, p1))
                 .expect("method not found (this should never happen)")
         }
         ///Calls the contract's `getLabel` (0x28a249b0) function
@@ -8670,7 +8702,23 @@ pub mod hevm {
         Hash
     )]
     #[ethcall(name = "getDeployedCode", abi = "getDeployedCode(string)")]
-    pub struct GetDeployedCodeCall(pub ::std::string::String);
+    pub struct GetDeployedCode0Call(pub ::std::string::String);
+    ///Container type for all input parameters for the `getDeployedCode` function with signature `getDeployedCode(string,bytes32[])` and selector `0x4b848e77`
+    #[derive(
+        Clone,
+        ::ethers_contract::EthCall,
+        ::ethers_contract::EthDisplay,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[ethcall(name = "getDeployedCode", abi = "getDeployedCode(string,bytes32[])")]
+    pub struct GetDeployedCode1Call(
+        pub ::std::string::String,
+        pub ::std::vec::Vec<[u8; 32]>,
+    );
     ///Container type for all input parameters for the `getLabel` function with signature `getLabel(address)` and selector `0x28a249b0`
     #[derive(
         Clone,
@@ -10556,7 +10604,8 @@ pub mod hevm {
         Ffi(FfiCall),
         FsMetadata(FsMetadataCall),
         GetCode(GetCodeCall),
-        GetDeployedCode(GetDeployedCodeCall),
+        GetDeployedCode0(GetDeployedCode0Call),
+        GetDeployedCode1(GetDeployedCode1Call),
         GetLabel(GetLabelCall),
         GetMappingKeyAndParentOf(GetMappingKeyAndParentOfCall),
         GetMappingLength(GetMappingLengthCall),
@@ -11034,8 +11083,12 @@ pub mod hevm {
                 return Ok(Self::GetCode(decoded));
             }
             if let Ok(decoded)
-                = <GetDeployedCodeCall as ::ethers_core::abi::AbiDecode>::decode(data) {
-                return Ok(Self::GetDeployedCode(decoded));
+                = <GetDeployedCode0Call as ::ethers_core::abi::AbiDecode>::decode(data) {
+                return Ok(Self::GetDeployedCode0(decoded));
+            }
+            if let Ok(decoded)
+                = <GetDeployedCode1Call as ::ethers_core::abi::AbiDecode>::decode(data) {
+                return Ok(Self::GetDeployedCode1(decoded));
             }
             if let Ok(decoded)
                 = <GetLabelCall as ::ethers_core::abi::AbiDecode>::decode(data) {
@@ -11766,7 +11819,10 @@ pub mod hevm {
                     ::ethers_core::abi::AbiEncode::encode(element)
                 }
                 Self::GetCode(element) => ::ethers_core::abi::AbiEncode::encode(element),
-                Self::GetDeployedCode(element) => {
+                Self::GetDeployedCode0(element) => {
+                    ::ethers_core::abi::AbiEncode::encode(element)
+                }
+                Self::GetDeployedCode1(element) => {
                     ::ethers_core::abi::AbiEncode::encode(element)
                 }
                 Self::GetLabel(element) => ::ethers_core::abi::AbiEncode::encode(element),
@@ -12176,7 +12232,8 @@ pub mod hevm {
                 Self::Ffi(element) => ::core::fmt::Display::fmt(element, f),
                 Self::FsMetadata(element) => ::core::fmt::Display::fmt(element, f),
                 Self::GetCode(element) => ::core::fmt::Display::fmt(element, f),
-                Self::GetDeployedCode(element) => ::core::fmt::Display::fmt(element, f),
+                Self::GetDeployedCode0(element) => ::core::fmt::Display::fmt(element, f),
+                Self::GetDeployedCode1(element) => ::core::fmt::Display::fmt(element, f),
                 Self::GetLabel(element) => ::core::fmt::Display::fmt(element, f),
                 Self::GetMappingKeyAndParentOf(element) => {
                     ::core::fmt::Display::fmt(element, f)
@@ -12739,9 +12796,14 @@ pub mod hevm {
             Self::GetCode(value)
         }
     }
-    impl ::core::convert::From<GetDeployedCodeCall> for HEVMCalls {
-        fn from(value: GetDeployedCodeCall) -> Self {
-            Self::GetDeployedCode(value)
+    impl ::core::convert::From<GetDeployedCode0Call> for HEVMCalls {
+        fn from(value: GetDeployedCode0Call) -> Self {
+            Self::GetDeployedCode0(value)
+        }
+    }
+    impl ::core::convert::From<GetDeployedCode1Call> for HEVMCalls {
+        fn from(value: GetDeployedCode1Call) -> Self {
+            Self::GetDeployedCode1(value)
         }
     }
     impl ::core::convert::From<GetLabelCall> for HEVMCalls {

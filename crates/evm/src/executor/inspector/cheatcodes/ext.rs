@@ -95,9 +95,9 @@ fn ffi(state: &Cheatcodes, args: &[String]) -> Result {
 #[serde(untagged)]
 #[allow(clippy::large_enum_variant)]
 enum ArtifactBytecode {
+    Forge(CompactContractBytecode),
     Hardhat(HardhatArtifact),
     Solc(JsonAbi),
-    Forge(CompactContractBytecode),
     Huff(HuffArtifact),
 }
 
@@ -113,12 +113,47 @@ impl ArtifactBytecode {
         }
     }
 
-    fn into_deployed_bytecode(self) -> Option<Bytes> {
+    fn into_deployed_bytecode(self, immutables: &[[u8; 32]]) -> Option<Bytes> {
         match self {
+            ArtifactBytecode::Forge(inner) => {
+                inner.deployed_bytecode.and_then(|bytecode| {
+                    bytecode.bytecode.and_then(|bytecode| bytecode.object.into_bytes()).and_then(
+                        |bytes| {
+                            // Fill the immutable references if any.
+                            if !bytecode.immutable_references.is_empty() {
+                                // Not enough / too much immutable values have been given.
+                                // TODO: Should return an Error instead.
+                                if bytecode.immutable_references.keys().len() != immutables.len() {
+                                    return None
+                                }
+
+                                // Convert the `Bytes` to raw bytes to patch them on the fly.
+                                let mut bytes = bytes.into_iter().collect::<Vec<_>>();
+
+                                // Loop on the immutable references, and patch the bytecode at their
+                                // associated offsets.
+                                // NOTE: It is assume iterating over `bytecode.immutable_references`
+                                // yield the items ordered by their key (AST id) in ascending order.
+                                // NOTE: `immutables` must be sorted in order of increasing AST id.
+                                for ((_, offsets), immutable_value) in
+                                    bytecode.immutable_references.iter().zip(immutables)
+                                {
+                                    for offset in offsets {
+                                        for i in 0..32_usize {
+                                            bytes[offset.start as usize + i] = immutable_value[i];
+                                        }
+                                    }
+                                }
+
+                                Some(Bytes::from_iter(bytes))
+                            } else {
+                                Some(bytes)
+                            }
+                        },
+                    )
+                })
+            }
             ArtifactBytecode::Hardhat(inner) => Some(inner.deployed_bytecode),
-            ArtifactBytecode::Forge(inner) => inner.deployed_bytecode.and_then(|bytecode| {
-                bytecode.bytecode.and_then(|bytecode| bytecode.object.into_bytes())
-            }),
             ArtifactBytecode::Solc(inner) => inner.deployed_bytecode(),
             ArtifactBytecode::Huff(inner) => Some(inner.runtime),
         }
@@ -150,9 +185,10 @@ fn get_code(state: &Cheatcodes, path: &str) -> Result {
 }
 
 /// Returns the _deployed_ bytecode (`bytecode`) of the matching artifact
-fn get_deployed_code(state: &Cheatcodes, path: &str) -> Result {
+fn get_deployed_code(state: &Cheatcodes, path: &str, immutables: &[[u8; 32]]) -> Result {
     let bytecode = read_bytecode(state, path)?;
-    if let Some(bin) = bytecode.into_deployed_bytecode() {
+
+    if let Some(bin) = bytecode.into_deployed_bytecode(immutables) {
         Ok(bin.encode().into())
     } else {
         Err(fmt_err!("No deployed bytecode for contract. Is it abstract or unlinked?"))
@@ -533,7 +569,8 @@ pub fn apply<DB: Database>(
             }
         }
         HEVMCalls::GetCode(inner) => get_code(state, &inner.0),
-        HEVMCalls::GetDeployedCode(inner) => get_deployed_code(state, &inner.0),
+        HEVMCalls::GetDeployedCode0(inner) => get_deployed_code(state, &inner.0, &[]),
+        HEVMCalls::GetDeployedCode1(inner) => get_deployed_code(state, &inner.0, &inner.1),
         HEVMCalls::SetEnv(inner) => set_env(&inner.0, &inner.1),
         HEVMCalls::EnvBool0(inner) => get_env(&inner.0, ParamType::Bool, None, None),
         HEVMCalls::EnvUint0(inner) => get_env(&inner.0, ParamType::Uint(256), None, None),
@@ -743,12 +780,39 @@ mod tests {
     }
 
     #[test]
-    fn test_artifact_parsing() {
+    fn test_artifact_parsing_no_immutables() {
         let s = include_str!("../../../../test-data/solc-obj.json");
         let artifact: ArtifactBytecode = serde_json::from_str(s).unwrap();
         assert!(artifact.into_bytecode().is_some());
 
         let artifact: ArtifactBytecode = serde_json::from_str(s).unwrap();
-        assert!(artifact.into_deployed_bytecode().is_some());
+        assert!(artifact.into_deployed_bytecode(&[]).is_some());
+    }
+
+    #[test]
+    fn test_artifact_parsing_with_immutables() {
+        let s = include_str!("../../../../test-data/forge-immutable.json");
+        let artifact: ArtifactBytecode = serde_json::from_str(s).unwrap();
+        assert!(artifact.into_bytecode().is_some());
+
+        // No immutables provided.
+        let artifact: ArtifactBytecode = serde_json::from_str(s).unwrap();
+        assert!(artifact.into_deployed_bytecode(&[]).is_none());
+
+        // Not all the immutables are provided.
+        let artifact: ArtifactBytecode = serde_json::from_str(s).unwrap();
+        let immutable1 = vec![1; 32];
+        assert!(artifact.into_deployed_bytecode(&[immutable1.try_into().unwrap()]).is_none());
+
+        // All the immutables are provided.
+        let artifact: ArtifactBytecode = serde_json::from_str(s).unwrap();
+        let immutable1 = vec![1; 32];
+        let immutable2 = vec![2; 32];
+        assert!(artifact
+            .into_deployed_bytecode(&[
+                immutable1.try_into().unwrap(),
+                immutable2.try_into().unwrap()
+            ])
+            .is_some());
     }
 }
