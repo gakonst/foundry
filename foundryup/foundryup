@@ -16,15 +16,36 @@ main() {
 
   while [[ $1 ]]; do
     case $1 in
-      --)               shift; break;;
+      --)
+        shift
+        break
+        ;;
 
-      -r|--repo)        shift; FOUNDRYUP_REPO=$1;;
-      -b|--branch)      shift; FOUNDRYUP_BRANCH=$1;;
-      -v|--version)     shift; FOUNDRYUP_VERSION=$1;;
-      -p|--path)        shift; FOUNDRYUP_LOCAL_REPO=$1;;
-      -P|--pr)          shift; FOUNDRYUP_PR=$1;;
-      -C|--commit)      shift; FOUNDRYUP_COMMIT=$1;;
-      -h|--help)
+      -r | --repo)
+        shift
+        FOUNDRYUP_REPO=$1
+        ;;
+      -b | --branch)
+        shift
+        FOUNDRYUP_BRANCH=$1
+        ;;
+      -v | --version)
+        shift
+        FOUNDRYUP_VERSION=$1
+        ;;
+      -p | --path)
+        shift
+        FOUNDRYUP_LOCAL_REPO=$1
+        ;;
+      -P | --pr)
+        shift
+        FOUNDRYUP_PR=$1
+        ;;
+      -C | --commit)
+        shift
+        FOUNDRYUP_COMMIT=$1
+        ;;
+      -h | --help)
         usage
         exit 0
         ;;
@@ -32,7 +53,9 @@ main() {
         warn "unknown option: $1"
         usage
         exit 1
-    esac; shift
+        ;;
+    esac
+    shift
   done
 
   # Print the banner after successfully parsing args
@@ -81,12 +104,12 @@ main() {
     # Normalize versions (handle channels, versions without v prefix
     if [[ "$FOUNDRYUP_VERSION" == "nightly" ]]; then
       # Locate real nightly tag
-      SHA=$(ensure curl -sSf "https://api.github.com/repos/$FOUNDRYUP_REPO/git/refs/tags/nightly" \
-        | grep -Eo '"sha"[^,]*' \
-        | grep -Eo '[^:]*$' \
-        | tr -d '"' \
-        | tr -d ' ' \
-        | cut -d ':' -f2 )
+      SHA=$(ensure curl -sSf "https://api.github.com/repos/$FOUNDRYUP_REPO/git/refs/tags/nightly" |
+        grep -Eo '"sha"[^,]*' |
+        grep -Eo '[^:]*$' |
+        tr -d '"' |
+        tr -d ' ' |
+        cut -d ':' -f2)
       FOUNDRYUP_TAG="nightly-${SHA}"
     elif [[ "$FOUNDRYUP_VERSION" == nightly* ]]; then
       FOUNDRYUP_VERSION="nightly"
@@ -124,7 +147,7 @@ main() {
       else
         ARCHITECTURE="amd64" # Intel.
       fi
-    elif [ "${ARCHITECTURE}" = "arm64" ] ||[ "${ARCHITECTURE}" = "aarch64" ] ; then
+    elif [ "${ARCHITECTURE}" = "arm64" ] || [ "${ARCHITECTURE}" = "aarch64" ]; then
       ARCHITECTURE="arm64" # Arm.
     else
       ARCHITECTURE="amd64" # Amd.
@@ -217,7 +240,7 @@ EOF
     # If help2man is installed, use it to add Foundry man pages.
     if check_cmd help2man; then
       for bin in "${BINS[@]}"; do
-        help2man -N "$FOUNDRY_BIN_DIR/$bin" > "$FOUNDRY_MAN_DIR/$bin.1"
+        help2man -N "$FOUNDRY_BIN_DIR/$bin" >"$FOUNDRY_MAN_DIR/$bin.1"
       done
     fi
 
@@ -294,9 +317,11 @@ download() {
   fi
 }
 
-# Banner Function for Foundry 
-banner() {
-  printf '
+# Check if the environment variable 'CI' is set and not empty
+if [[ -n "$CI" && "$CI" != true ]]; then
+  # Enable the 'banner()' function
+  banner() {
+    printf '
 
 .xOx.xOx.xOx.xOx.xOx.xOx.xOx.xOx.xOx.xOx.xOx.xOx.xOx.xOx.xOx.xOx.xOx.xOx
  
@@ -306,16 +331,27 @@ banner() {
 
 .xOx.xOx.xOx.xOx.xOx.xOx.xOx.xOx.xOx.xOx.xOx.xOx.xOx.xOx.xOx.xOx.xOx.xOx
 
-Repo       : https://github.com/foundry-rs/
-Book       : https://book.getfoundry.sh/                      
-Chat       : https://t.me/foundry_rs/                         
-Support    : https://t.me/foundry_support/
-Contribute : https://github.com/orgs/foundry-rs/projects/2/
+Repo       : <https://github.com/foundry-rs/foundry>
+Book       : <https://book.getfoundry.sh>                     
+Chat       : <https://t.me/foundry_rs>                        
+Support    : <https://t.me/foundry_support>
+Contribute : <https://github.com/orgs/foundry-rs/projects/2>
 
 .xOx.xOx.xOx.xOx.xOx.xOx.xOx.xOx.xOx.xOx.xOx.xOx.xOx.xOx.xOx.xOx.xOx.xOx
 
 '
+  }
+fi
+
+# Function to handle errors and exit the script
+handle_error() {
+  echo "Error: $1"
+  exit 1
 }
 
+# Check if any command exited with a non-zero exit code
+if [ $? -ne 0 ]; then
+  handle_error "One or more commands failed"
+fi
 
 main "$@" || exit 1
