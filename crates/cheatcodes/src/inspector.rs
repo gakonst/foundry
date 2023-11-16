@@ -200,6 +200,182 @@ pub struct Cheatcodes {
     /// Breakpoints supplied by the `breakpoint` cheatcode.
     /// `char -> (address, pc)`
     pub breakpoints: Breakpoints,
+
+    /// Track if cool cheatcode was called on each address
+    /// Mapping tracks if the address itself is cool and if each of it's slots are cool
+    pub addresses: HashMap<Address, (AddressState, HashMap<U256, StorageSlotState>)>,
+    /// How much gas to charge in the next step (op code) based on cool cheatcode calculations
+    pub additional_gas_next_op: u64,
+}
+
+/// Whether an Address is accessed or not
+#[derive(Clone, PartialEq, Debug)]
+pub enum AddressState {
+    /// if already accessed, then charge WARM_STORAGE_READ_COST (100)
+    Warm,
+    /// charge COLD_ACCOUNT_ACCESS_COST (2600)
+    Cool,
+}
+
+/// Whether a Storage Slot is warm or already been modified
+#[derive(Clone, PartialEq, Debug)]
+pub enum StorageSlotState {
+    /// charge extra based on SSTORE calculations
+    WarmWithSLOAD,
+    /// if SSTORE already happened, don't charge extra
+    WarmWithSSTORE,
+    /// same as if empty
+    Cool,
+}
+
+/// Function to charge extra gas per opcode based on cool cheatcode
+fn add_gas_from_cool_cheatcode<DB: DatabaseExt>(
+    state: &mut Cheatcodes,
+    interpreter: &mut Interpreter,
+    data: &mut EVMData<'_, DB>,
+) -> InstructionResult {
+    if state.addresses.is_empty() {
+        return InstructionResult::Continue
+    }
+
+    // For gas costs, see https://eips.ethereum.org/EIPS/eip-2200, https://eips.ethereum.org/EIPS/eip-2929
+
+    // if previous step added gas, add it once
+    // note that all the opcodes will already have a cost (usually 100)
+    // so adding until it hits the gas expected for a cold key/address
+    if state.additional_gas_next_op > 0 {
+        interpreter.gas.record_cost(state.additional_gas_next_op);
+        state.additional_gas_next_op = 0;
+    }
+
+    // if cool cheatcode was ever called on this address
+    let contract_address = interpreter.contract().address;
+
+    if state.addresses.get(&contract_address).is_some() {
+        // check target itself
+        match interpreter.current_opcode() {
+            // via AccessListTracer
+            opcode::EXTCODECOPY |
+            opcode::EXTCODEHASH |
+            opcode::EXTCODESIZE |
+            opcode::BALANCE |
+            opcode::SELFDESTRUCT => {
+                // address is first parameter
+                if let Ok(slot) = interpreter.stack().peek(0) {
+                    let addr: Address = Address::from_word(slot.into());
+
+                    // COLD_ACCOUNT_ACCESS_COST is 2600
+                    // check this is done once per address, unless cheatcode is called again
+                    // ignore if same as contract address
+                    if let Some((ref mut address, _)) = state.addresses.get_mut(&addr) {
+                        if *address == AddressState::Cool {
+                            state.additional_gas_next_op = 2500;
+                            *address = AddressState::Warm;
+                        }
+                    }
+                }
+            }
+            // via AccessListTracer
+            opcode::DELEGATECALL | opcode::CALL | opcode::STATICCALL | opcode::CALLCODE => {
+                // address is second parameter
+                if let Ok(slot) = interpreter.stack().peek(1) {
+                    let addr: Address = Address::from_word(slot.into());
+
+                    // COLD_ACCOUNT_ACCESS_COST is 2600
+                    // check this is done once per address, unless cheatcode is called again
+                    // ignore if same as contract address
+                    if let Some((ref mut address, _)) = state.addresses.get_mut(&addr) {
+                        if *address == AddressState::Cool {
+                            state.additional_gas_next_op = 2500;
+                            *address = AddressState::Warm;
+                        }
+                    }
+                }
+            }
+            _ => {}
+        }
+        // check target's slots
+        if let Some((_, slots)) = state.addresses.get_mut(&contract_address) {
+            match interpreter.current_opcode() {
+                opcode::SLOAD => {
+                    let key = try_or_continue!(interpreter.stack().peek(0));
+
+                    let account = data.journaled_state.state().get(&contract_address).unwrap();
+                    if account.storage.get(&key).is_some() {
+                        match slots.get(&key) {
+                            None | Some(StorageSlotState::Cool) => {
+                                // COLD_SLOAD_COST is 2100
+                                state.additional_gas_next_op = 2000;
+                                slots.insert(key, StorageSlotState::WarmWithSLOAD);
+                            }
+                            Some(_) => {}
+                        }
+                    } else {
+                        slots.insert(key, StorageSlotState::WarmWithSLOAD);
+                    }
+                }
+                opcode::SSTORE => {
+                    let key = try_or_continue!(interpreter.stack().peek(0));
+                    let val = try_or_continue!(interpreter.stack().peek(1));
+
+                    let account = data.journaled_state.state().get(&contract_address).unwrap();
+                    if account.storage.get(&key).is_some() {
+                        // only add gas the first time the storage is touched again
+                        match slots.get(&key) {
+                            Some(StorageSlotState::WarmWithSLOAD) => {
+                                // cool keeps the slot value changes
+                                // as if the previous_or_original_value = present_value`
+                                // so include the extra gas
+                                let slot = account.storage.get(&key).unwrap();
+                                if val != slot.present_value &&
+                                    slot.present_value != slot.previous_or_original_value
+                                {
+                                    if slot.present_value == U256::ZERO {
+                                        // SSTORE_SET_GAS is 20000
+                                        state.additional_gas_next_op += 20000 - 100
+                                    } else {
+                                        // SSTORE_RESET_GAS is 5000 - COLD_SLOAD_COST (2100)
+                                        state.additional_gas_next_op += 2900 - 100
+                                    }
+                                }
+
+                                // set slot is_warm to true
+                                slots.insert(key, StorageSlotState::WarmWithSSTORE);
+                            }
+                            None | Some(StorageSlotState::Cool) => {
+                                // Means SSTORE was called without SLOAD before
+                                // COLD_SLOAD_COST is 2100
+                                state.additional_gas_next_op = 2100;
+
+                                // cool keeps the slot value changes
+                                // as if the previous_or_original_value = present_value`
+                                // so include the extra gas
+                                let slot = account.storage.get(&key).unwrap();
+                                if val != slot.present_value &&
+                                    slot.present_value != slot.previous_or_original_value
+                                {
+                                    if slot.present_value == U256::ZERO {
+                                        // SSTORE_SET_GAS is 20000
+                                        state.additional_gas_next_op += 20000 - 100
+                                    } else {
+                                        // SSTORE_RESET_GAS is 5000 - COLD_SLOAD_COST (2100)
+                                        state.additional_gas_next_op += 2900 - 100
+                                    }
+                                }
+                                slots.insert(key, StorageSlotState::WarmWithSSTORE);
+                            }
+                            Some(StorageSlotState::WarmWithSSTORE) => {}
+                        }
+                    } else {
+                        slots.insert(key, StorageSlotState::WarmWithSSTORE);
+                    }
+                }
+                _ => {}
+            }
+        }
+    }
+
+    InstructionResult::Continue
 }
 
 impl Cheatcodes {
@@ -521,6 +697,16 @@ impl<DB: DatabaseExt> Inspector<DB> for Cheatcodes {
         }
 
         InstructionResult::Continue
+    }
+
+    fn step_end(
+        &mut self,
+        interpreter: &mut Interpreter,
+        data: &mut EVMData<'_, DB>,
+        eval: InstructionResult,
+    ) -> InstructionResult {
+        add_gas_from_cool_cheatcode(self, interpreter, data);
+        eval
     }
 
     fn log(&mut self, _: &mut EVMData<'_, DB>, address: &Address, topics: &[B256], data: &Bytes) {

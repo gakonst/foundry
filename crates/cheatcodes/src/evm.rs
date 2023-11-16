@@ -1,6 +1,7 @@
 //! Implementations of [`Evm`](crate::Group::Evm) cheatcodes.
 
-use crate::{Cheatcode, Cheatcodes, CheatsCtxt, Result, Vm::*};
+use crate::{inspector::AddressState, Cheatcode, Cheatcodes, CheatsCtxt, Result, Vm::*};
+
 use alloy_primitives::{Address, Bytes, U256};
 use alloy_sol_types::SolValue;
 use ethers_core::utils::{Genesis, GenesisAccount};
@@ -302,11 +303,10 @@ impl Cheatcode for storeCall {
 
 impl Cheatcode for coolCall {
     fn apply_full<DB: DatabaseExt>(&self, ccx: &mut CheatsCtxt<DB>) -> Result {
-        let Self { target } = self;
-        if let Some(account) = ccx.data.journaled_state.state.get_mut(target) {
-            account.unmark_touch();
-            account.storage.clear();
-        }
+        let Self { target } = *self;
+        ensure_not_precompile!(&target, ccx);
+        // TODO: prevent or warn about cooling the to/from address in a tx
+        ccx.state.addresses.insert(target, (AddressState::Cool, HashMap::new()));
         Ok(Default::default())
     }
 }

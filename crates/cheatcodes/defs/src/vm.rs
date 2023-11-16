@@ -255,7 +255,8 @@ interface Vm {
     #[cheatcode(group = Evm, safety = Unsafe)]
     function store(address target, bytes32 slot, bytes32 value) external;
 
-    /// Marks the slots of an account and the account address as cold.
+    /// Marks the `target` address cold, and is a no-op if the address is already cold.
+    /// All storage slots are also made cold, but their values are preserved.
     #[cheatcode(group = Evm, safety = Unsafe)]
     function cool(address target) external;
 
