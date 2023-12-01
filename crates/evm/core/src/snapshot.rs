@@ -10,7 +10,7 @@ pub struct Snapshots<T> {
     snapshots: HashMap<U256, T>,
 }
 
-impl<T> Snapshots<T> {
+impl<T: Clone> Snapshots<T> {
     fn next_id(&mut self) -> U256 {
         let id = self.id;
         self.id = id.saturating_add(U256::from(1));
@@ -35,6 +35,20 @@ impl<T> Snapshots<T> {
             self.snapshots.remove(&to_revert);
             to_revert += U256::from(1);
         }
+
+        snapshot
+    }
+
+    /// Removes all snapshots after `id`.
+    ///
+    /// This will not remove the `id` itself, only clone its data, since the snapshot will still
+    /// point to a valid state. e.g.: reverting
+    /// to id 1 will delete snapshots with ids 2, 3, etc.)
+    pub fn revert_to(&mut self, id: U256) -> Option<T> {
+        let snapshot = self.snapshots.get(&id).cloned();
+
+        // revert all snapshots taken after the snapshot
+        self.snapshots.retain(|k, _| *k <= id);
 
         snapshot
     }

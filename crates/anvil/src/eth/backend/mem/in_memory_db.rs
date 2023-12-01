@@ -72,7 +72,7 @@ impl Db for MemDb {
     }
 
     fn revert(&mut self, id: U256) -> bool {
-        if let Some(snapshot) = self.snapshots.remove(id.to_alloy()) {
+        if let Some(snapshot) = self.snapshots.revert_to(id.to_alloy()) {
             self.inner = snapshot;
             trace!(target: "backend::memdb", "Reverted snapshot {}", id);
             true
