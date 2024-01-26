@@ -1584,7 +1584,7 @@ impl From<Config> for Figment {
                     .global(),
             )
             .merge(DappEnvCompatProvider)
-            .merge(Env::raw().only(&["ETHERSCAN_API_KEY"]))
+            .merge(Env::raw().only(&["ETHERSCAN_API_KEY", "ETH_RPC_URL"]))
             .merge(
                 Env::prefixed("FOUNDRY_")
                     .ignore(&["PROFILE", "REMAPPINGS", "LIBRARIES", "FFI", "FS_PERMISSIONS"])
@@ -4325,6 +4325,23 @@ mod tests {
                     source: Some("foundry.toml".into())
                 }]
             );
+
+            Ok(())
+        });
+    }
+
+    #[test]
+    fn test_eth_rpc_url_env_var() {
+        figment::Jail::expect_with(|jail| {
+            jail.create_file(
+                "foundry.toml",
+                r"
+                [default]
+            ",
+            )?;
+            jail.set_env("ETH_RPC_URL", "https://example.com/");
+            let loaded = Config::load();
+            assert_eq!(loaded.eth_rpc_url, Some("https://example.com/".to_string()));
 
             Ok(())
         });
