@@ -184,7 +184,7 @@ impl DebuggerContext<'_> {
 
     fn draw_footer(&self, f: &mut Frame<'_>, area: Rect) {
         let l1 = "[q]: quit | [k/j]: prev/next op | [a/s]: prev/next jump | [c/C]: prev/next call | [g/G]: start/end | [b]: cycle memory/calldata/returndata buffers";
-        let l2 = "[t]: stack labels | [m]: buffer decoding | [shift + j/k]: scroll stack | [ctrl + j/k]: scroll buffer | ['<char>]: goto breakpoint | [h] toggle help";
+        let l2 = "[t]: stack labels | [m]: buffer decoding | [shift + j/k]: scroll stack | [ctrl + j/k]: scroll buffer | ['<char>]: goto breakpoint | [h] toggle help | [w] dump buffers to json file";
         let dimmed = Style::new().add_modifier(Modifier::DIM);
         let lines =
             vec![Line::from(Span::styled(l1, dimmed)), Line::from(Span::styled(l2, dimmed))];

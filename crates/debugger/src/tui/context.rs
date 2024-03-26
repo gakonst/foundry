@@ -3,9 +3,10 @@
 use crate::{Debugger, ExitReason};
 use alloy_primitives::Address;
 use crossterm::event::{Event, KeyCode, KeyEvent, KeyModifiers, MouseEvent, MouseEventKind};
+use foundry_common::fs::{create_dir, write_json_file};
 use foundry_evm_core::debug::{DebugNodeFlat, DebugStep};
 use revm_inspectors::tracing::types::CallKind;
-use std::{cell::RefCell, ops::ControlFlow};
+use std::{cell::RefCell, collections::HashMap, ops::ControlFlow, path::PathBuf};
 
 /// This is currently used to remember last scroll position so screen doesn't wiggle as much.
 #[derive(Default)]
@@ -293,6 +294,47 @@ impl DebuggerContext<'_> {
             KeyCode::Char('m') => self.buf_utf = !self.buf_utf,
             // toggle help notice
             KeyCode::Char('h') => self.show_shortcuts = !self.show_shortcuts,
+            // dump memory+calldata+returndata to timestamped file
+            KeyCode::Char('w') => {
+                use std::{fmt::Write, time::SystemTime};
+                // create a json file with the current memory, calldata, and returndata
+                // and write it to the current directory
+                // the file should be named with the current timestamp
+                let debug_step = self.current_step();
+
+                let mut memory_ascii = "0x".to_string();
+                debug_step.memory.iter().for_each(|x| {
+                    write!(&mut memory_ascii, "{:02x}", x).unwrap();
+                });
+                let mut calldata_ascii = "0x".to_string();
+                debug_step.calldata.iter().for_each(|x| {
+                    write!(&mut calldata_ascii, "{:02x}", x).unwrap();
+                });
+                let mut returndata_ascii = "0x".to_string();
+                debug_step.returndata.iter().for_each(|x| {
+                    write!(&mut returndata_ascii, "{:02x}", x).unwrap();
+                });
+
+                let mapping: HashMap<&str, &String> = [
+                    ("memory", &memory_ascii),
+                    ("calldata", &calldata_ascii),
+                    ("returndata", &returndata_ascii),
+                ]
+                .into();
+                let address = self.address();
+                let unknown = "Unknown".to_string();
+                let contract_name =
+                    self.debugger.identified_contracts.get(address).unwrap_or(&unknown);
+                let filename: PathBuf = format!(
+                    "debug/debug_dump_{}_{}_{}.json",
+                    contract_name,
+                    address,
+                    SystemTime::now().duration_since(SystemTime::UNIX_EPOCH).unwrap().as_secs()
+                )
+                .into();
+                create_dir("debug").err();
+                write_json_file(&filename, &mapping).unwrap();
+            }
             KeyCode::Char(
                 other @ ('0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '\''),
             ) => self.key_buffer.push(other),
