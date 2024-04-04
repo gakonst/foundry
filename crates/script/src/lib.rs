@@ -11,7 +11,6 @@ use broadcast::next_nonce;
 use build::PreprocessedState;
 use clap::{Parser, ValueHint};
 use dialoguer::Confirm;
-use ethers_signers::Signer;
 use eyre::{ContextCompat, Result};
 use forge_verify::RetryArgs;
 use foundry_cli::{opts::CoreBuildArgs, utils::LoadConfig};
@@ -21,9 +20,7 @@ use foundry_common::{
     errors::UnlinkedByteCode,
     evm::{Breakpoints, EvmArgs},
     provider::ethers::RpcUrl,
-    shell,
-    types::ToAlloy,
-    CONTRACT_MAX_SIZE, SELECTOR_LEN,
+    shell, CONTRACT_MAX_SIZE, SELECTOR_LEN,
 };
 use foundry_compilers::{artifacts::ContractBytecodeSome, ArtifactId};
 use foundry_config::{
@@ -203,11 +200,7 @@ impl ScriptArgs {
         let script_wallets =
             ScriptWallets::new(self.wallets.get_multi_wallet().await?, self.evm_opts.sender);
 
-        let (config, mut evm_opts) = self.load_config_and_evm_opts_emit_warnings()?;
-
-        if let Some(sender) = self.maybe_load_private_key()? {
-            evm_opts.sender = sender;
-        }
+        let (config, evm_opts) = self.load_config_and_evm_opts_emit_warnings()?;
 
         let script_config = ScriptConfig::new(config, evm_opts).await?;
 
@@ -290,17 +283,6 @@ impl ScriptArgs {
         }
 
         Ok(())
-    }
-
-    /// In case the user has loaded *only* one private-key, we can assume that he's using it as the
-    /// `--sender`
-    fn maybe_load_private_key(&self) -> Result<Option<Address>> {
-        let maybe_sender = self
-            .wallets
-            .private_keys()?
-            .filter(|pks| pks.len() == 1)
-            .map(|pks| pks.first().unwrap().address().to_alloy());
-        Ok(maybe_sender)
     }
 
     /// Returns the Function and calldata based on the signature
@@ -588,6 +570,24 @@ impl ScriptConfig {
             .gas_limit(self.evm_opts.gas_limit());
 
         if let Some(script_wallets) = script_wallets {
+            let mut inner = script_wallets.inner.lock();
+            // if a sender is provided it will be set on evm_opts already
+            // otherwise if we have exactly one signer we can assume it is the sender
+            // else we throw an error to avoid landing on the DEFAULT_SENDER.
+            if inner.provided_sender.is_none() {
+                // may unlock some pending keystores
+                let signers = inner.multi_wallet.signers()?;
+                if signers.len() == 1 {
+                    let address = signers.keys().next().unwrap();
+                    self.evm_opts.sender = *address;
+                }
+                if signers.len() > 1 {
+                    eyre::bail!("multiple signers found, please provide a --sender address.");
+                }
+            }
+            // we can drop the inner wallet now that we have the sender
+            // and release the lock for the runner.
+            drop(inner);
             builder = builder.inspectors(|stack| {
                 stack
                     .debug(debug)
