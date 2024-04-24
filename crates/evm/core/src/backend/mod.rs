@@ -1,6 +1,7 @@
 //! Foundry's main executor backend abstraction and implementation.
 
 use crate::{
+    arbitrum::{self, ARB_SYS_ADDRESS},
     constants::{CALLER, CHEATCODE_ADDRESS, DEFAULT_CREATE2_DEPLOYER, TEST_CONTRACT_ADDRESS},
     fork::{CreateFork, ForkId, MultiFork, SharedBackend},
     snapshot::Snapshots,
@@ -20,10 +21,11 @@ use revm::{
         Account, AccountInfo, Bytecode, CreateScheme, Env, EnvWithHandlerCfg, HashMap as Map, Log,
         ResultAndState, SpecId, State, StorageSlot, TransactTo, KECCAK_EMPTY,
     },
-    Database, DatabaseCommit, JournaledState,
+    ContextPrecompile, ContextPrecompiles, Database, DatabaseCommit, JournaledState,
 };
 use std::{
     collections::{BTreeMap, HashMap, HashSet},
+    sync::Arc,
     time::Instant,
 };
 
@@ -43,7 +45,7 @@ mod snapshot;
 pub use snapshot::{BackendSnapshot, RevertSnapshotAction, StateSnapshot};
 
 // A `revm::Database` that is used in forking mode
-type ForkDB = CacheDB<SharedBackend>;
+pub type ForkDB = CacheDB<SharedBackend>;
 
 /// Represents a numeric `ForkId` valid only for the existence of the `Backend`.
 /// The difference between `ForkId` and `LocalForkId` is that `ForkId` tracks pairs of `endpoint +
@@ -105,29 +107,37 @@ pub trait DatabaseExt: Database<Error = DatabaseError> {
     /// Creates and also selects a new fork
     ///
     /// This is basically `create_fork` + `select_fork`
-    fn create_select_fork(
+    fn create_select_fork<DB: DatabaseExt>(
         &mut self,
         fork: CreateFork,
         env: &mut Env,
+        precompiles: &mut ContextPrecompiles<DB>,
         journaled_state: &mut JournaledState,
-    ) -> eyre::Result<LocalForkId> {
+    ) -> eyre::Result<LocalForkId>
+    where
+        Self: Sized,
+    {
         let id = self.create_fork(fork)?;
-        self.select_fork(id, env, journaled_state)?;
+        self.select_fork(id, env, precompiles, journaled_state)?;
         Ok(id)
     }
 
     /// Creates and also selects a new fork
     ///
     /// This is basically `create_fork` + `select_fork`
-    fn create_select_fork_at_transaction(
+    fn create_select_fork_at_transaction<DB: DatabaseExt>(
         &mut self,
         fork: CreateFork,
         env: &mut Env,
         journaled_state: &mut JournaledState,
+        precompiles: &mut ContextPrecompiles<DB>,
         transaction: B256,
-    ) -> eyre::Result<LocalForkId> {
+    ) -> eyre::Result<LocalForkId>
+    where
+        Self: Sized,
+    {
         let id = self.create_fork_at_transaction(fork, transaction)?;
-        self.select_fork(id, env, journaled_state)?;
+        self.select_fork(id, env, precompiles, journaled_state)?;
         Ok(id)
     }
 
@@ -150,12 +160,15 @@ pub trait DatabaseExt: Database<Error = DatabaseError> {
     /// # Errors
     ///
     /// Returns an error if no fork with the given `id` exists
-    fn select_fork(
+    fn select_fork<DB: DatabaseExt>(
         &mut self,
         id: LocalForkId,
         env: &mut Env,
+        precompiles: &mut ContextPrecompiles<DB>,
         journaled_state: &mut JournaledState,
-    ) -> eyre::Result<()>;
+    ) -> eyre::Result<()>
+    where
+        Self: Sized;
 
     /// Updates the fork to given block number.
     ///
@@ -327,6 +340,9 @@ pub trait DatabaseExt: Database<Error = DatabaseError> {
         }
         Ok(())
     }
+
+    /// NUMBER opcode handler accounting for potential chain-specifics.
+    fn get_block_number(&self, env: &Env) -> Result<U256, DatabaseError>;
 }
 
 struct _ObjectSafe(dyn DatabaseExt);
@@ -443,13 +459,15 @@ impl Backend {
         };
 
         if let Some(fork) = fork {
-            let (fork_id, fork, _) =
+            let (fork_id, fork, fork_env) =
                 backend.forks.create_fork(fork).expect("Unable to create fork");
+            let precompiles = ForkSpecificPrecompiles::new(fork_env.cfg.chain_id);
             let fork_db = ForkDB::new(fork);
             let fork_ids = backend.inner.insert_new_fork(
                 fork_id.clone(),
                 fork_db,
                 backend.inner.new_journaled_state(),
+                precompiles,
             );
             backend.inner.launched_with_fork = Some((fork_id, fork_ids.0, fork_ids.1));
             backend.active_fork_ids = Some(fork_ids);
@@ -464,7 +482,8 @@ impl Backend {
     /// as active
     pub(crate) fn new_with_fork(id: &ForkId, fork: Fork, journaled_state: JournaledState) -> Self {
         let mut backend = Self::spawn(None);
-        let fork_ids = backend.inner.insert_new_fork(id.clone(), fork.db, journaled_state);
+        let fork_ids =
+            backend.inner.insert_new_fork(id.clone(), fork.db, journaled_state, fork.precompiles);
         backend.inner.launched_with_fork = Some((id.clone(), fork_ids.0, fork_ids.1));
         backend.active_fork_ids = Some(fork_ids);
         backend
@@ -787,7 +806,7 @@ impl Backend {
         inspector: I,
     ) -> eyre::Result<ResultAndState> {
         self.initialize(env);
-        let mut evm = crate::utils::new_evm_with_inspector(self, env.clone(), inspector);
+        let mut evm = crate::utils::new_extended_evm_with_inspector(self, env.clone(), inspector);
 
         let res = evm.transact().wrap_err("backend: failed while inspecting")?;
 
@@ -1015,11 +1034,16 @@ impl DatabaseExt for Backend {
 
     fn create_fork(&mut self, create_fork: CreateFork) -> eyre::Result<LocalForkId> {
         trace!("create fork");
-        let (fork_id, fork, _) = self.forks.create_fork(create_fork)?;
+        let (fork_id, fork, fork_env) = self.forks.create_fork(create_fork)?;
 
         let fork_db = ForkDB::new(fork);
-        let (id, _) =
-            self.inner.insert_new_fork(fork_id, fork_db, self.fork_init_journaled_state.clone());
+        let precompiles = ForkSpecificPrecompiles::new(fork_env.cfg.chain_id);
+        let (id, _) = self.inner.insert_new_fork(
+            fork_id,
+            fork_db,
+            self.fork_init_journaled_state.clone(),
+            precompiles,
+        );
         Ok(id)
     }
 
@@ -1049,10 +1073,11 @@ impl DatabaseExt for Backend {
 
     /// Select an existing fork by id.
     /// When switching forks we copy the shared state
-    fn select_fork(
+    fn select_fork<DB: DatabaseExt>(
         &mut self,
         id: LocalForkId,
         env: &mut Env,
+        precompiles: &mut ContextPrecompiles<DB>,
         active_journaled_state: &mut JournaledState,
     ) -> eyre::Result<()> {
         trace!(?id, "select fork");
@@ -1072,6 +1097,10 @@ impl DatabaseExt for Backend {
         // this ensures the changes performed while the fork was active are recorded
         if let Some(active) = self.active_fork_mut() {
             active.journaled_state = active_journaled_state.clone();
+
+            for address in active.precompiles.addresses() {
+                precompiles.remove(&address);
+            }
 
             let caller = env.tx.caller;
             let caller_account = active.journaled_state.state.get(&env.tx.caller).cloned();
@@ -1131,6 +1160,8 @@ impl DatabaseExt for Backend {
             });
 
             self.update_fork_db(active_journaled_state, &mut fork);
+
+            fork.precompiles.fill_precompiles(precompiles);
 
             // insert the fork back
             self.inner.set_fork(idx, fork);
@@ -1407,6 +1438,16 @@ impl DatabaseExt for Backend {
     fn has_cheatcode_access(&self, account: &Address) -> bool {
         self.inner.cheatcode_access_accounts.contains(account)
     }
+
+    fn get_block_number(&self, env: &Env) -> Result<U256, DatabaseError> {
+        if let Some(active_fork_db) = self.active_fork_db() {
+            if arbitrum::is_arbitrum(env.cfg.chain_id) {
+                return arbitrum::get_block_number(active_fork_db, env)
+                    .map_err(|e| DatabaseError::Other(e.to_string()));
+            }
+        }
+        Ok(env.block.number)
+    }
 }
 
 impl DatabaseRef for Backend {
@@ -1499,11 +1540,47 @@ pub enum BackendDatabaseSnapshot {
     Forked(LocalForkId, ForkId, ForkLookupIndex, Box<Fork>),
 }
 
+#[derive(Clone, Debug)]
+pub struct ForkSpecificPrecompiles {
+    arb_sys: Option<Arc<arbitrum::ArbSysPrecompile>>,
+}
+
+impl ForkSpecificPrecompiles {
+    pub fn new(chain_id: u64) -> Self {
+        let is_arbitrum = arbitrum::is_arbitrum(chain_id);
+
+        let mut arb_sys = None;
+        if is_arbitrum {
+            arb_sys = Some(Arc::new(arbitrum::ArbSysPrecompile {}));
+        }
+
+        Self { arb_sys }
+    }
+
+    pub fn addresses(&self) -> Vec<Address> {
+        let mut addresses = Vec::new();
+
+        if self.arb_sys.is_some() {
+            addresses.push(ARB_SYS_ADDRESS);
+        }
+
+        addresses
+    }
+
+    pub fn fill_precompiles<DB: DatabaseExt>(&self, precompiles: &mut ContextPrecompiles<DB>) {
+        if let Some(arb_sys) = &self.arb_sys {
+            precompiles
+                .insert(ARB_SYS_ADDRESS, ContextPrecompile::ContextStateful(arb_sys.clone()));
+        }
+    }
+}
+
 /// Represents a fork
 #[derive(Clone, Debug)]
 pub struct Fork {
     db: ForkDB,
     journaled_state: JournaledState,
+    pub precompiles: ForkSpecificPrecompiles,
 }
 
 // === impl Fork ===
@@ -1669,12 +1746,13 @@ impl BackendInner {
         fork_id: ForkId,
         db: ForkDB,
         journaled_state: JournaledState,
+        precompiles: ForkSpecificPrecompiles,
     ) -> ForkLookupIndex {
         let idx = self.forks.len();
         self.issued_local_fork_ids.insert(id, fork_id.clone());
         self.created_forks.insert(fork_id, idx);
 
-        let fork = Fork { db, journaled_state };
+        let fork = Fork { db, journaled_state, precompiles };
         self.forks.push(Some(fork));
         idx
     }
@@ -1710,12 +1788,13 @@ impl BackendInner {
         fork_id: ForkId,
         db: ForkDB,
         journaled_state: JournaledState,
+        precompiles: ForkSpecificPrecompiles,
     ) -> (LocalForkId, ForkLookupIndex) {
         let idx = self.forks.len();
         self.created_forks.insert(fork_id.clone(), idx);
         let id = self.next_id();
         self.issued_local_fork_ids.insert(id, fork_id);
-        let fork = Fork { db, journaled_state };
+        let fork = Fork { db, journaled_state, precompiles };
         self.forks.push(Some(fork));
         (id, idx)
     }
@@ -1884,7 +1963,7 @@ fn commit_transaction<I: InspectorExt<Backend>>(
         let fork = fork.clone();
         let journaled_state = journaled_state.clone();
         let db = Backend::new_with_fork(fork_id, fork, journaled_state);
-        crate::utils::new_evm_with_inspector(db, env, inspector)
+        crate::utils::new_extended_evm_with_inspector(db, env, inspector)
             .transact()
             .wrap_err("backend: failed committing transaction")?
     };

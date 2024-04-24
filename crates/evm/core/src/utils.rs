@@ -1,5 +1,5 @@
 pub use crate::ic::*;
-use crate::{constants::DEFAULT_CREATE2_DEPLOYER, InspectorExt};
+use crate::{backend::DatabaseExt, constants::DEFAULT_CREATE2_DEPLOYER, InspectorExt};
 use alloy_json_abi::{Function, JsonAbi};
 use alloy_primitives::{Address, FixedBytes, U256};
 use alloy_rpc_types::{Block, Transaction};
@@ -11,7 +11,9 @@ use revm::{
     db::WrapDatabaseRef,
     handler::register::EvmHandler,
     interpreter::{
-        return_ok, CallContext, CallInputs, CallScheme, CreateInputs, CreateOutcome, Gas,
+        gas,
+        opcode::{self, InstructionTables},
+        push, return_ok, CallContext, CallInputs, CallScheme, CreateInputs, CreateOutcome, Gas,
         InstructionResult, InterpreterResult, Transfer,
     },
     primitives::{CreateScheme, EVMError, SpecId, TransactTo, KECCAK_EMPTY},
@@ -36,18 +38,6 @@ pub fn apply_chain_and_block_specific_env_changes(env: &mut revm::primitives::En
                 }
 
                 return;
-            }
-            NamedChain::Arbitrum |
-            NamedChain::ArbitrumGoerli |
-            NamedChain::ArbitrumNova |
-            NamedChain::ArbitrumTestnet => {
-                // on arbitrum `block.number` is the L1 block which is included in the
-                // `l1BlockNumber` field
-                if let Some(l1_block_number) = block.other.get("l1BlockNumber").cloned() {
-                    if let Ok(l1_block_number) = serde_json::from_value::<U256>(l1_block_number) {
-                        env.block.number = l1_block_number;
-                    }
-                }
             }
             _ => {}
         }
@@ -228,6 +218,29 @@ pub fn create2_handler_register<DB: revm::Database, I: InspectorExt<DB>>(
         });
 }
 
+pub fn instruction_table_handle_register<DB: DatabaseExt>(
+    handler: &mut EvmHandler<'_, impl InspectorExt<DB>, DB>,
+) {
+    let instruction_table =
+        handler.instruction_table.as_mut().expect("instruction table must be present");
+
+    instruction_table.convert_boxed();
+
+    let InstructionTables::Boxed(ref mut table) = instruction_table else {
+        unreachable!();
+    };
+
+    table[opcode::NUMBER as usize] = Box::new(move |interpreter, evm| {
+        let Ok(number) = evm.db().get_block_number(&evm.context.evm.env) else {
+            interpreter.instruction_result = InstructionResult::FatalExternalError;
+            return;
+        };
+
+        gas!(interpreter, revm::interpreter::gas::BASE);
+        push!(interpreter, number);
+    });
+}
+
 /// Creates a new EVM with the given inspector.
 pub fn new_evm_with_inspector<'a, DB, I>(
     db: DB,
@@ -259,6 +272,26 @@ where
     I: InspectorExt<WrapDatabaseRef<DB>>,
 {
     new_evm_with_inspector(WrapDatabaseRef(db), env, inspector)
+}
+
+pub fn new_extended_evm_with_inspector<'a, DB, I>(
+    db: DB,
+    env: revm::primitives::EnvWithHandlerCfg,
+    inspector: I,
+) -> revm::Evm<'a, I, DB>
+where
+    DB: DatabaseExt,
+    I: InspectorExt<DB>,
+{
+    // NOTE: We could use `revm::Evm::builder()` here, but on the current patch it has some
+    // performance issues.
+    let revm::primitives::EnvWithHandlerCfg { env, handler_cfg } = env;
+    let context = revm::Context::new(revm::EvmContext::new_with_env(db, env), inspector);
+    let mut handler = revm::Handler::new(handler_cfg);
+    handler.append_handler_register_plain(revm::inspector_handle_register);
+    handler.append_handler_register_plain(create2_handler_register);
+    handler.append_handler_register_plain(instruction_table_handle_register);
+    revm::Evm::new(context, handler)
 }
 
 #[cfg(test)]

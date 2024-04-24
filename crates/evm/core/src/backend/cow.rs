@@ -17,7 +17,7 @@ use revm::{
         Account, AccountInfo, Bytecode, Env, EnvWithHandlerCfg, HashMap as Map, ResultAndState,
         SpecId,
     },
-    Database, DatabaseCommit, JournaledState,
+    ContextPrecompiles, Database, DatabaseCommit, JournaledState,
 };
 use std::{borrow::Cow, collections::BTreeMap};
 
@@ -68,7 +68,7 @@ impl<'a> CowBackend<'a> {
         // already, we reset the initialized state
         self.is_initialized = false;
         self.spec_id = env.handler_cfg.spec_id;
-        let mut evm = crate::utils::new_evm_with_inspector(self, env.clone(), inspector);
+        let mut evm = crate::utils::new_extended_evm_with_inspector(self, env.clone(), inspector);
 
         let res = evm.transact().wrap_err("backend: failed while inspecting")?;
 
@@ -148,13 +148,14 @@ impl<'a> DatabaseExt for CowBackend<'a> {
         self.backend.to_mut().create_fork_at_transaction(fork, transaction)
     }
 
-    fn select_fork(
+    fn select_fork<DB: DatabaseExt>(
         &mut self,
         id: LocalForkId,
         env: &mut Env,
+        precompiles: &mut ContextPrecompiles<DB>,
         journaled_state: &mut JournaledState,
     ) -> eyre::Result<()> {
-        self.backend_mut(env).select_fork(id, env, journaled_state)
+        self.backend_mut(env).select_fork(id, env, precompiles, journaled_state)
     }
 
     fn roll_fork(
@@ -242,6 +243,10 @@ impl<'a> DatabaseExt for CowBackend<'a> {
 
     fn has_cheatcode_access(&self, account: &Address) -> bool {
         self.backend.has_cheatcode_access(account)
+    }
+
+    fn get_block_number(&self, env: &Env) -> Result<U256, DatabaseError> {
+        self.backend.get_block_number(env)
     }
 }
 
