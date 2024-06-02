@@ -47,6 +47,7 @@ pub mod config;
 pub mod coverage;
 pub mod create;
 pub mod debug;
+pub mod decode_error;
 pub mod doc;
 pub mod flatten;
 pub mod fmt;

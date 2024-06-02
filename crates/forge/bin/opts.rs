@@ -1,8 +1,8 @@
 use crate::cmd::{
     bind::BindArgs, build::BuildArgs, cache::CacheArgs, clone::CloneArgs, config, coverage,
-    create::CreateArgs, debug::DebugArgs, doc::DocArgs, flatten, fmt::FmtArgs, geiger, generate,
-    init::InitArgs, inspect, install::InstallArgs, remappings::RemappingArgs, remove::RemoveArgs,
-    selectors::SelectorsSubcommands, snapshot, test, tree, update,
+    create::CreateArgs, debug::DebugArgs, decode_error, doc::DocArgs, flatten, fmt::FmtArgs,
+    geiger, generate, init::InitArgs, inspect, install::InstallArgs, remappings::RemappingArgs,
+    remove::RemoveArgs, selectors::SelectorsSubcommands, snapshot, test, tree, update,
 };
 use clap::{Parser, Subcommand, ValueHint};
 use forge_script::ScriptArgs;
@@ -161,6 +161,9 @@ pub enum ForgeSubcommand {
     /// Verify the deployed bytecode against its source.
     #[clap(visible_alias = "vb")]
     VerifyBytecode(VerifyBytecodeArgs),
+
+    /// Attempt to decode raw bytes from a revert message
+    DecodeError(decode_error::DecodeError),
 }
 
 #[cfg(test)]

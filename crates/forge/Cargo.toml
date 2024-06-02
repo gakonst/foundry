@@ -62,6 +62,7 @@ alloy-transport.workspace = true
 alloy-signer.workspace = true
 alloy-consensus.workspace = true
 alloy-chains.workspace = true
+alloy-sol-types.workspace = true
 
 async-trait = "0.1"
 clap = { version = "4", features = ["derive", "env", "unicode", "wrap_help"] }
