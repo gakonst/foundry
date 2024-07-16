@@ -1,7 +1,7 @@
+use crate::{revm::primitives::EnvWithHandlerCfg, traces::TraceKind};
 use alloy_primitives::U256;
 use alloy_provider::Provider;
 use alloy_rpc_types::BlockTransactions;
-use cast::{revm::primitives::EnvWithHandlerCfg, traces::TraceKind};
 use clap::Parser;
 use eyre::{Result, WrapErr};
 use foundry_cli::{
@@ -16,6 +16,7 @@ use foundry_evm::{
     opts::EvmOpts,
     utils::configure_tx_env,
 };
+use tracing::trace;
 
 /// CLI arguments for `cast run`.
 #[derive(Clone, Debug, Parser)]

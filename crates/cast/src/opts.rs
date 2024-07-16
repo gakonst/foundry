@@ -1,16 +1,38 @@
-use crate::cmd::{
-    access_list::AccessListArgs, bind::BindArgs, call::CallArgs, create2::Create2Args,
-    estimate::EstimateArgs, find_block::FindBlockArgs, interface::InterfaceArgs, logs::LogsArgs,
-    mktx::MakeTxArgs, rpc::RpcArgs, run::RunArgs, send::SendTxArgs, storage::StorageArgs,
-    wallet::WalletSubcommands,
+use crate::{
+    cmd::{
+        access_list::AccessListArgs, bind::BindArgs, call::CallArgs, create2::Create2Args,
+        estimate::EstimateArgs, find_block::FindBlockArgs, interface::InterfaceArgs,
+        logs::LogsArgs, mktx::MakeTxArgs, rpc::RpcArgs, run::RunArgs, send::SendTxArgs,
+        storage::StorageArgs, wallet::WalletSubcommands,
+    },
+    Cast, SimpleCast,
 };
 use alloy_primitives::{Address, B256, U256};
 use alloy_rpc_types::BlockId;
-use clap::{Parser, Subcommand, ValueHint};
+use clap::{CommandFactory, Parser, Subcommand, ValueHint};
 use eyre::Result;
 use foundry_cli::opts::{EtherscanOpts, RpcOpts};
 use foundry_common::ens::NameOrAddress;
 use std::{path::PathBuf, str::FromStr};
+
+use alloy_primitives::{hex, keccak256};
+use alloy_provider::Provider;
+use alloy_rpc_types::BlockNumberOrTag::Latest;
+use clap_complete::generate;
+use foundry_cli::{prompt, stdin, utils};
+use foundry_common::{
+    abi::get_event,
+    ens::{namehash, ProviderEnsExt},
+    fmt::{format_tokens, format_uint_exp},
+    fs,
+    selectors::{
+        decode_calldata, decode_event_topic, decode_function_selector, decode_selectors,
+        import_selectors, parse_signatures, pretty_calldata, ParsedSignatures, SelectorImportData,
+        SelectorType,
+    },
+};
+use foundry_config::Config;
+use std::time::Instant;
 
 const VERSION_MESSAGE: &str = concat!(
     env!("CARGO_PKG_VERSION"),
@@ -29,7 +51,7 @@ const VERSION_MESSAGE: &str = concat!(
     after_help = "Find more information in the book: http://book.getfoundry.sh/reference/cast/cast.html",
     next_display_order = None,
 )]
-pub struct Cast {
+pub struct CastArgs {
     #[command(subcommand)]
     pub cmd: CastSubcommand,
 }
@@ -910,6 +932,551 @@ pub enum CastSubcommand {
     },
 }
 
+impl CastSubcommand {
+    pub async fn run(self) -> eyre::Result<()> {
+        match self {
+            // Constants
+            Self::MaxInt { r#type } => {
+                println!("{}", SimpleCast::max_int(&r#type)?);
+            }
+            Self::MinInt { r#type } => {
+                println!("{}", SimpleCast::min_int(&r#type)?);
+            }
+            Self::MaxUint { r#type } => {
+                println!("{}", SimpleCast::max_int(&r#type)?);
+            }
+            Self::AddressZero => {
+                println!("{:?}", Address::ZERO);
+            }
+            Self::HashZero => {
+                println!("{:?}", B256::ZERO);
+            }
+
+            // Conversions & transformations
+            Self::FromUtf8 { text } => {
+                let value = stdin::unwrap(text, false)?;
+                println!("{}", SimpleCast::from_utf8(&value));
+            }
+            Self::ToAscii { hexdata } => {
+                let value = stdin::unwrap(hexdata, false)?;
+                println!("{}", SimpleCast::to_ascii(&value)?);
+            }
+            Self::ToUtf8 { hexdata } => {
+                let value = stdin::unwrap(hexdata, false)?;
+                println!("{}", SimpleCast::to_utf8(&value)?);
+            }
+            Self::FromFixedPoint { value, decimals } => {
+                let (value, decimals) = stdin::unwrap2(value, decimals)?;
+                println!("{}", SimpleCast::from_fixed_point(&value, &decimals)?);
+            }
+            Self::ToFixedPoint { value, decimals } => {
+                let (value, decimals) = stdin::unwrap2(value, decimals)?;
+                println!("{}", SimpleCast::to_fixed_point(&value, &decimals)?);
+            }
+            Self::ConcatHex { data } => {
+                if data.is_empty() {
+                    let s = stdin::read(true)?;
+                    println!("{}", SimpleCast::concat_hex(s.split_whitespace()))
+                } else {
+                    println!("{}", SimpleCast::concat_hex(data))
+                }
+            }
+            Self::FromBin => {
+                let hex = stdin::read_bytes(false)?;
+                println!("{}", hex::encode_prefixed(hex));
+            }
+            Self::ToHexdata { input } => {
+                let value = stdin::unwrap_line(input)?;
+                let output = match value {
+                    s if s.starts_with('@') => hex::encode(std::env::var(&s[1..])?),
+                    s if s.starts_with('/') => hex::encode(fs::read(s)?),
+                    s => s.split(':').map(|s| s.trim_start_matches("0x").to_lowercase()).collect(),
+                };
+                println!("0x{output}");
+            }
+            Self::ToCheckSumAddress { address } => {
+                let value = stdin::unwrap_line(address)?;
+                println!("{}", value.to_checksum(None));
+            }
+            Self::ToUint256 { value } => {
+                let value = stdin::unwrap_line(value)?;
+                println!("{}", SimpleCast::to_uint256(&value)?);
+            }
+            Self::ToInt256 { value } => {
+                let value = stdin::unwrap_line(value)?;
+                println!("{}", SimpleCast::to_int256(&value)?);
+            }
+            Self::ToUnit { value, unit } => {
+                let value = stdin::unwrap_line(value)?;
+                println!("{}", SimpleCast::to_unit(&value, &unit)?);
+            }
+            Self::FromWei { value, unit } => {
+                let value = stdin::unwrap_line(value)?;
+                println!("{}", SimpleCast::from_wei(&value, &unit)?);
+            }
+            Self::ToWei { value, unit } => {
+                let value = stdin::unwrap_line(value)?;
+                println!("{}", SimpleCast::to_wei(&value, &unit)?);
+            }
+            Self::FromRlp { value } => {
+                let value = stdin::unwrap_line(value)?;
+                println!("{}", SimpleCast::from_rlp(value)?);
+            }
+            Self::ToRlp { value } => {
+                let value = stdin::unwrap_line(value)?;
+                println!("{}", SimpleCast::to_rlp(&value)?);
+            }
+            Self::ToHex(ToBaseArgs { value, base_in }) => {
+                let value = stdin::unwrap_line(value)?;
+                println!("{}", SimpleCast::to_base(&value, base_in.as_deref(), "hex")?);
+            }
+            Self::ToDec(ToBaseArgs { value, base_in }) => {
+                let value = stdin::unwrap_line(value)?;
+                println!("{}", SimpleCast::to_base(&value, base_in.as_deref(), "dec")?);
+            }
+            Self::ToBase { base: ToBaseArgs { value, base_in }, base_out } => {
+                let (value, base_out) = stdin::unwrap2(value, base_out)?;
+                println!("{}", SimpleCast::to_base(&value, base_in.as_deref(), &base_out)?);
+            }
+            Self::ToBytes32 { bytes } => {
+                let value = stdin::unwrap_line(bytes)?;
+                println!("{}", SimpleCast::to_bytes32(&value)?);
+            }
+            Self::FormatBytes32String { string } => {
+                let value = stdin::unwrap_line(string)?;
+                println!("{}", SimpleCast::format_bytes32_string(&value)?);
+            }
+            Self::ParseBytes32String { bytes } => {
+                let value = stdin::unwrap_line(bytes)?;
+                println!("{}", SimpleCast::parse_bytes32_string(&value)?);
+            }
+            Self::ParseBytes32Address { bytes } => {
+                let value = stdin::unwrap_line(bytes)?;
+                println!("{}", SimpleCast::parse_bytes32_address(&value)?);
+            }
+
+            // ABI encoding & decoding
+            Self::AbiDecode { sig, calldata, input } => {
+                let tokens = SimpleCast::abi_decode(&sig, &calldata, input)?;
+                let tokens = format_tokens(&tokens);
+                tokens.for_each(|t| println!("{t}"));
+            }
+            Self::AbiEncode { sig, packed, args } => {
+                if !packed {
+                    println!("{}", SimpleCast::abi_encode(&sig, &args)?);
+                } else {
+                    println!("{}", SimpleCast::abi_encode_packed(&sig, &args)?);
+                }
+            }
+            Self::CalldataDecode { sig, calldata } => {
+                let tokens = SimpleCast::calldata_decode(&sig, &calldata, true)?;
+                let tokens = format_tokens(&tokens);
+                tokens.for_each(|t| println!("{t}"));
+            }
+            Self::CalldataEncode { sig, args } => {
+                println!("{}", SimpleCast::calldata_encode(sig, &args)?);
+            }
+            Self::Interface(cmd) => cmd.run().await?,
+            Self::Bind(cmd) => cmd.run().await?,
+            Self::PrettyCalldata { calldata, offline } => {
+                let calldata = stdin::unwrap_line(calldata)?;
+                println!("{}", pretty_calldata(&calldata, offline).await?);
+            }
+            Self::Sig { sig, optimize } => {
+                let sig = stdin::unwrap_line(sig)?;
+                match optimize {
+                    Some(opt) => {
+                        println!("Starting to optimize signature...");
+                        let start_time = Instant::now();
+                        let (selector, signature) = SimpleCast::get_selector(&sig, opt)?;
+                        println!("Successfully generated in {:?}", start_time.elapsed());
+                        println!("Selector: {selector}");
+                        println!("Optimized signature: {signature}");
+                    }
+                    None => println!("{}", SimpleCast::get_selector(&sig, 0)?.0),
+                }
+            }
+
+            // Blockchain & RPC queries
+            Self::AccessList(cmd) => cmd.run().await?,
+            Self::Age { block, rpc } => {
+                let config = Config::from(&rpc);
+                let provider = utils::get_provider(&config)?;
+                println!(
+                    "{}",
+                    Cast::new(provider).age(block.unwrap_or(BlockId::Number(Latest))).await?
+                );
+            }
+            Self::Balance { block, who, ether, rpc, erc20 } => {
+                let config = Config::from(&rpc);
+                let provider = utils::get_provider(&config)?;
+                let account_addr = who.resolve(&provider).await?;
+
+                match erc20 {
+                    Some(token) => {
+                        let balance =
+                            Cast::new(&provider).erc20_balance(token, account_addr, block).await?;
+                        println!("{}", format_uint_exp(balance));
+                    }
+                    None => {
+                        let value = Cast::new(&provider).balance(account_addr, block).await?;
+                        if ether {
+                            println!("{}", SimpleCast::from_wei(&value.to_string(), "eth")?);
+                        } else {
+                            println!("{value}");
+                        }
+                    }
+                }
+            }
+            Self::BaseFee { block, rpc } => {
+                let config = Config::from(&rpc);
+                let provider = utils::get_provider(&config)?;
+                println!(
+                    "{}",
+                    Cast::new(provider).base_fee(block.unwrap_or(BlockId::Number(Latest))).await?
+                );
+            }
+            Self::Block { block, full, field, json, rpc } => {
+                let config = Config::from(&rpc);
+                let provider = utils::get_provider(&config)?;
+                println!(
+                    "{}",
+                    Cast::new(provider)
+                        .block(block.unwrap_or(BlockId::Number(Latest)), full, field, json)
+                        .await?
+                );
+            }
+            Self::BlockNumber { rpc, block } => {
+                let config = Config::from(&rpc);
+                let provider = utils::get_provider(&config)?;
+                let number = match block {
+                    Some(id) => provider
+                        .get_block(id, false.into())
+                        .await?
+                        .ok_or_else(|| eyre::eyre!("block {id:?} not found"))?
+                        .header
+                        .number
+                        .ok_or_else(|| eyre::eyre!("block {id:?} has no block number"))?,
+                    None => Cast::new(provider).block_number().await?,
+                };
+                println!("{number}");
+            }
+            Self::Chain { rpc } => {
+                let config = Config::from(&rpc);
+                let provider = utils::get_provider(&config)?;
+                println!("{}", Cast::new(provider).chain().await?);
+            }
+            Self::ChainId { rpc } => {
+                let config = Config::from(&rpc);
+                let provider = utils::get_provider(&config)?;
+                println!("{}", Cast::new(provider).chain_id().await?);
+            }
+            Self::Client { rpc } => {
+                let config = Config::from(&rpc);
+                let provider = utils::get_provider(&config)?;
+                println!("{}", provider.get_client_version().await?);
+            }
+            Self::Code { block, who, disassemble, rpc } => {
+                let config = Config::from(&rpc);
+                let provider = utils::get_provider(&config)?;
+                let who = who.resolve(&provider).await?;
+                println!("{}", Cast::new(provider).code(who, block, disassemble).await?);
+            }
+            Self::Codesize { block, who, rpc } => {
+                let config = Config::from(&rpc);
+                let provider = utils::get_provider(&config)?;
+                let who = who.resolve(&provider).await?;
+                println!("{}", Cast::new(provider).codesize(who, block).await?);
+            }
+            Self::ComputeAddress { address, nonce, rpc } => {
+                let config = Config::from(&rpc);
+                let provider = utils::get_provider(&config)?;
+
+                let address: Address = stdin::unwrap_line(address)?.parse()?;
+                let computed = Cast::new(provider).compute_address(address, nonce).await?;
+                println!("Computed Address: {}", computed.to_checksum(None));
+            }
+            Self::Disassemble { bytecode } => {
+                println!("{}", SimpleCast::disassemble(&bytecode)?);
+            }
+            Self::Selectors { bytecode, resolve } => {
+                let selectors_and_args = SimpleCast::extract_selectors(&bytecode)?;
+                if resolve {
+                    let selectors_it = selectors_and_args.iter().map(|r| &r.0);
+                    let resolve_results =
+                        decode_selectors(SelectorType::Function, selectors_it).await?;
+
+                    let max_args_len =
+                        selectors_and_args.iter().map(|r| r.1.len()).max().unwrap_or(0);
+                    for ((selector, arguments), func_names) in
+                        selectors_and_args.into_iter().zip(resolve_results.into_iter())
+                    {
+                        let resolved = match func_names {
+                            Some(v) => v.join("|"),
+                            None => String::new(),
+                        };
+                        println!("{selector}\t{arguments:max_args_len$}\t{resolved}");
+                    }
+                } else {
+                    for (selector, arguments) in selectors_and_args {
+                        println!("{selector}\t{arguments}");
+                    }
+                }
+            }
+            Self::FindBlock(cmd) => cmd.run().await?,
+            Self::GasPrice { rpc } => {
+                let config = Config::from(&rpc);
+                let provider = utils::get_provider(&config)?;
+                println!("{}", Cast::new(provider).gas_price().await?);
+            }
+            Self::Index { key_type, key, slot_number } => {
+                println!("{}", SimpleCast::index(&key_type, &key, &slot_number)?);
+            }
+            Self::IndexErc7201 { id, formula_id } => {
+                eyre::ensure!(formula_id == "erc7201", "unsupported formula ID: {formula_id}");
+                let id = stdin::unwrap_line(id)?;
+                println!("{}", foundry_common::erc7201(&id));
+            }
+            Self::Implementation { block, who, rpc } => {
+                let config = Config::from(&rpc);
+                let provider = utils::get_provider(&config)?;
+                let who = who.resolve(&provider).await?;
+                println!("{}", Cast::new(provider).implementation(who, block).await?);
+            }
+            Self::Admin { block, who, rpc } => {
+                let config = Config::from(&rpc);
+                let provider = utils::get_provider(&config)?;
+                let who = who.resolve(&provider).await?;
+                println!("{}", Cast::new(provider).admin(who, block).await?);
+            }
+            Self::Nonce { block, who, rpc } => {
+                let config = Config::from(&rpc);
+                let provider = utils::get_provider(&config)?;
+                let who = who.resolve(&provider).await?;
+                println!("{}", Cast::new(provider).nonce(who, block).await?);
+            }
+            Self::Proof { address, slots, rpc, block } => {
+                let config = Config::from(&rpc);
+                let provider = utils::get_provider(&config)?;
+                let address = address.resolve(&provider).await?;
+                let value = provider
+                    .get_proof(address, slots.into_iter().collect())
+                    .block_id(block.unwrap_or_default())
+                    .await?;
+                println!("{}", serde_json::to_string(&value)?);
+            }
+            Self::Rpc(cmd) => cmd.run().await?,
+            Self::Storage(cmd) => cmd.run().await?,
+
+            // Calls & transactions
+            Self::Call(cmd) => cmd.run().await?,
+            Self::Estimate(cmd) => cmd.run().await?,
+            Self::MakeTx(cmd) => cmd.run().await?,
+            Self::PublishTx { raw_tx, cast_async, rpc } => {
+                let config = Config::from(&rpc);
+                let provider = utils::get_provider(&config)?;
+                let cast = Cast::new(&provider);
+                let pending_tx = cast.publish(raw_tx).await?;
+                let tx_hash = pending_tx.inner().tx_hash();
+
+                if cast_async {
+                    println!("{tx_hash:#x}");
+                } else {
+                    let receipt = pending_tx.get_receipt().await?;
+                    println!("{}", serde_json::json!(receipt));
+                }
+            }
+            Self::Receipt { tx_hash, field, json, cast_async, confirmations, rpc } => {
+                let config = Config::from(&rpc);
+                let provider = utils::get_provider(&config)?;
+                println!(
+                    "{}",
+                    Cast::new(provider)
+                        .receipt(tx_hash, field, confirmations, cast_async, json)
+                        .await?
+                );
+            }
+            Self::Run(cmd) => cmd.run().await?,
+            Self::SendTx(cmd) => cmd.run().await?,
+            Self::Tx { tx_hash, field, raw, json, rpc } => {
+                let config = Config::from(&rpc);
+                let provider = utils::get_provider(&config)?;
+
+                // Can use either --raw or specify raw as a field
+                let raw = raw || field.as_ref().is_some_and(|f| f == "raw");
+
+                println!("{}", Cast::new(&provider).transaction(tx_hash, field, raw, json).await?)
+            }
+
+            // 4Byte
+            Self::FourByte { selector } => {
+                let selector = stdin::unwrap_line(selector)?;
+                let sigs = decode_function_selector(&selector).await?;
+                if sigs.is_empty() {
+                    eyre::bail!("No matching function signatures found for selector `{selector}`");
+                }
+                for sig in sigs {
+                    println!("{sig}");
+                }
+            }
+            Self::FourByteDecode { calldata } => {
+                let calldata = stdin::unwrap_line(calldata)?;
+                let sigs = decode_calldata(&calldata).await?;
+                sigs.iter().enumerate().for_each(|(i, sig)| println!("{}) \"{sig}\"", i + 1));
+
+                let sig = match sigs.len() {
+                    0 => eyre::bail!("No signatures found"),
+                    1 => sigs.first().unwrap(),
+                    _ => {
+                        let i: usize = prompt!("Select a function signature by number: ")?;
+                        sigs.get(i - 1).ok_or_else(|| eyre::eyre!("Invalid signature index"))?
+                    }
+                };
+
+                let tokens = SimpleCast::calldata_decode(sig, &calldata, true)?;
+                for token in format_tokens(&tokens) {
+                    println!("{token}");
+                }
+            }
+            Self::FourByteEvent { topic } => {
+                let topic = stdin::unwrap_line(topic)?;
+                let sigs = decode_event_topic(&topic).await?;
+                if sigs.is_empty() {
+                    eyre::bail!("No matching event signatures found for topic `{topic}`");
+                }
+                for sig in sigs {
+                    println!("{sig}");
+                }
+            }
+            Self::UploadSignature { signatures } => {
+                let signatures = stdin::unwrap_vec(signatures)?;
+                let ParsedSignatures { signatures, abis } = parse_signatures(signatures);
+                if !abis.is_empty() {
+                    import_selectors(SelectorImportData::Abi(abis)).await?.describe();
+                }
+                if !signatures.is_empty() {
+                    import_selectors(SelectorImportData::Raw(signatures)).await?.describe();
+                }
+            }
+
+            // ENS
+            Self::Namehash { name } => {
+                let name = stdin::unwrap_line(name)?;
+                println!("{}", namehash(&name));
+            }
+            Self::LookupAddress { who, rpc, verify } => {
+                let config = Config::from(&rpc);
+                let provider = utils::get_provider(&config)?;
+
+                let who = stdin::unwrap_line(who)?;
+                let name = provider.lookup_address(&who).await?;
+                if verify {
+                    let address = provider.resolve_name(&name).await?;
+                    eyre::ensure!(
+                        address == who,
+                        "Reverse lookup verification failed: got `{address}`, expected `{who}`"
+                    );
+                }
+                println!("{name}");
+            }
+            Self::ResolveName { who, rpc, verify } => {
+                let config = Config::from(&rpc);
+                let provider = utils::get_provider(&config)?;
+
+                let who = stdin::unwrap_line(who)?;
+                let address = provider.resolve_name(&who).await?;
+                if verify {
+                    let name = provider.lookup_address(&address).await?;
+                    eyre::ensure!(
+                        name == who,
+                        "Forward lookup verification failed: got `{name}`, expected `{who}`"
+                    );
+                }
+                println!("{address}");
+            }
+
+            // Misc
+            Self::Keccak { data } => {
+                let bytes = match data {
+                    Some(data) => data.into_bytes(),
+                    None => stdin::read_bytes(false)?,
+                };
+                match String::from_utf8(bytes) {
+                    Ok(s) => {
+                        let s = SimpleCast::keccak(&s)?;
+                        println!("{s}");
+                    }
+                    Err(e) => {
+                        let hash = keccak256(e.as_bytes());
+                        let s = hex::encode(hash);
+                        println!("0x{s}");
+                    }
+                };
+            }
+            Self::SigEvent { event_string } => {
+                let event_string = stdin::unwrap_line(event_string)?;
+                let parsed_event = get_event(&event_string)?;
+                println!("{:?}", parsed_event.selector());
+            }
+            Self::LeftShift { value, bits, base_in, base_out } => {
+                println!(
+                    "{}",
+                    SimpleCast::left_shift(&value, &bits, base_in.as_deref(), &base_out)?
+                );
+            }
+            Self::RightShift { value, bits, base_in, base_out } => {
+                println!(
+                    "{}",
+                    SimpleCast::right_shift(&value, &bits, base_in.as_deref(), &base_out)?
+                );
+            }
+            Self::EtherscanSource { address, directory, etherscan, flatten } => {
+                let config = Config::from(&etherscan);
+                let chain = config.chain.unwrap_or_default();
+                let api_key = config.get_etherscan_api_key(Some(chain)).unwrap_or_default();
+                match (directory, flatten) {
+                    (Some(dir), false) => {
+                        SimpleCast::expand_etherscan_source_to_directory(
+                            chain, address, api_key, dir,
+                        )
+                        .await?
+                    }
+                    (None, false) => {
+                        println!(
+                            "{}",
+                            SimpleCast::etherscan_source(chain, address, api_key).await?
+                        );
+                    }
+                    (dir, true) => {
+                        SimpleCast::etherscan_source_flatten(chain, address, api_key, dir).await?;
+                    }
+                }
+            }
+            Self::Create2(cmd) => {
+                cmd.run()?;
+            }
+            Self::Wallet { command } => command.run().await?,
+            Self::Completions { shell } => {
+                generate(shell, &mut CastArgs::command(), "cast", &mut std::io::stdout())
+            }
+            Self::GenerateFigSpec => clap_complete::generate(
+                clap_complete_fig::Fig,
+                &mut CastArgs::command(),
+                "cast",
+                &mut std::io::stdout(),
+            ),
+            Self::Logs(cmd) => cmd.run().await?,
+            Self::DecodeTransaction { tx } => {
+                let tx = stdin::unwrap_line(tx)?;
+                let tx = SimpleCast::decode_raw_transaction(&tx)?;
+
+                println!("{}", serde_json::to_string_pretty(&tx)?);
+            }
+        };
+        Ok(())
+    }
+}
+
 /// CLI arguments for `cast --to-base`.
 #[derive(Debug, Parser)]
 pub struct ToBaseArgs {
@@ -930,18 +1497,18 @@ pub fn parse_slot(s: &str) -> Result<B256> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::SimpleCast;
     use alloy_rpc_types::{BlockNumberOrTag, RpcBlockHash};
-    use cast::SimpleCast;
     use clap::CommandFactory;
 
     #[test]
     fn verify_cli() {
-        Cast::command().debug_assert();
+        CastArgs::command().debug_assert();
     }
 
     #[test]
     fn parse_proof_slot() {
-        let args: Cast = Cast::parse_from([
+        let args: CastArgs = CastArgs::parse_from([
             "foundry-cli",
             "proof",
             "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
@@ -970,7 +1537,7 @@ mod tests {
 
     #[test]
     fn parse_call_data() {
-        let args: Cast = Cast::parse_from([
+        let args: CastArgs = CastArgs::parse_from([
             "foundry-cli",
             "calldata",
             "f()",
@@ -991,7 +1558,7 @@ mod tests {
     // <https://github.com/foundry-rs/book/issues/1019>
     #[test]
     fn parse_signature() {
-        let args: Cast = Cast::parse_from([
+        let args: CastArgs = CastArgs::parse_from([
             "foundry-cli",
             "sig",
             "__$_$__$$$$$__$$_$$$_$$__$$___$$(address,address,uint256)",

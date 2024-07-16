@@ -1,5 +1,5 @@
+use crate::Cast;
 use alloy_provider::Provider;
-use cast::Cast;
 use clap::Parser;
 use eyre::Result;
 use foundry_cli::{opts::RpcOpts, utils};

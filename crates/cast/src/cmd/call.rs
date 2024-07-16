@@ -1,7 +1,6 @@
-use crate::tx::CastTxBuilder;
+use crate::{traces::TraceKind, tx::CastTxBuilder, Cast};
 use alloy_primitives::{TxKind, U256};
 use alloy_rpc_types::{BlockId, BlockNumberOrTag};
-use cast::{traces::TraceKind, Cast};
 use clap::Parser;
 use eyre::Result;
 use foundry_cli::{

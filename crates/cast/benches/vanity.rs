@@ -2,7 +2,7 @@ use criterion::{criterion_group, criterion_main, Criterion};
 use rayon::prelude::*;
 use std::{hint::black_box, time::Duration};
 
-#[path = "../bin/cmd/wallet/mod.rs"]
+#[path = "../src/cmd/wallet/mod.rs"]
 #[allow(unused)]
 mod wallet;
 use wallet::vanity::*;

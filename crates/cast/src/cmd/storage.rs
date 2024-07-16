@@ -1,10 +1,9 @@
-use crate::opts::parse_slot;
+use crate::{opts::parse_slot, Cast};
 use alloy_network::AnyNetwork;
 use alloy_primitives::{Address, B256, U256};
 use alloy_provider::Provider;
 use alloy_rpc_types::BlockId;
 use alloy_transport::Transport;
-use cast::Cast;
 use clap::Parser;
 use comfy_table::{presets::ASCII_MARKDOWN, Table};
 use eyre::Result;

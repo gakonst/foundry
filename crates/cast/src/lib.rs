@@ -51,6 +51,10 @@ pub mod base;
 pub mod errors;
 mod rlp_converter;
 
+pub mod cmd;
+pub mod opts;
+pub mod tx;
+
 use rlp_converter::Item;
 
 // TODO: CastContract with common contract initializers? Same for CastProviders?

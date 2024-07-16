@@ -9,6 +9,7 @@ use foundry_common::fs;
 use foundry_config::Config;
 use itertools::Itertools;
 use std::path::{Path, PathBuf};
+use tracing::warn;
 
 /// CLI arguments for `cast interface`.
 #[derive(Clone, Debug, Parser)]

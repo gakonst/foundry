@@ -1,11 +1,13 @@
-use crate::tx::{self, CastTxBuilder};
+use crate::{
+    tx::{self, CastTxBuilder},
+    Cast,
+};
 use alloy_network::{AnyNetwork, EthereumWallet};
 use alloy_provider::{Provider, ProviderBuilder};
 use alloy_rpc_types::TransactionRequest;
 use alloy_serde::WithOtherFields;
 use alloy_signer::Signer;
 use alloy_transport::Transport;
-use cast::Cast;
 use clap::Parser;
 use eyre::Result;
 use foundry_cli::{

@@ -15,7 +15,7 @@ workspace = true
 
 [[bin]]
 name = "cast"
-path = "bin/main.rs"
+path = "src/cast.rs"
 
 [build-dependencies]
 vergen = { workspace = true, default-features = false, features = [
