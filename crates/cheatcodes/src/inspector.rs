@@ -26,7 +26,7 @@ use alloy_primitives::{
     Address, Bytes, Log, TxKind, B256, U256,
 };
 use alloy_rpc_types::request::{TransactionInput, TransactionRequest};
-use alloy_sol_types::{SolCall, SolInterface, SolValue};
+use alloy_sol_types::{SolCall, SolError, SolInterface};
 use foundry_common::{evm::Breakpoints, TransactionMaybeSigned, SELECTOR_LEN};
 use foundry_evm_core::{
     abi::Vm::stopExpectSafeMemoryCall,
@@ -427,7 +427,7 @@ pub struct Cheatcodes {
 
     /// Expected calls
     pub expected_calls: ExpectedCallTracker,
-    /// Expected emits
+    /// Expected log emits
     pub expected_emits: VecDeque<ExpectedEmit>,
 
     /// Map of context depths to memory offset ranges that may be written to within the call depth.
@@ -1447,15 +1447,20 @@ impl Inspector<&mut dyn DatabaseExt> for Cheatcodes {
             !call.is_static;
         if should_check_emits {
             // Not all emits were matched.
-            if self.expected_emits.iter().any(|expected| !expected.found) {
+            if let Some(not_found) = self.expected_emits.iter().find(|expected| !expected.found) {
                 outcome.result.result = InstructionResult::Revert;
-                outcome.result.output = "log != expected log".abi_encode().into();
+                // Where the revert is set and where color mode might be
+                // indicated for a given event that wasn't matched
+                outcome.result.output = Vm::UnemittedEventError {
+                    positionExpected: not_found.sequence,
+                }
+                .abi_encode()
+                .into();
                 return outcome;
             } else {
                 // All emits were found, we're good.
                 // Clear the queue, as we expect the user to declare more events for the next call
-                // if they wanna match further events.
-                self.expected_emits.clear()
+                self.expected_emits.clear();
             }
         }
 

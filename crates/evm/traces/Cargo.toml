@@ -37,6 +37,7 @@ futures.workspace = true
 itertools.workspace = true
 serde.workspace = true
 serde_json.workspace = true
+owo-colors.workspace = true
 tokio = { workspace = true, features = ["time", "macros"] }
 tracing.workspace = true
 tempfile.workspace = true

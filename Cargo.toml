@@ -258,6 +258,7 @@ chrono = { version = "0.4", default-features = false, features = [
 axum = "0.7"
 color-eyre = "0.6"
 comfy-table = "7"
+owo-colors = "3"
 dunce = "1"
 evm-disassembler = "0.5"
 evmole = "0.6"
@@ -331,3 +332,5 @@ yansi = { version = "1.0", features = ["detect-tty", "detect-env"] }
 # alloy-transport-http = { git = "https://github.com/alloy-rs/alloy", rev = "7fab7ee" }
 # alloy-transport-ipc = { git = "https://github.com/alloy-rs/alloy", rev = "7fab7ee" }
 # alloy-transport-ws = { git = "https://github.com/alloy-rs/alloy", rev = "7fab7ee" }
+# revm-inspectors = { path = "../revm-inspectors" }
+# revm-inspectors = { git = "https://github.com/topocount/revm-inspectors", rev = "0ec9274" }
