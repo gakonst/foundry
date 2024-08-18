@@ -115,6 +115,10 @@ use vyper::VyperConfig;
 mod bind_json;
 use bind_json::BindJsonConfig;
 
+mod mutate;
+pub use mutate::MutateConfig;
+
+
 /// Foundry configuration
 ///
 /// # Defaults
@@ -453,6 +457,9 @@ pub struct Config {
     /// Warnings gathered when loading the Config. See [`WarningsProvider`] for more information
     #[serde(rename = "__warnings", default, skip_serializing)]
     pub warnings: Vec<Warning>,
+  
+    /// Configures the Mutate test setup
+    pub mutate: MutateConfig,
 
     /// PRIVATE: This structure may grow, As such, constructing this structure should
     /// _always_ be done using a public constructor or update syntax:
@@ -2143,6 +2150,7 @@ impl Default for Config {
             extra_args: vec![],
             eof_version: None,
             alphanet: false,
+            mutate: Default::default(),
             _non_exhaustive: (),
         }
     }

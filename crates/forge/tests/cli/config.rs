@@ -149,6 +149,7 @@ forgetest!(can_extract_config_values, |prj, cmd| {
         extra_args: vec![],
         eof_version: None,
         alphanet: false,
+        mutate: Default::default(),
         _non_exhaustive: (),
     };
     prj.write_config(input.clone());

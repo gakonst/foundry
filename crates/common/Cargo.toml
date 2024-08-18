@@ -63,6 +63,7 @@ tracing.workspace = true
 url.workspace = true
 walkdir.workspace = true
 yansi.workspace = true
+indicatif = "0.17"
 
 [dev-dependencies]
 foundry-macros.workspace = true

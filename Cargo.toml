@@ -22,6 +22,7 @@ members = [
     "crates/forge/",
     "crates/macros/",
     "crates/test-utils/",
+    "crates/evm/mutator/"
 ]
 resolver = "2"
 
@@ -153,6 +154,8 @@ foundry-evm-fuzz = { path = "crates/evm/fuzz" }
 foundry-evm-traces = { path = "crates/evm/traces" }
 foundry-macros = { path = "crates/macros" }
 foundry-test-utils = { path = "crates/test-utils" }
+
+foundry-evm-mutator = { path = "crates/evm/mutator" }
 foundry-wallets = { path = "crates/wallets" }
 foundry-linking = { path = "crates/linking" }
 

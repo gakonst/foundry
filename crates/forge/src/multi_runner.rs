@@ -183,7 +183,7 @@ impl MultiContractRunner {
             self.contracts.len(),
             find_time,
         );
-
+      
         if show_progress {
             let tests_progress = TestsProgress::new(contracts.len(), rayon::current_num_threads());
             // Collect test suite results to stream at the end of test run.

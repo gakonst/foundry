@@ -36,6 +36,8 @@ foundry-linking.workspace = true
 
 ethers-contract-abigen = { workspace = true, features = ["providers"] }
 
+foundry-evm-mutator.workspace = true
+
 revm-inspectors.workspace = true
 
 comfy-table.workspace = true
@@ -110,6 +112,9 @@ soldeer.workspace = true
 
 [target.'cfg(unix)'.dependencies]
 tikv-jemallocator = { workspace = true, optional = true }
+
+# temp file
+tempfile = { version = "3.8.0" }
 
 [dev-dependencies]
 anvil.workspace = true

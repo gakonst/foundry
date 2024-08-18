@@ -1,0 +1,24 @@
+[package]
+name = "foundry-evm-mutator"
+description = "Mutation testing framework using `gambit`"
+
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+exclude.workspace = true
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+foundry-compilers = { workspace = true, features = ["full"] }
+eyre.workspace = true
+itertools.workspace = true
+foundry-common.workspace = true
+alloy-json-abi.workspace = true
+foundry-cli.workspace = true
+gambit = { git = "https://github.com/samparsky/gambit", rev = "dbdc911a450f2ada494016dbbc522245b5f3dc94" }
+alloy-primitives = { workspace = true, features = ["serde"] }

@@ -407,7 +407,7 @@ impl<'a> ContractRunner<'a> {
                 (sig, res)
             })
             .collect::<BTreeMap<_, _>>();
-
+      
         let duration = start.elapsed();
         SuiteResult::new(duration, test_results, warnings)
     }
@@ -642,14 +642,12 @@ impl<'a> ContractRunner<'a> {
         fuzz_config: FuzzConfig,
     ) -> TestResult {
         let progress = start_fuzz_progress(self.progress, self.name, &func.name, fuzz_config.runs);
-
         // Prepare fuzz test execution.
         let fuzz_fixtures = setup.fuzz_fixtures.clone();
         let (executor, test_result, address) = match self.prepare_test(func, setup) {
             Ok(res) => res,
             Err(res) => return res,
         };
-
         // Run fuzz test.
         let fuzzed_executor =
             FuzzedExecutor::new(executor.into_owned(), runner, self.sender, fuzz_config);

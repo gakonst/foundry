@@ -66,3 +66,4 @@ pub mod test;
 pub mod tree;
 pub mod update;
 pub mod watch;
+pub mod mutate;

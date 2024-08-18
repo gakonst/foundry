@@ -240,3 +240,17 @@ impl<T: std::error::Error> ErrorExt for T {
         alloy_sol_types::Revert::from(self.to_string()).abi_encode().into()
     }
 }
+
+/// Extension trait for matching functions
+pub trait FunctionFilter {
+    /// Returns whether the function should be included
+    fn matches_function(&self, function_name: impl AsRef<str>) -> bool;
+}
+
+/// Extension trait for matching functions
+pub trait ContractFilter {
+    /// Returns whether the contract should be included
+    fn matches_contract(&self, contract_name: impl AsRef<str>) -> bool;
+    /// Returns a contract with the given path should be included
+    fn matches_path(&self, path: &Path) -> bool;
+}

@@ -80,6 +80,37 @@ impl FilterArgs {
         }
         ProjectPathsAwareFilter { args_filter: self, paths: config.project_paths() }
     }
+
+    /// Merges the set filter globs with mutate test config values
+    pub fn merge_with_mutate_config(&self, config: &Config) -> ProjectPathsAwareFilter {
+        let mut filter = self.clone();
+
+        if filter.test_pattern.is_none() {
+            filter.test_pattern = config.mutate.test_pattern.clone().map(|p| p.into());
+        }
+
+        if filter.test_pattern_inverse.is_none() {
+            filter.test_pattern_inverse = config.mutate.test_contract_pattern_inverse.clone().map(|p| p.into());
+        }
+
+        if filter.contract_pattern.is_none() {
+            filter.contract_pattern = config.mutate.test_contract_pattern.clone().map(|p| p.into());
+        }
+
+        if filter.contract_pattern_inverse.is_none() {
+            filter.contract_pattern = config.mutate.test_contract_pattern_inverse.clone().map(|p| p.into());
+        }
+
+        if filter.path_pattern.is_none() {
+            filter.path_pattern = config.mutate.test_path_pattern.clone().map(|p| p.into());
+        }
+
+        if filter.path_pattern_inverse.is_none() {
+            filter.path_pattern = config.mutate.test_path_pattern_inverse.clone().map(|p| p.into());
+        }
+        
+        ProjectPathsAwareFilter { args_filter: self.clone(), paths: config.project_paths() }
+    }
 }
 
 impl fmt::Debug for FilterArgs {

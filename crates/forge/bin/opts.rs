@@ -3,6 +3,7 @@ use crate::cmd::{
     coverage, create::CreateArgs, debug::DebugArgs, doc::DocArgs, eip712, flatten, fmt::FmtArgs,
     geiger, generate, init::InitArgs, inspect, install::InstallArgs, remappings::RemappingArgs,
     remove::RemoveArgs, selectors::SelectorsSubcommands, snapshot, soldeer, test, tree, update,
+    mutate::MutateTestArgs,
 };
 use clap::{Parser, Subcommand, ValueHint};
 use forge_script::ScriptArgs;
@@ -157,7 +158,7 @@ pub enum ForgeSubcommand {
 
     /// Generate scaffold files.
     Generate(generate::GenerateArgs),
-
+  
     /// Verify the deployed bytecode against its source.
     #[clap(visible_alias = "vb")]
     VerifyBytecode(VerifyBytecodeArgs),
@@ -170,6 +171,9 @@ pub enum ForgeSubcommand {
 
     /// Generate bindings for serialization/deserialization of project structs via JSON cheatcodes.
     BindJson(bind_json::BindJsonArgs),
+  
+    /// Run mutation tests on project
+    Mutate(MutateTestArgs),
 }
 
 #[cfg(test)]
