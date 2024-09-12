@@ -9,7 +9,8 @@ use alloy_dyn_abi::{DecodedEvent, DynSolValue, EventExt, FunctionExt, JsonAbiExt
 use alloy_json_abi::{Error, Event, Function, JsonAbi};
 use alloy_primitives::{Address, LogData, Selector, B256};
 use foundry_common::{
-    abi::get_indexed_event, fmt::format_token, get_contract_name, ContractsByArtifact, SELECTOR_LEN,
+    abi::get_indexed_event, fmt::format_token, get_contract_name, selectors::OpenChainClient,
+    ContractsByArtifact, SELECTOR_LEN,
 };
 use foundry_evm_core::{
     abi::{Console, HardhatConsole, Vm, HARDHAT_CONSOLE_SELECTOR_PATCHES},
@@ -88,6 +89,13 @@ impl CallTraceDecoderBuilder {
     #[inline]
     pub fn with_signature_identifier(mut self, identifier: SingleSignaturesIdentifier) -> Self {
         self.decoder.signature_identifier = Some(identifier);
+        self
+    }
+
+    /// Sets the openchain client.
+    #[inline]
+    pub fn with_openchain_client(mut self, client: OpenChainClient) -> Self {
+        self.decoder.revert_decoder.open_chain_client = Some(client);
         self
     }
 
@@ -567,7 +575,15 @@ impl CallTraceDecoder {
 
     /// The default decoded return data for a trace.
     fn default_return_data(&self, trace: &CallTrace) -> Option<String> {
-        (!trace.success).then(|| self.revert_decoder.decode(&trace.output, Some(trace.status)))
+        (!trace.success).then(|| {
+            let err_str = self.revert_decoder.decode(&trace.output, Some(trace.status));
+            if err_str.contains("custom error") {
+                if let Some(err) = self.revert_decoder.may_decode_using_open_chain(&trace.output) {
+                    return err;
+                }
+            }
+            err_str
+        })
     }
 
     /// Decodes an event.

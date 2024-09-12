@@ -5,11 +5,15 @@ use alloy_dyn_abi::JsonAbiExt;
 use alloy_json_abi::{Error, JsonAbi};
 use alloy_primitives::{hex, Log, Selector};
 use alloy_sol_types::{SolCall, SolError, SolEventInterface, SolInterface, SolValue};
-use foundry_common::SELECTOR_LEN;
+use foundry_common::{abi::get_error, selectors::OpenChainClient, SELECTOR_LEN};
 use itertools::Itertools;
 use revm::interpreter::InstructionResult;
 use rustc_hash::FxHashMap;
-use std::sync::OnceLock;
+use std::{
+    sync::{mpsc, OnceLock},
+    thread,
+};
+use tokio::runtime::Handle;
 
 /// Decode a set of logs, only returning logs from DSTest logging events and Hardhat's `console.log`
 pub fn decode_console_logs(logs: &[Log]) -> Vec<String> {
@@ -29,6 +33,7 @@ pub fn decode_console_log(log: &Log) -> Option<String> {
 pub struct RevertDecoder {
     /// The custom errors to use for decoding.
     pub errors: FxHashMap<Selector, Vec<Error>>,
+    pub open_chain_client: Option<OpenChainClient>,
 }
 
 impl Default for &RevertDecoder {
@@ -182,6 +187,44 @@ impl RevertDecoder {
             hex::encode(selector),
             std::str::from_utf8(data).map_or_else(|_| trimmed_hex(data), String::from)
         ))
+    }
+
+    pub fn may_decode_using_open_chain(&self, err: &[u8]) -> Option<String> {
+        let (selector, data) = err.split_at(SELECTOR_LEN);
+        // try from https://openchain.xyz
+        if let Some(client) = self.open_chain_client.clone() {
+            if let Ok(handle) = Handle::try_current() {
+                let (tx, rx) = mpsc::channel();
+                let encoded_selector = hex::encode(selector);
+                thread::spawn(move || {
+                    let result =
+                        handle.block_on(client.decode_function_selector(&encoded_selector));
+                    tx.send(result).unwrap();
+                });
+
+                let result = match rx.recv() {
+                    Ok(Ok(sigs)) => Some(sigs),
+                    Ok(Err(_)) | Err(_) => None,
+                };
+                if let Some(sigs) = result {
+                    for sig in sigs {
+                        if let Ok(error) = get_error(&sig) {
+                            if let Ok(decoded) = error.abi_decode_input(data, true) {
+                                return Some(format!(
+                                    "{}({})",
+                                    error.name,
+                                    decoded
+                                        .iter()
+                                        .map(foundry_common::fmt::format_token)
+                                        .format(", ")
+                                ));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        None
     }
 }
 

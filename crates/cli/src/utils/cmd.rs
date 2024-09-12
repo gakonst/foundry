@@ -1,7 +1,7 @@
 use alloy_json_abi::JsonAbi;
 use alloy_primitives::Address;
 use eyre::{Result, WrapErr};
-use foundry_common::{cli_warn, fs, TestFunctionExt};
+use foundry_common::{cli_warn, fs, selectors::OpenChainClient, TestFunctionExt};
 use foundry_compilers::{
     artifacts::{CompactBytecode, CompactDeployedBytecode, Settings},
     cache::{CacheEntry, CompilerCache},
@@ -379,6 +379,7 @@ pub async fn handle_traces(
             Config::foundry_cache_dir(),
             config.offline,
         )?)
+        .with_openchain_client(OpenChainClient::new()?)
         .build();
 
     let mut etherscan_identifier = EtherscanIdentifier::new(config, chain)?;

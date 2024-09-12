@@ -1,7 +1,7 @@
 //! ABI related helper functions.
 
 use alloy_dyn_abi::{DynSolType, DynSolValue, FunctionExt, JsonAbiExt};
-use alloy_json_abi::{Event, Function, Param};
+use alloy_json_abi::{Error, Event, Function, Param};
 use alloy_primitives::{hex, Address, LogData};
 use eyre::{Context, ContextCompat, Result};
 use foundry_block_explorers::{contract::ContractMetadata, errors::EtherscanError, Client};
@@ -83,6 +83,10 @@ pub fn get_func(sig: &str) -> Result<Function> {
 /// Given an event signature string, it tries to parse it as a `Event`
 pub fn get_event(sig: &str) -> Result<Event> {
     Event::parse(sig).wrap_err("could not parse event signature")
+}
+
+pub fn get_error(sig: &str) -> Result<Error> {
+    Error::parse(sig).wrap_err("could not parse error signature")
 }
 
 /// Given an event without indexed parameters and a rawlog, it tries to return the event with the
