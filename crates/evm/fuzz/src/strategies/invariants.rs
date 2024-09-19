@@ -4,8 +4,8 @@ use crate::{
     strategies::{fuzz_calldata_from_state, fuzz_param, EvmFuzzState},
     FuzzFixtures,
 };
-use alloy_json_abi::Function;
-use alloy_primitives::Address;
+use alloy_json_abi::{Function, StateMutability};
+use alloy_primitives::{Address, U256};
 use parking_lot::RwLock;
 use proptest::prelude::*;
 use rand::seq::IteratorRandom;
@@ -70,15 +70,16 @@ pub fn invariant_strat(
             let functions = contracts.fuzzed_functions();
             let (target_address, target_function) = selector.select(functions);
             let sender = select_random_sender(&fuzz_state, senders.clone(), dictionary_weight);
+            let value = select_random_msg_value(&fuzz_state, dictionary_weight, target_function);
             let call_details = fuzz_contract_with_calldata(
                 &fuzz_state,
                 &fuzz_fixtures,
                 *target_address,
                 target_function.clone(),
             );
-            (sender, call_details)
+            (sender, call_details, value)
         })
-        .prop_map(|(sender, call_details)| BasicTxDetails { sender, call_details })
+        .prop_map(|(sender, call_details, value)| BasicTxDetails { sender, call_details, value })
 }
 
 /// Strategy to select a sender address:
@@ -101,6 +102,27 @@ fn select_random_sender(
         // Too many exclusions can slow down testing.
         .prop_filter("excluded sender", move |addr| !senders.excluded.contains(addr))
         .boxed()
+    }
+}
+
+/// Strategy to select a msg.value:
+/// * If the target function is not payable, the msg.value is zero.
+/// * If the target function is payable, the msg.value either a random number or
+/// * from the dictionary.
+fn select_random_msg_value(
+    fuzz_state: &EvmFuzzState,
+    dictionary_weight: u32,
+    func: &Function,
+) -> impl Strategy<Value = U256> {
+    if func.state_mutability != StateMutability::Payable {
+        (0..1).prop_map(move |_value| U256::ZERO).boxed()
+    } else {
+        assert!(dictionary_weight <= 100, "dictionary_weight must be <= 100");
+        proptest::prop_oneof![
+        100 - dictionary_weight => fuzz_param(&alloy_dyn_abi::DynSolType::Uint(96)),
+        dictionary_weight => fuzz_param_from_state(&alloy_dyn_abi::DynSolType::Uint(96), fuzz_state),
+        ]
+        .prop_map(move |value| value.as_uint().unwrap().0).boxed()
     }
 }
 

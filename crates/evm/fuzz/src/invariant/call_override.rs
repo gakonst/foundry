@@ -1,5 +1,5 @@
 use super::{BasicTxDetails, CallDetails};
-use alloy_primitives::Address;
+use alloy_primitives::{Address, U256};
 use parking_lot::{Mutex, RwLock};
 use proptest::{
     option::weighted,
@@ -75,12 +75,13 @@ impl RandomCallGenerator {
             *self.target_reference.write() = original_caller;
 
             // `original_caller` has a 80% chance of being the `new_target`.
+            // TODO: Support msg.value > 0 for call_override
             let choice = self
                 .strategy
                 .new_tree(&mut self.runner.lock())
                 .unwrap()
                 .current()
-                .map(|call_details| BasicTxDetails { sender, call_details });
+                .map(|call_details| BasicTxDetails { sender, call_details, value: U256::ZERO });
 
             self.last_sequence.write().push(choice.clone());
             choice

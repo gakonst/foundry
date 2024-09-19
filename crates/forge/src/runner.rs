@@ -508,6 +508,7 @@ impl<'a> ContractRunner<'a> {
                         target: seq.addr.unwrap_or_default(),
                         calldata: seq.calldata.clone(),
                     },
+                    value: seq.value.unwrap_or(U256::ZERO),
                 })
                 .collect::<Vec<BasicTxDetails>>();
             if let Ok((success, replayed_entirely)) = check_sequence(

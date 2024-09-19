@@ -589,6 +589,25 @@ async fn test_invariant_scrape_values() {
 }
 
 #[tokio::test(flavor = "multi_thread")]
+async fn test_invariant_msg_value() {
+    let filter = Filter::new(".*", ".*", ".*fuzz/invariant/common/InvariantMsgValue.t.sol");
+    let results = TEST_DATA_DEFAULT.runner().test_collect(&filter);
+    assert_multiple(
+        &results,
+        BTreeMap::from([(
+                "default/fuzz/invariant/common/InvariantMsgValue.t.sol:InvariantMsgValue",
+                vec![(
+                    "invariant_msg_value_not_found()",
+                    false,
+                    Some("revert: CBA with 2,msg.value>0.1234,0 found".into()),
+                    None,
+                    None,
+                )],
+            )]),
+    );
+}
+
+#[tokio::test(flavor = "multi_thread")]
 async fn test_invariant_roll_fork_handler() {
     let filter = Filter::new(".*", ".*", ".*fuzz/invariant/common/InvariantRollFork.t.sol");
     let mut runner = TEST_DATA_DEFAULT.runner();
@@ -672,7 +691,7 @@ async fn test_invariant_selectors_weight() {
     let mut runner = TEST_DATA_DEFAULT.runner();
     runner.test_options.fuzz.seed = Some(U256::from(119u32));
     runner.test_options.invariant.runs = 1;
-    runner.test_options.invariant.depth = 10;
+    runner.test_options.invariant.depth = 5000;
     let results = runner.test_collect(&filter);
     assert_multiple(
         &results,

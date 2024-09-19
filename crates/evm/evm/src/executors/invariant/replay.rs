@@ -16,7 +16,6 @@ use foundry_evm_traces::{load_contracts, TraceKind, TraceMode, Traces};
 use indicatif::ProgressBar;
 use parking_lot::RwLock;
 use proptest::test_runner::TestError;
-use revm::primitives::U256;
 use std::sync::Arc;
 
 /// Replays a call sequence for collecting logs and traces.
@@ -41,11 +40,14 @@ pub fn replay_run(
 
     // Replay each call from the sequence, collect logs, traces and coverage.
     for tx in inputs {
+        if executor.get_balance(tx.sender)? < tx.value {
+            executor.set_balance(tx.sender, tx.value)?;
+        }
         let call_result = executor.transact_raw(
             tx.sender,
             tx.call_details.target,
             tx.call_details.calldata.clone(),
-            U256::ZERO,
+            tx.value,
         )?;
         logs.extend(call_result.logs);
         traces.push((TraceKind::Execution, call_result.traces.clone().unwrap()));
@@ -67,6 +69,7 @@ pub fn replay_run(
             tx.sender,
             tx.call_details.target,
             &tx.call_details.calldata,
+            tx.value,
             &ided_contracts,
             call_result.traces,
         ));

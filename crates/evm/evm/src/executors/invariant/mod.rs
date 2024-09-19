@@ -316,7 +316,9 @@ impl<'a> InvariantExecutor<'a> {
                 let tx = current_run.inputs.last().ok_or_else(|| {
                     TestCaseError::fail("No input generated to call fuzzed target.")
                 })?;
-
+                if current_run.executor.get_balance(tx.sender)? < tx.value {
+                    current_run.executor.set_balance(tx.sender, tx.value)?;
+                }
                 // Execute call from the randomly generated sequence and commit state changes.
                 let call_result = current_run
                     .executor
@@ -324,7 +326,7 @@ impl<'a> InvariantExecutor<'a> {
                         tx.sender,
                         tx.call_details.target,
                         tx.call_details.calldata.clone(),
-                        U256::ZERO,
+                        tx.value,
                     )
                     .map_err(|e| {
                         TestCaseError::fail(format!("Could not make raw evm call: {e}"))

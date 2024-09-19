@@ -9,7 +9,7 @@
 extern crate tracing;
 
 use alloy_dyn_abi::{DynSolValue, JsonAbiExt};
-use alloy_primitives::{Address, Bytes, Log};
+use alloy_primitives::{Address, Bytes, Log, U256};
 use foundry_common::{calc, contracts::ContractsByAddress, evm::Breakpoints};
 use foundry_evm_coverage::HitMaps;
 use foundry_evm_traces::{CallTraceArena, SparsedTraceArena};
@@ -44,6 +44,8 @@ pub struct BaseCounterExample {
     pub addr: Option<Address>,
     /// The data to provide
     pub calldata: Bytes,
+    /// The number of wei sent
+    pub value: Option<U256>,
     /// Contract name if it exists
     pub contract_name: Option<String>,
     /// Function signature if it exists
@@ -61,9 +63,11 @@ impl BaseCounterExample {
         sender: Address,
         addr: Address,
         bytes: &Bytes,
+        value: U256,
         contracts: &ContractsByAddress,
         traces: Option<SparsedTraceArena>,
     ) -> Self {
+        let value = if value == U256::ZERO { None } else { Some(value) };
         if let Some((name, abi)) = &contracts.get(&addr) {
             if let Some(func) = abi.functions().find(|f| f.selector() == bytes[..4]) {
                 // skip the function selector when decoding
@@ -72,6 +76,7 @@ impl BaseCounterExample {
                         sender: Some(sender),
                         addr: Some(addr),
                         calldata: bytes.clone(),
+                        value,
                         contract_name: Some(name.clone()),
                         signature: Some(func.signature()),
                         args: Some(
@@ -87,6 +92,7 @@ impl BaseCounterExample {
             sender: Some(sender),
             addr: Some(addr),
             calldata: bytes.clone(),
+            value,
             contract_name: None,
             signature: None,
             args: None,
@@ -104,6 +110,7 @@ impl BaseCounterExample {
             sender: None,
             addr: None,
             calldata: bytes,
+            value: None,
             contract_name: None,
             signature: None,
             args: Some(foundry_common::fmt::format_tokens(&args).format(", ").to_string()),
@@ -133,9 +140,15 @@ impl fmt::Display for BaseCounterExample {
         }
 
         if let Some(args) = &self.args {
-            write!(f, " args=[{args}]")
+            write!(f, " args=[{args}]")?
         } else {
-            write!(f, " args=[]")
+            write!(f, " args=[]")?
+        }
+
+        if let Some(value) = &self.value {
+            write!(f, " value=[{value}]")
+        } else {
+            write!(f, "")
         }
     }
 }

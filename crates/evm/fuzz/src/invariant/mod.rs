@@ -1,5 +1,5 @@
 use alloy_json_abi::{Function, JsonAbi};
-use alloy_primitives::{Address, Bytes, Selector};
+use alloy_primitives::{Address, Bytes, Selector, U256};
 use itertools::Either;
 use parking_lot::Mutex;
 use std::{collections::BTreeMap, sync::Arc};
@@ -205,6 +205,8 @@ pub struct BasicTxDetails {
     pub sender: Address,
     // Transaction call details.
     pub call_details: CallDetails,
+    // Transaction value.
+    pub value: U256,
 }
 
 /// Call details of a transaction generated to fuzz invariant target.

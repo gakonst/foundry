@@ -4,7 +4,7 @@ use crate::executors::{
     },
     Executor,
 };
-use alloy_primitives::{Address, Bytes, U256};
+use alloy_primitives::{Address, Bytes};
 use foundry_evm_fuzz::invariant::BasicTxDetails;
 use indicatif::ProgressBar;
 use proptest::bits::{BitSetLike, VarBitSet};
@@ -154,11 +154,14 @@ pub fn check_sequence(
     // Apply the call sequence.
     for call_index in sequence {
         let tx = &calls[call_index];
+        if executor.get_balance(tx.sender)? < tx.value {
+            executor.set_balance(tx.sender, tx.value)?;
+        }
         let call_result = executor.transact_raw(
             tx.sender,
             tx.call_details.target,
             tx.call_details.calldata.clone(),
-            U256::ZERO,
+            tx.value,
         )?;
         if call_result.reverted && fail_on_revert {
             // Candidate sequence fails test.
