@@ -21,7 +21,7 @@ use foundry_config::{
 use foundry_evm::{
     executors::{EvmError, TracingExecutor},
     opts::EvmOpts,
-    utils::configure_tx_env,
+    utils::{configure_quorum, configure_tx_env},
 };
 
 /// CLI arguments for `cast run`.
@@ -108,7 +108,7 @@ impl RunArgs {
         .build()?;
 
         let tx_hash = self.tx_hash.parse().wrap_err("invalid tx hash")?;
-        let tx = provider
+        let mut tx = provider
             .get_transaction_by_hash(tx_hash)
             .await
             .wrap_err_with(|| format!("tx not found: {tx_hash:?}"))?
@@ -187,10 +187,10 @@ impl RunArgs {
                         tx.transaction_type == Some(SYSTEM_TRANSACTION_TYPE)
                     {
                         pb.set_position((index + 1) as u64);
-                        continue;
+                        continue
                     }
                     if tx.hash == tx_hash {
-                        break;
+                        break
                     }
 
                     configure_tx_env(&mut env, &tx.inner);
@@ -230,6 +230,7 @@ impl RunArgs {
         let result = {
             executor.set_trace_printer(self.trace_printer);
 
+            configure_quorum(&mut tx, provider).await;
             configure_tx_env(&mut env, &tx.inner);
 
             if let Some(to) = tx.to {

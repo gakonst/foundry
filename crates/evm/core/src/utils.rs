@@ -4,12 +4,15 @@ use crate::{
     InspectorExt,
 };
 use alloy_json_abi::{Function, JsonAbi};
-use alloy_primitives::{Address, Selector, TxKind, U256};
+use alloy_primitives::{Address, Bytes, Selector, TxKind, Uint, U256};
 use alloy_provider::{
-    network::{BlockResponse, HeaderResponse},
-    Network,
+    network::{AnyNetwork, BlockResponse, HeaderResponse},
+    Network, Provider, RootProvider,
 };
 use alloy_rpc_types::{Transaction, TransactionRequest};
+use alloy_serde::WithOtherFields;
+use alloy_transport::layers::RetryBackoffService;
+use foundry_common::provider::runtime_transport::RuntimeTransport;
 use foundry_config::NamedChain;
 use foundry_fork_db::DatabaseError;
 use revm::{
@@ -140,6 +143,44 @@ pub fn configure_tx_req_env(
     }
 
     Ok(())
+}
+
+/// Configures the input to the raw payload for the given RPC transaction if it is a quorum private
+/// transaction.
+pub async fn configure_quorum(
+    tx: &mut WithOtherFields<Transaction>,
+    provider: RootProvider<RetryBackoffService<RuntimeTransport>, AnyNetwork>,
+) {
+    if let Some(signature) = tx.inner.signature {
+        let v = signature.v;
+
+        let is_private_quorum_txn =
+            (v == Uint::from(37) || v == Uint::from(38)) && tx.input.len() == 64;
+
+        if is_private_quorum_txn {
+            println!("Private quorum transaction detected.");
+
+            let result: alloy_transport::TransportResult<Bytes> =
+                provider.client().request("eth_getQuorumPayload", (tx.input.clone(),)).await;
+
+            match result {
+                Ok(tessera_input) => {
+                    println!(
+                        "Executing private quorum transaction with quorum payload: {:?}",
+                        tessera_input.to_string()
+                    );
+                    tx.input = tessera_input;
+                }
+                Err(e) => {
+                    println!(
+                        "eth_getQuorumPayload threw an error: {e}, cannot fetch transaction
+                    input {:?}",
+                        tx.hash
+                    );
+                }
+            }
+        }
+    }
 }
 
 /// Get the gas used, accounting for refunds
