@@ -4156,6 +4156,7 @@ dependencies = [
  "foundry-linking",
  "futures",
  "itertools 0.13.0",
+ "owo-colors",
  "rayon",
  "revm",
  "revm-inspectors",
