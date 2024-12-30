@@ -43,7 +43,7 @@ pub async fn parse_function_args<T: Transport + Clone, P: Provider<T, AnyNetwork
     let args = resolve_name_args(&args, provider).await;
 
     if let Ok(data) = hex::decode(sig) {
-        return Ok((data, None))
+        return Ok((data, None));
     }
 
     let func = if sig.contains('(') {
@@ -51,7 +51,7 @@ pub async fn parse_function_args<T: Transport + Clone, P: Provider<T, AnyNetwork
         get_func(sig)?
     } else {
         let etherscan_api_key = etherscan_api_key.ok_or_eyre(
-            "If you wish to fetch function data from EtherScan, please provide an API key.",
+            "Function signature does not contain parentheses. If you wish to fetch function data from Etherscan, please provide an API key.",
         )?;
         let to = to.ok_or_eyre("A 'to' address must be provided to fetch function data.")?;
         get_func_etherscan(sig, to, &args, chain, etherscan_api_key).await?
