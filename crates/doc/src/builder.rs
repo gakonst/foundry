@@ -444,9 +444,16 @@ impl DocBuilder {
                     readme.write_link_list_item(ident, &readme_path.display().to_string(), 0)?;
                 }
             } else {
+                // Generate a relative path to "index.html" based on the current directory depth and
                 let name = path.iter().last().unwrap().to_string_lossy();
-                let readme_path = Path::new("/").join(&path).display().to_string();
-                readme.write_link_list_item(&name, &readme_path, 0)?;
+                let depth = path.components().count();
+                let mut prefix = PathBuf::new();
+                for _ in 0..depth {
+                    prefix.push("..");
+                }
+                let readme_path = prefix.join(&path).join("index.html");
+                let readme_path_str = readme_path.to_string_lossy();
+                readme.write_link_list_item(&name, &readme_path_str, 0)?;
                 self.write_summary_section(summary, &files, Some(&path), depth + 1)?;
             }
         }

@@ -160,8 +160,16 @@ impl AsDoc for Document {
                                                     .ok()
                                                     .unwrap_or(path),
                                             );
-                                            Markdown::Link(&base_doc, &path.display().to_string())
-                                                .as_doc()
+                                            Markdown::Link(
+                                                &base_doc,
+                                                &format!(
+                                                    "../../../{}",
+                                                    path.display()
+                                                        .to_string()
+                                                        .trim_start_matches('/')
+                                                ),
+                                            )
+                                            .as_doc()
                                         })
                                     })
                                     .transpose()?
