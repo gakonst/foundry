@@ -13,24 +13,26 @@ on:
 env:
     REGISTRY: ghcr.io
     # Will resolve to foundry-rs/foundry
-    IMAGE_NAME: ${{ github.repository }}
+    IMAGE_NAME: dzejkop/foundry
 
 jobs:
     container:
-        runs-on: Linux-20.04
+        runs-on: ubuntu-latest
         # https://docs.github.com/en/actions/reference/authentication-in-a-workflow
         permissions:
             id-token: write
             packages: write
             contents: read
-        timeout-minutes: 120
         steps:
             - name: Checkout repository
               id: checkout
               uses: actions/checkout@v4
 
+            - name: Set up QEMU
+              uses: docker/setup-qemu-action@v3
+
             - name: Install Docker BuildX
-              uses: docker/setup-buildx-action@v2
+              uses: docker/setup-buildx-action@v3
               id: buildx
               with:
                   install: true
@@ -82,8 +84,9 @@ jobs:
             # https://github.com/docker/build-push-action
             # https://github.com/docker/build-push-action/blob/master/docs/advanced/cache.md
             - name: Build and push Docker image
-              uses: docker/build-push-action@v3
+              uses: docker/build-push-action@v6
               with:
+                  platforms: linux/amd64,linux/arm64
                   context: .
                   push: true
                   tags: ${{ steps.docker_tagging.outputs.docker_tags }}
