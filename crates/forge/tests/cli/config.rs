@@ -164,14 +164,17 @@ forgetest!(can_extract_config_values, |prj, cmd| {
         _non_exhaustive: (),
     };
     prj.write_config(input.clone());
+    cmd.unset_env("ETH_RPC_URL");
     let config = cmd.config();
     similar_asserts::assert_eq!(input, config);
 });
 
 // tests config gets printed to std out
 forgetest!(can_show_config, |prj, cmd| {
+    println!("prj.root {}", prj.root().display());
     let expected =
         Config::load_with_root(prj.root()).to_string_pretty().unwrap().trim().to_string();
+    cmd.unset_env("ETH_RPC_URL");
     let output = cmd.arg("config").assert_success().get_output().stdout_lossy().trim().to_string();
     assert_eq!(expected, output);
 });
@@ -199,6 +202,7 @@ forgetest_init!(can_override_config, |prj, cmd| {
     );
 
     let expected = profile.to_string_pretty().unwrap().trim().to_string();
+    cmd.unset_env("ETH_RPC_URL");
     let output = cmd.arg("config").assert_success().get_output().stdout_lossy().trim().to_string();
     assert_eq!(expected, output);
 

@@ -47,7 +47,7 @@ pub struct EvmArgs {
     /// Fetch state over a remote endpoint instead of starting from an empty state.
     ///
     /// If you want to fetch state from a specific block number, see --fork-block-number.
-    #[arg(long, short, visible_alias = "rpc-url", value_name = "URL")]
+    #[arg(long, short, visible_alias = "rpc-url", env = "ETH_RPC_URL", value_name = "URL")]
     #[serde(rename = "eth_rpc_url", skip_serializing_if = "Option::is_none")]
     pub fork_url: Option<String>,
 
