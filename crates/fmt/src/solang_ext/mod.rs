@@ -20,9 +20,11 @@ pub mod pt {
 }
 
 mod ast_eq;
+mod ext;
 mod loc;
 mod safe_unwrap;
 
 pub use ast_eq::AstEq;
+pub use ext::{CommentExt, StatementExt};
 pub use loc::CodeLocationExt;
 pub use safe_unwrap::SafeUnwrap;

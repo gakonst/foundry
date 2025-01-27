@@ -12,6 +12,7 @@ mod formatter;
 mod helpers;
 pub mod inline_config;
 mod macros;
+pub mod shadow;
 pub mod solang_ext;
 mod string;
 pub mod visit;
