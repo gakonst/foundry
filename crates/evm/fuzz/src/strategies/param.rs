@@ -2,15 +2,35 @@ use super::state::EvmFuzzState;
 use alloy_dyn_abi::{DynSolType, DynSolValue};
 use alloy_primitives::{Address, B256, I256, U256};
 use proptest::prelude::*;
+use std::collections::HashMap;
 
 /// The max length of arrays we fuzz for is 256.
 const MAX_ARRAY_LEN: usize = 256;
 
+/// Struct to hold range configuration
+#[derive(Default, Clone)]
+pub struct FuzzConfig {
+    ranges: HashMap<String, (U256, U256)>,
+}
+
+impl FuzzConfig {
+    /// Initiates a  new range configuration
+    pub fn new() -> Self {
+        Self { ranges: HashMap::new() }
+    }
+
+    /// Adds a range
+    pub fn with_range(mut self, param_name: &str, min: U256, max: U256) -> Self {
+        self.ranges.insert(param_name.to_string(), (min, max));
+        self
+    }
+}
+
 /// Given a parameter type, returns a strategy for generating values for that type.
 ///
 /// See [`fuzz_param_with_fixtures`] for more information.
-pub fn fuzz_param(param: &DynSolType) -> BoxedStrategy<DynSolValue> {
-    fuzz_param_inner(param, None)
+pub fn fuzz_param(param: &DynSolType, config: &FuzzConfig) -> BoxedStrategy<DynSolValue> {
+    fuzz_param_inner(param, config, None)
 }
 
 /// Given a parameter type and configured fixtures for param name, returns a strategy for generating
@@ -33,13 +53,16 @@ pub fn fuzz_param_with_fixtures(
     fixtures: Option<&[DynSolValue]>,
     name: &str,
 ) -> BoxedStrategy<DynSolValue> {
-    fuzz_param_inner(param, fixtures.map(|f| (f, name)))
+    fuzz_param_inner(param, &FuzzConfig::new(), fixtures.map(|f| (f, name)))
 }
 
 fn fuzz_param_inner(
     param: &DynSolType,
+    config: &FuzzConfig,
     mut fuzz_fixtures: Option<(&[DynSolValue], &str)>,
 ) -> BoxedStrategy<DynSolValue> {
+    let param_name = fuzz_fixtures.as_ref().map(|(_, name)| *name);
+
     if let Some((fixtures, name)) = fuzz_fixtures {
         if !fixtures.iter().all(|f| f.matches(param)) {
             error!("fixtures for {name:?} do not match type {param}");
@@ -70,9 +93,19 @@ fn fuzz_param_inner(
         DynSolType::Int(n @ 8..=256) => super::IntStrategy::new(n, fuzz_fixtures)
             .prop_map(move |x| DynSolValue::Int(x, n))
             .boxed(),
-        DynSolType::Uint(n @ 8..=256) => super::UintStrategy::new(n, fuzz_fixtures)
-            .prop_map(move |x| DynSolValue::Uint(x, n))
-            .boxed(),
+        DynSolType::Uint(n @ 8..=256) => {
+            let bounds = param_name.and_then(|name| config.ranges.get(name));
+            match bounds {
+                Some((min, max)) => {
+                    super::UintStrategy::new(n, fuzz_fixtures, Some(*min), Some(*max))
+                        .prop_map(move |x| DynSolValue::Uint(x, n))
+                        .boxed()
+                }
+                None => super::UintStrategy::new(n, fuzz_fixtures, None, None)
+                    .prop_map(move |x| DynSolValue::Uint(x, n))
+                    .boxed(),
+            }
+        }
         DynSolType::Function | DynSolType::Bool => DynSolValue::type_strategy(param).boxed(),
         DynSolType::Bytes => value(),
         DynSolType::FixedBytes(_size @ 1..=32) => value(),
@@ -85,20 +118,21 @@ fn fuzz_param_inner(
             .boxed(),
         DynSolType::Tuple(ref params) => params
             .iter()
-            .map(|param| fuzz_param_inner(param, None))
+            .map(|param| fuzz_param_inner(param, &FuzzConfig::new(), None))
             .collect::<Vec<_>>()
             .prop_map(DynSolValue::Tuple)
             .boxed(),
         DynSolType::FixedArray(ref param, size) => {
-            proptest::collection::vec(fuzz_param_inner(param, None), size)
+            proptest::collection::vec(fuzz_param_inner(param, &FuzzConfig::new(), None), size)
                 .prop_map(DynSolValue::FixedArray)
                 .boxed()
         }
-        DynSolType::Array(ref param) => {
-            proptest::collection::vec(fuzz_param_inner(param, None), 0..MAX_ARRAY_LEN)
-                .prop_map(DynSolValue::Array)
-                .boxed()
-        }
+        DynSolType::Array(ref param) => proptest::collection::vec(
+            fuzz_param_inner(param, &FuzzConfig::new(), None),
+            0..MAX_ARRAY_LEN,
+        )
+        .prop_map(DynSolValue::Array)
+        .boxed(),
         _ => panic!("unsupported fuzz param type: {param}"),
     }
 }
@@ -220,9 +254,14 @@ mod tests {
         strategies::{fuzz_calldata, fuzz_calldata_from_state, EvmFuzzState},
         FuzzFixtures,
     };
+    use alloy_dyn_abi::{DynSolType, DynSolValue};
+    use alloy_primitives::U256;
     use foundry_common::abi::get_func;
     use foundry_config::FuzzDictionaryConfig;
+    use proptest::{prelude::Strategy, test_runner::TestRunner};
     use revm::db::{CacheDB, EmptyDB};
+
+    use super::{fuzz_param_inner, FuzzConfig};
 
     #[test]
     fn can_fuzz_array() {
@@ -237,5 +276,144 @@ mod tests {
         let cfg = proptest::test_runner::Config { failure_persistence: None, ..Default::default() };
         let mut runner = proptest::test_runner::TestRunner::new(cfg);
         let _ = runner.run(&strategy, |_| Ok(()));
+    }
+
+    #[test]
+    fn test_uint_param_with_range() {
+        let mut config = FuzzConfig::new();
+        let min = U256::from(100u64);
+        let max = U256::from(1000u64);
+        config = config.with_range("amount", min, max);
+
+        let param = DynSolType::Uint(256);
+        let strategy = fuzz_param_inner(&param, &config, Some((&[], "amount")));
+
+        let mut runner = TestRunner::default();
+        for _ in 0..1000 {
+            let value = strategy.new_tree(&mut runner).unwrap().current();
+            if let DynSolValue::Uint(value, _) = value {
+                assert!(
+                    value >= min && value <= max,
+                    "Generated value {value} outside configured range [{min}, {max}]"
+                );
+            } else {
+                panic!("Expected Uint value");
+            }
+        }
+    }
+
+    #[test]
+    fn test_uint_param_without_range() {
+        let config = FuzzConfig::new();
+        let param = DynSolType::Uint(8);
+        let strategy = fuzz_param_inner(&param, &config, None);
+
+        let mut runner = TestRunner::default();
+        for _ in 0..1000 {
+            let value = strategy.new_tree(&mut runner).unwrap().current();
+            if let DynSolValue::Uint(value, bits) = value {
+                assert!(value <= U256::from(u8::MAX), "Generated value {value} exceeds uint8 max");
+                assert_eq!(bits, 8, "Incorrect bit size");
+            } else {
+                panic!("Expected Uint value");
+            }
+        }
+    }
+
+    #[test]
+    fn test_uint_param_with_fixtures() {
+        let config = FuzzConfig::new();
+        let fixtures = vec![
+            DynSolValue::Uint(U256::from(500u64), 256),
+            DynSolValue::Uint(U256::from(600u64), 256),
+        ];
+
+        let param = DynSolType::Uint(256);
+        let strategy = fuzz_param_inner(&param, &config, Some((&fixtures, "test")));
+
+        let mut runner = TestRunner::default();
+        let mut found_fixture = false;
+
+        for _ in 0..1000 {
+            let value = strategy.new_tree(&mut runner).unwrap().current();
+            if let DynSolValue::Uint(value, _) = value {
+                if value == U256::from(500u64) || value == U256::from(600u64) {
+                    found_fixture = true;
+                    break;
+                }
+            }
+        }
+        assert!(found_fixture, "Never generated fixture value");
+    }
+
+    #[test]
+    fn test_uint_param_with_range_and_fixtures() {
+        let mut config = FuzzConfig::new();
+        let min = U256::from(100u64);
+        let max = U256::from(1000u64);
+        config = config.with_range("test", min, max);
+
+        let fixtures = vec![
+            DynSolValue::Uint(U256::from(50u64), 256),
+            DynSolValue::Uint(U256::from(500u64), 256),
+            DynSolValue::Uint(U256::from(1500u64), 256),
+        ];
+
+        let param = DynSolType::Uint(256);
+        let strategy = fuzz_param_inner(&param, &config, Some((&fixtures, "test")));
+
+        let mut runner = TestRunner::default();
+        for _ in 0..1000 {
+            let value = strategy.new_tree(&mut runner).unwrap().current();
+            if let DynSolValue::Uint(value, _) = value {
+                assert!(
+                    value >= min && value <= max,
+                    "Generated value {value} outside configured range [{min}, {max}]"
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn test_param_range_matching() {
+        let mut config = FuzzConfig::new();
+        config = config.with_range("amount", U256::from(100u64), U256::from(1000u64)).with_range(
+            "other",
+            U256::from(2000u64),
+            U256::from(3000u64),
+        );
+
+        let param = DynSolType::Uint(256);
+        let mut runner = TestRunner::default();
+
+        let strategy1 = fuzz_param_inner(&param, &config, Some((&[], "amount")));
+        for _ in 0..100 {
+            let value = strategy1.new_tree(&mut runner).unwrap().current();
+            match value {
+                DynSolValue::Uint(value, bits) => {
+                    assert_eq!(bits, 256, "Incorrect bit size");
+                    assert!(
+                        value >= U256::from(100u64) && value <= U256::from(1000u64),
+                        "Generated value {value} outside 'amount' range [100, 1000]"
+                    );
+                }
+                _ => panic!("Expected Uint value"),
+            }
+        }
+
+        let strategy2 = fuzz_param_inner(&param, &config, Some((&[], "nonexistent")));
+        for _ in 0..100 {
+            let value = strategy2.new_tree(&mut runner).unwrap().current();
+            match value {
+                DynSolValue::Uint(value, bits) => {
+                    assert_eq!(bits, 256, "Incorrect bit size");
+                    assert!(
+                        value <= (U256::from(1) << 256) - U256::from(1),
+                        "Generated value {value} exceeds maximum uint256 value"
+                    );
+                }
+                _ => panic!("Expected Uint value"),
+            }
+        }
     }
 }

@@ -1,7 +1,7 @@
 use super::{fuzz_calldata, fuzz_param_from_state};
 use crate::{
     invariant::{BasicTxDetails, CallDetails, FuzzRunIdentifiedContracts, SenderFilters},
-    strategies::{fuzz_calldata_from_state, fuzz_param, EvmFuzzState},
+    strategies::{fuzz_calldata_from_state, fuzz_param, param::FuzzConfig, EvmFuzzState},
     FuzzFixtures,
 };
 use alloy_json_abi::Function;
@@ -94,7 +94,7 @@ fn select_random_sender(
     } else {
         assert!(dictionary_weight <= 100, "dictionary_weight must be <= 100");
         proptest::prop_oneof![
-            100 - dictionary_weight => fuzz_param(&alloy_dyn_abi::DynSolType::Address),
+            100 - dictionary_weight => fuzz_param(&alloy_dyn_abi::DynSolType::Address, &FuzzConfig::new()),
             dictionary_weight => fuzz_param_from_state(&alloy_dyn_abi::DynSolType::Address, fuzz_state),
         ]
         .prop_map(move |addr| addr.as_address().unwrap())
