@@ -646,7 +646,8 @@
       },
       "group": "testing",
       "status": "internal",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -666,7 +667,8 @@
       },
       "group": "testing",
       "status": "internal",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -686,7 +688,8 @@
       },
       "group": "testing",
       "status": "internal",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -706,7 +709,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -726,7 +730,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -746,7 +751,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -766,7 +772,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -786,7 +793,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -806,7 +814,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -826,7 +835,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -846,7 +856,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -866,7 +877,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -886,7 +898,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -906,7 +919,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -926,7 +940,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -946,7 +961,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -966,7 +982,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -986,7 +1003,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -1006,7 +1024,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -1026,7 +1045,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -1046,7 +1066,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -1066,7 +1087,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -1086,7 +1108,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -1106,7 +1129,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -1126,7 +1150,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -1146,7 +1171,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -1166,7 +1192,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -1186,7 +1213,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -1206,7 +1234,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -1226,7 +1255,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -1246,7 +1276,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -1266,7 +1297,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -1286,7 +1318,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -1306,7 +1339,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -1326,7 +1360,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -1346,7 +1381,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -1366,7 +1402,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -1386,7 +1423,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -1406,7 +1444,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -1426,7 +1465,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -1446,7 +1486,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -1466,7 +1507,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -1486,7 +1528,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -1506,7 +1549,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -1526,7 +1570,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -1546,7 +1591,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -1566,7 +1612,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -1586,7 +1633,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -1606,7 +1654,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -1626,7 +1675,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -1646,7 +1696,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -1666,7 +1717,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -1686,7 +1738,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -1706,7 +1759,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -1726,7 +1780,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -1746,7 +1801,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -1766,7 +1822,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -1786,7 +1843,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -1806,7 +1864,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -1826,7 +1885,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -1846,7 +1906,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -1866,7 +1927,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -1886,7 +1948,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -1906,7 +1969,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -1926,7 +1990,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -1946,7 +2011,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -1966,7 +2032,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -1986,7 +2053,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -2006,7 +2074,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -2026,7 +2095,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -2046,7 +2116,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -2066,7 +2137,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -2086,7 +2158,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -2106,7 +2179,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -2126,7 +2200,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -2146,7 +2221,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -2166,7 +2242,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -2186,7 +2263,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -2206,7 +2284,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -2226,7 +2305,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -2246,7 +2326,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -2266,7 +2347,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -2286,7 +2368,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -2306,7 +2389,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -2326,7 +2410,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -2346,7 +2431,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -2366,7 +2452,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -2386,7 +2473,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -2406,7 +2494,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -2426,7 +2515,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -2446,7 +2536,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -2466,7 +2557,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -2486,7 +2578,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -2506,7 +2599,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -2526,7 +2620,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -2546,7 +2641,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -2566,7 +2662,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -2586,7 +2683,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -2606,7 +2704,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -2626,7 +2725,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -2646,7 +2746,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -2666,7 +2767,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -2686,7 +2788,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -2706,7 +2809,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -2726,7 +2830,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -2746,7 +2851,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -2766,7 +2872,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -2786,7 +2893,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -2806,7 +2914,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -2826,7 +2935,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -2846,7 +2956,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -2866,7 +2977,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -2886,7 +2998,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -2906,7 +3019,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -2926,7 +3040,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -2946,7 +3061,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -2966,7 +3082,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -2986,7 +3103,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -3006,7 +3124,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -3026,7 +3145,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -3046,7 +3166,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -3066,7 +3187,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -3086,7 +3208,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -3106,7 +3229,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -3126,7 +3250,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -3186,7 +3311,8 @@
       },
       "group": "scripting",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -3206,7 +3332,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -3226,7 +3353,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -3246,7 +3374,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -3266,7 +3395,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -3286,7 +3416,8 @@
       },
       "group": "scripting",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -3306,7 +3437,8 @@
       },
       "group": "scripting",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -3326,7 +3458,8 @@
       },
       "group": "scripting",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -3346,7 +3479,8 @@
       },
       "group": "scripting",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -3366,7 +3500,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -3386,7 +3521,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -3406,7 +3542,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -3426,7 +3563,8 @@
       },
       "group": "filesystem",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -3446,7 +3584,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -3466,7 +3605,8 @@
       },
       "group": "utilities",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -3486,7 +3626,8 @@
       },
       "group": "utilities",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -3506,7 +3647,8 @@
       },
       "group": "utilities",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -3526,7 +3668,8 @@
       },
       "group": "string",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -3546,7 +3689,8 @@
       },
       "group": "evm",
       "status": "experimental",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -3566,7 +3710,8 @@
       },
       "group": "filesystem",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -3586,7 +3731,8 @@
       },
       "group": "utilities",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -3606,7 +3752,8 @@
       },
       "group": "filesystem",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -3626,7 +3773,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -3646,7 +3794,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -3666,7 +3815,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -3686,7 +3836,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -3706,7 +3857,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -3726,7 +3878,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -3746,7 +3899,8 @@
       },
       "group": "crypto",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -3766,7 +3920,8 @@
       },
       "group": "crypto",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -3786,7 +3941,8 @@
       },
       "group": "crypto",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -3806,7 +3962,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -3828,7 +3985,8 @@
       "status": {
         "deprecated": "replaced by `deleteStateSnapshot`"
       },
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -3850,7 +4008,8 @@
       "status": {
         "deprecated": "replaced by `deleteStateSnapshots`"
       },
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -3870,7 +4029,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -3890,7 +4050,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -3910,7 +4071,8 @@
       },
       "group": "filesystem",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -3930,7 +4092,8 @@
       },
       "group": "filesystem",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -3950,7 +4113,8 @@
       },
       "group": "crypto",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -3970,7 +4134,8 @@
       },
       "group": "crypto",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -3990,7 +4155,8 @@
       },
       "group": "crypto",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -4010,7 +4176,8 @@
       },
       "group": "crypto",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -4030,7 +4197,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -4050,7 +4218,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -4070,7 +4239,8 @@
       },
       "group": "utilities",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -4090,7 +4260,8 @@
       },
       "group": "environment",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -4110,7 +4281,8 @@
       },
       "group": "environment",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -4130,7 +4302,8 @@
       },
       "group": "environment",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -4150,7 +4323,8 @@
       },
       "group": "environment",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -4170,7 +4344,8 @@
       },
       "group": "environment",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -4190,7 +4365,8 @@
       },
       "group": "environment",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -4210,7 +4386,8 @@
       },
       "group": "environment",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -4230,7 +4407,8 @@
       },
       "group": "environment",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -4250,7 +4428,8 @@
       },
       "group": "environment",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -4270,7 +4449,8 @@
       },
       "group": "environment",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -4290,7 +4470,8 @@
       },
       "group": "environment",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -4310,7 +4491,8 @@
       },
       "group": "environment",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -4330,7 +4512,8 @@
       },
       "group": "environment",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -4350,7 +4533,8 @@
       },
       "group": "environment",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -4370,7 +4554,8 @@
       },
       "group": "environment",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -4390,7 +4575,8 @@
       },
       "group": "environment",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -4410,7 +4596,8 @@
       },
       "group": "environment",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -4430,7 +4617,8 @@
       },
       "group": "environment",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -4450,7 +4638,8 @@
       },
       "group": "environment",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -4470,7 +4659,8 @@
       },
       "group": "environment",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -4490,7 +4680,8 @@
       },
       "group": "environment",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -4510,7 +4701,8 @@
       },
       "group": "environment",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -4530,7 +4722,8 @@
       },
       "group": "environment",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -4550,7 +4743,8 @@
       },
       "group": "environment",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -4570,7 +4764,8 @@
       },
       "group": "environment",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -4590,7 +4785,8 @@
       },
       "group": "environment",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -4610,7 +4806,8 @@
       },
       "group": "environment",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -4630,7 +4827,8 @@
       },
       "group": "environment",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -4650,7 +4848,8 @@
       },
       "group": "environment",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -4670,7 +4869,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -4690,7 +4890,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -4710,7 +4911,8 @@
       },
       "group": "filesystem",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -4730,7 +4932,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -4750,7 +4953,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -4770,7 +4974,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -4790,7 +4995,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -4810,7 +5016,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -4830,7 +5037,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -4850,7 +5058,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -4870,7 +5079,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -4890,7 +5100,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -4910,7 +5121,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -4930,7 +5142,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -4950,7 +5163,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -4970,7 +5184,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -4990,7 +5205,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -5010,7 +5226,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -5030,7 +5247,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -5050,7 +5268,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -5070,7 +5289,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -5090,7 +5310,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -5110,7 +5331,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -5130,7 +5352,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -5150,7 +5373,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -5170,7 +5394,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -5190,7 +5415,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -5210,7 +5436,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -5230,7 +5457,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -5250,7 +5478,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -5270,7 +5499,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -5290,7 +5520,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -5310,7 +5541,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -5330,7 +5562,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -5350,7 +5583,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -5370,7 +5604,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -5390,7 +5625,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -5410,7 +5646,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -5430,7 +5667,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -5450,7 +5688,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -5470,7 +5709,8 @@
       },
       "group": "filesystem",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -5490,7 +5730,8 @@
       },
       "group": "filesystem",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -5510,7 +5751,8 @@
       },
       "group": "filesystem",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -5530,7 +5772,8 @@
       },
       "group": "filesystem",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -5550,7 +5793,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -5570,7 +5814,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -5590,7 +5835,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -5610,7 +5856,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -5630,7 +5877,8 @@
       },
       "group": "filesystem",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -5650,7 +5898,8 @@
       },
       "group": "filesystem",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -5670,7 +5919,8 @@
       },
       "group": "filesystem",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -5690,7 +5940,8 @@
       },
       "group": "filesystem",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -5710,7 +5961,8 @@
       },
       "group": "filesystem",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -5730,7 +5982,8 @@
       },
       "group": "filesystem",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -5750,7 +6003,8 @@
       },
       "group": "filesystem",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -5770,7 +6024,8 @@
       },
       "group": "filesystem",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -5790,7 +6045,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -5810,7 +6066,8 @@
       },
       "group": "utilities",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -5830,7 +6087,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -5850,7 +6108,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -5870,7 +6129,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -5890,7 +6150,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -5910,7 +6171,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -5930,7 +6192,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -5950,7 +6213,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -5970,7 +6234,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -5990,7 +6255,8 @@
       },
       "group": "scripting",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -6010,7 +6276,8 @@
       },
       "group": "string",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -6030,7 +6297,8 @@
       },
       "group": "environment",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -6050,7 +6318,8 @@
       },
       "group": "filesystem",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -6070,7 +6339,8 @@
       },
       "group": "filesystem",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -6090,7 +6360,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -6112,7 +6383,8 @@
       "status": {
         "deprecated": "replaced by `keyExistsJson`"
       },
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -6132,7 +6404,8 @@
       },
       "group": "json",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -6152,7 +6425,8 @@
       },
       "group": "toml",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -6172,7 +6446,8 @@
       },
       "group": "utilities",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -6192,7 +6467,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -6212,7 +6488,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -6232,7 +6509,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -6252,7 +6530,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -6272,7 +6551,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -6292,7 +6572,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -6312,7 +6593,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -6332,7 +6614,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -6352,7 +6635,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -6372,7 +6656,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -6392,7 +6677,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -6412,7 +6698,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -6432,7 +6719,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -6452,7 +6740,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -6472,7 +6761,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -6492,7 +6782,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -6512,7 +6803,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -6532,7 +6824,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -6552,7 +6845,8 @@
       },
       "group": "string",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -6572,7 +6866,8 @@
       },
       "group": "string",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -6592,7 +6887,8 @@
       },
       "group": "string",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -6612,7 +6908,8 @@
       },
       "group": "string",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -6632,7 +6929,8 @@
       },
       "group": "string",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -6652,7 +6950,8 @@
       },
       "group": "json",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -6672,7 +6971,8 @@
       },
       "group": "json",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -6692,7 +6992,8 @@
       },
       "group": "json",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -6712,7 +7013,8 @@
       },
       "group": "json",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -6732,7 +7034,8 @@
       },
       "group": "json",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -6752,7 +7055,8 @@
       },
       "group": "json",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -6772,7 +7076,8 @@
       },
       "group": "json",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -6792,7 +7097,8 @@
       },
       "group": "json",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -6812,7 +7118,8 @@
       },
       "group": "json",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -6832,7 +7139,8 @@
       },
       "group": "json",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -6852,7 +7160,8 @@
       },
       "group": "json",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -6872,7 +7181,8 @@
       },
       "group": "json",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -6892,7 +7202,8 @@
       },
       "group": "json",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -6912,7 +7223,8 @@
       },
       "group": "json",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -6932,7 +7244,8 @@
       },
       "group": "json",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -6952,7 +7265,8 @@
       },
       "group": "json",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -6972,7 +7286,8 @@
       },
       "group": "json",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -6992,7 +7307,8 @@
       },
       "group": "json",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -7012,7 +7328,8 @@
       },
       "group": "json",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -7032,7 +7349,8 @@
       },
       "group": "json",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -7052,7 +7370,8 @@
       },
       "group": "toml",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -7072,7 +7391,8 @@
       },
       "group": "toml",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -7092,7 +7412,8 @@
       },
       "group": "toml",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -7112,7 +7433,8 @@
       },
       "group": "toml",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -7132,7 +7454,8 @@
       },
       "group": "toml",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -7152,7 +7475,8 @@
       },
       "group": "toml",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -7172,7 +7496,8 @@
       },
       "group": "toml",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -7192,7 +7517,8 @@
       },
       "group": "toml",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -7212,7 +7538,8 @@
       },
       "group": "toml",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -7232,7 +7559,8 @@
       },
       "group": "toml",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -7252,7 +7580,8 @@
       },
       "group": "toml",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -7272,7 +7601,8 @@
       },
       "group": "toml",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -7292,7 +7622,8 @@
       },
       "group": "toml",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -7312,7 +7643,8 @@
       },
       "group": "toml",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -7332,7 +7664,8 @@
       },
       "group": "toml",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -7352,7 +7685,8 @@
       },
       "group": "toml",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -7372,7 +7706,8 @@
       },
       "group": "toml",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -7392,7 +7727,8 @@
       },
       "group": "toml",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -7412,7 +7748,8 @@
       },
       "group": "toml",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -7432,7 +7769,8 @@
       },
       "group": "toml",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -7452,7 +7790,8 @@
       },
       "group": "string",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -7472,7 +7811,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -7492,7 +7832,8 @@
       },
       "group": "utilities",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -7512,7 +7853,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -7532,7 +7874,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -7552,7 +7895,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -7572,7 +7916,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -7592,7 +7937,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -7612,7 +7958,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -7632,7 +7979,8 @@
       },
       "group": "filesystem",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -7652,7 +8000,8 @@
       },
       "group": "filesystem",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -7672,7 +8021,8 @@
       },
       "group": "filesystem",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -7692,7 +8042,8 @@
       },
       "group": "filesystem",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -7712,7 +8063,8 @@
       },
       "group": "filesystem",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -7732,7 +8084,8 @@
       },
       "group": "filesystem",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -7752,7 +8105,8 @@
       },
       "group": "crypto",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -7772,7 +8126,8 @@
       },
       "group": "utilities",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -7792,7 +8147,8 @@
       },
       "group": "utilities",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -7812,7 +8168,8 @@
       },
       "group": "utilities",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -7832,7 +8189,8 @@
       },
       "group": "utilities",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -7852,7 +8210,8 @@
       },
       "group": "utilities",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -7872,7 +8231,8 @@
       },
       "group": "utilities",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -7892,7 +8252,8 @@
       },
       "group": "utilities",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -7912,7 +8273,8 @@
       },
       "group": "utilities",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -7932,7 +8294,8 @@
       },
       "group": "utilities",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -7952,7 +8315,8 @@
       },
       "group": "utilities",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -7972,7 +8336,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -7992,7 +8357,8 @@
       },
       "group": "filesystem",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -8012,7 +8378,8 @@
       },
       "group": "filesystem",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -8032,7 +8399,8 @@
       },
       "group": "filesystem",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -8052,7 +8420,8 @@
       },
       "group": "filesystem",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -8072,7 +8441,8 @@
       },
       "group": "filesystem",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -8092,7 +8462,8 @@
       },
       "group": "filesystem",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -8112,7 +8483,8 @@
       },
       "group": "filesystem",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -8132,7 +8504,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -8152,7 +8525,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -8172,7 +8546,8 @@
       },
       "group": "crypto",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -8192,7 +8567,8 @@
       },
       "group": "crypto",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -8212,7 +8588,8 @@
       },
       "group": "crypto",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -8232,7 +8609,8 @@
       },
       "group": "filesystem",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -8252,7 +8630,8 @@
       },
       "group": "filesystem",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -8272,7 +8651,8 @@
       },
       "group": "string",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -8292,7 +8672,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -8312,7 +8693,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -8332,7 +8714,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -8352,7 +8735,8 @@
       },
       "group": "utilities",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -8374,7 +8758,8 @@
       "status": {
         "deprecated": "replaced by `revertToState`"
       },
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -8396,7 +8781,8 @@
       "status": {
         "deprecated": "replaced by `revertToStateAndDelete`"
       },
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -8416,7 +8802,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -8436,7 +8823,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -8456,7 +8844,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -8476,7 +8865,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -8496,7 +8886,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -8516,7 +8907,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -8536,7 +8928,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -8556,7 +8949,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -8576,7 +8970,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -8596,7 +8991,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -8616,7 +9012,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -8636,7 +9033,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -8656,7 +9054,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -8676,7 +9075,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -8696,7 +9096,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -8716,7 +9117,8 @@
       },
       "group": "json",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -8736,7 +9138,8 @@
       },
       "group": "json",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -8756,7 +9159,8 @@
       },
       "group": "json",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -8776,7 +9180,8 @@
       },
       "group": "json",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -8796,7 +9201,8 @@
       },
       "group": "json",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -8816,7 +9222,8 @@
       },
       "group": "json",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -8836,7 +9243,8 @@
       },
       "group": "json",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -8856,7 +9264,8 @@
       },
       "group": "json",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -8876,7 +9285,8 @@
       },
       "group": "json",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -8896,7 +9306,8 @@
       },
       "group": "json",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -8916,7 +9327,8 @@
       },
       "group": "json",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -8936,7 +9348,8 @@
       },
       "group": "json",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -8956,7 +9369,8 @@
       },
       "group": "json",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -8976,7 +9390,8 @@
       },
       "group": "json",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -8996,7 +9411,8 @@
       },
       "group": "json",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -9016,7 +9432,8 @@
       },
       "group": "json",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -9036,7 +9453,8 @@
       },
       "group": "json",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -9056,7 +9474,8 @@
       },
       "group": "json",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -9076,7 +9495,8 @@
       },
       "group": "utilities",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -9096,7 +9516,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -9116,7 +9537,8 @@
       },
       "group": "environment",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -9136,7 +9558,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -9156,7 +9579,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -9176,7 +9600,8 @@
       },
       "group": "scripting",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -9196,7 +9621,8 @@
       },
       "group": "crypto",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -9216,7 +9642,8 @@
       },
       "group": "crypto",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -9236,7 +9663,8 @@
       },
       "group": "crypto",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -9256,7 +9684,8 @@
       },
       "group": "crypto",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -9276,7 +9705,8 @@
       },
       "group": "scripting",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -9296,7 +9726,8 @@
       },
       "group": "crypto",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -9316,7 +9747,8 @@
       },
       "group": "crypto",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -9336,7 +9768,8 @@
       },
       "group": "crypto",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -9356,7 +9789,8 @@
       },
       "group": "crypto",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -9376,7 +9810,8 @@
       },
       "group": "crypto",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -9396,7 +9831,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -9416,7 +9852,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -9436,7 +9873,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -9458,7 +9896,8 @@
       "status": {
         "deprecated": "replaced by `snapshotState`"
       },
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -9478,7 +9917,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "isolation"
     },
     {
       "func": {
@@ -9498,7 +9938,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "isolation"
     },
     {
       "func": {
@@ -9518,7 +9959,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -9538,7 +9980,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -9558,7 +10001,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -9578,7 +10022,8 @@
       },
       "group": "string",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -9598,7 +10043,8 @@
       },
       "group": "scripting",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -9618,7 +10064,8 @@
       },
       "group": "scripting",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -9638,7 +10085,8 @@
       },
       "group": "scripting",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -9658,7 +10106,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -9678,7 +10127,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -9698,7 +10148,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -9718,7 +10169,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -9738,7 +10190,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -9758,7 +10211,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -9778,7 +10232,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "isolation"
     },
     {
       "func": {
@@ -9798,7 +10253,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "isolation"
     },
     {
       "func": {
@@ -9818,7 +10274,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -9838,7 +10295,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -9858,7 +10316,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -9878,7 +10337,8 @@
       },
       "group": "scripting",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -9898,7 +10358,8 @@
       },
       "group": "testing",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -9918,7 +10379,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -9938,7 +10400,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -9958,7 +10421,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "isolation"
     },
     {
       "func": {
@@ -9978,7 +10442,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "isolation"
     },
     {
       "func": {
@@ -9998,7 +10463,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "isolation"
     },
     {
       "func": {
@@ -10018,7 +10484,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -10038,7 +10505,8 @@
       },
       "group": "utilities",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -10058,7 +10526,8 @@
       },
       "group": "utilities",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -10078,7 +10547,8 @@
       },
       "group": "utilities",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -10098,7 +10568,8 @@
       },
       "group": "utilities",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -10118,7 +10589,8 @@
       },
       "group": "string",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -10138,7 +10610,8 @@
       },
       "group": "string",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -10158,7 +10631,8 @@
       },
       "group": "string",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -10178,7 +10652,8 @@
       },
       "group": "string",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -10198,7 +10673,8 @@
       },
       "group": "string",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -10218,7 +10694,8 @@
       },
       "group": "string",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -10238,7 +10715,8 @@
       },
       "group": "string",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -10258,7 +10736,8 @@
       },
       "group": "string",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -10278,7 +10757,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -10298,7 +10778,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -10318,7 +10799,8 @@
       },
       "group": "string",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -10338,7 +10820,8 @@
       },
       "group": "filesystem",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -10358,7 +10841,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -10378,7 +10862,8 @@
       },
       "group": "filesystem",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -10398,7 +10883,8 @@
       },
       "group": "evm",
       "status": "stable",
-      "safety": "unsafe"
+      "safety": "unsafe",
+      "requires": "none"
     },
     {
       "func": {
@@ -10418,7 +10904,8 @@
       },
       "group": "filesystem",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -10438,7 +10925,8 @@
       },
       "group": "filesystem",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -10458,7 +10946,8 @@
       },
       "group": "json",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -10478,7 +10967,8 @@
       },
       "group": "json",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -10498,7 +10988,8 @@
       },
       "group": "filesystem",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -10518,7 +11009,8 @@
       },
       "group": "toml",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     },
     {
       "func": {
@@ -10538,7 +11030,8 @@
       },
       "group": "toml",
       "status": "stable",
-      "safety": "safe"
+      "safety": "safe",
+      "requires": "none"
     }
   ]
 }

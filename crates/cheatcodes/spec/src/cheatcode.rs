@@ -27,6 +27,8 @@ pub struct Cheatcode<'a> {
     /// Whether the cheatcode is safe to use inside of scripts. E.g. it does not change state in an
     /// unexpected way.
     pub safety: Safety,
+    /// The external requirements of the cheatcode.
+    pub requires: Requires,
 }
 
 /// The status of a cheatcode.
@@ -196,5 +198,28 @@ impl Safety {
     #[inline]
     pub const fn is_safe(self) -> bool {
         matches!(self, Self::Safe)
+    }
+}
+
+/// The requirements of a cheatcode it requires to run.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
+#[serde(rename_all = "camelCase")]
+#[non_exhaustive]
+pub enum Requires {
+    /// The cheatcode has no requirements.
+    None,
+    /// The cheatcode requires isolation mode to be enabled.
+    Isolation,
+}
+
+impl Requires {
+    /// Returns this value as a string.
+    #[inline]
+    pub const fn as_str(self) -> &'static str {
+        match self {
+            Self::None => "none",
+            Self::Isolation => "isolation",
+        }
     }
 }

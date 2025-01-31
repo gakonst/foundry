@@ -54,6 +54,7 @@
       "required": [
         "func",
         "group",
+        "requires",
         "safety",
         "status"
       ],
@@ -71,6 +72,14 @@
           "allOf": [
             {
               "$ref": "#/definitions/Group"
+            }
+          ]
+        },
+        "requires": {
+          "description": "The external requirements of the cheatcode.",
+          "allOf": [
+            {
+              "$ref": "#/definitions/Requires"
             }
           ]
         },
@@ -343,6 +352,25 @@
           "type": "string",
           "enum": [
             ""
+          ]
+        }
+      ]
+    },
+    "Requires": {
+      "description": "The requirements of a cheatcode it requires to run.",
+      "oneOf": [
+        {
+          "description": "The cheatcode has no requirements.",
+          "type": "string",
+          "enum": [
+            "none"
+          ]
+        },
+        {
+          "description": "The cheatcode requires isolation mode to be enabled.",
+          "type": "string",
+          "enum": [
+            "isolation"
           ]
         }
       ]

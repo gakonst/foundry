@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 use std::{borrow::Cow, fmt};
 
 mod cheatcode;
-pub use cheatcode::{Cheatcode, CheatcodeDef, Group, Safety, Status};
+pub use cheatcode::{Cheatcode, CheatcodeDef, Group, Requires, Safety, Status};
 
 mod function;
 pub use function::{Function, Mutability, Visibility};

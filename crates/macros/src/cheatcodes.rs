@@ -22,6 +22,7 @@ fn derive_call(name: &Ident, data: &DataStruct, attrs: &[Attribute]) -> Result<T
     let mut group = None::<Ident>;
     let mut status = None::<TokenStream>;
     let mut safety = None::<Ident>;
+    let mut requires = None::<TokenStream>;
     for attr in attrs.iter().filter(|a| a.path().is_ident("cheatcode")) {
         attr.meta.require_list()?.parse_nested_meta(|meta| {
             let path = meta.path.get_ident().ok_or_else(|| meta.error("expected ident"))?;
@@ -30,6 +31,7 @@ fn derive_call(name: &Ident, data: &DataStruct, attrs: &[Attribute]) -> Result<T
                 "group" if group.is_none() => group = Some(meta.value()?.parse()?),
                 "status" if status.is_none() => status = Some(meta.value()?.parse()?),
                 "safety" if safety.is_none() => safety = Some(meta.value()?.parse()?),
+                "requires" if requires.is_none() => requires = Some(meta.value()?.parse()?),
                 _ => return Err(meta.error("unexpected attribute")),
             };
             Ok(())
@@ -49,6 +51,7 @@ fn derive_call(name: &Ident, data: &DataStruct, attrs: &[Attribute]) -> Result<T
             }
         }
     };
+    let requires = requires.unwrap_or_else(|| quote!(Requires::None));
 
     check_named_fields(data, name);
 
@@ -94,6 +97,7 @@ fn derive_call(name: &Ident, data: &DataStruct, attrs: &[Attribute]) -> Result<T
                 group: Group::#group,
                 status: Status::#status,
                 safety: #safety,
+                requires: #requires,
             };
         }
     })

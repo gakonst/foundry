@@ -947,6 +947,11 @@ fn inner_last_gas_snapshot(
     name: Option<String>,
     value: u64,
 ) -> Result {
+    // If isolation mode is not enabled, silently skip the snapshotting.
+    if !ccx.state.config.evm_opts.isolate {
+        return Ok(value.abi_encode());
+    }
+
     let (group, name) = derive_snapshot_name(ccx, group, name);
 
     ccx.state.gas_snapshots.entry(group).or_default().insert(name, value.to_string());
@@ -959,6 +964,11 @@ fn inner_start_gas_snapshot(
     group: Option<String>,
     name: Option<String>,
 ) -> Result {
+    // If isolation mode is not enabled, silently skip the snapshotting.
+    if !ccx.state.config.evm_opts.isolate {
+        return Ok(Default::default());
+    }
+
     // Revert if there is an active gas snapshot as we can only have one active snapshot at a time.
     if ccx.state.gas_metering.active_gas_snapshot.is_some() {
         let (group, name) = ccx.state.gas_metering.active_gas_snapshot.as_ref().unwrap().clone();
@@ -986,6 +996,11 @@ fn inner_stop_gas_snapshot(
     group: Option<String>,
     name: Option<String>,
 ) -> Result {
+    // If isolation mode is not enabled, silently skip the snapshotting.
+    if !ccx.state.config.evm_opts.isolate {
+        return Ok(0.abi_encode());
+    }
+
     // If group and name are not provided, use the last snapshot group and name.
     let (group, name) = group.zip(name).unwrap_or_else(|| {
         let (group, name) = ccx.state.gas_metering.active_gas_snapshot.as_ref().unwrap().clone();

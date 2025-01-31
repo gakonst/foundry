@@ -620,6 +620,7 @@ impl<'a> FunctionRunner<'a> {
                         &mut self.result.traces,
                         &mut self.result.coverage,
                         &mut self.result.deprecated_cheatcodes,
+                        &mut self.result.isolated_cheatcodes,
                         &txes,
                     );
                     self.result.invariant_replay_fail(
@@ -670,6 +671,7 @@ impl<'a> FunctionRunner<'a> {
                         &mut self.result.traces,
                         &mut self.result.coverage,
                         &mut self.result.deprecated_cheatcodes,
+                        &mut self.result.isolated_cheatcodes,
                         progress.as_ref(),
                     ) {
                         Ok(call_sequence) => {
@@ -706,6 +708,7 @@ impl<'a> FunctionRunner<'a> {
                     &mut self.result.traces,
                     &mut self.result.coverage,
                     &mut self.result.deprecated_cheatcodes,
+                    &mut self.result.isolated_cheatcodes,
                     &invariant_result.last_run_inputs,
                 ) {
                     error!(%err, "Failed to replay last invariant run");

@@ -18,7 +18,7 @@ extern crate tracing;
 use alloy_primitives::Address;
 use foundry_evm_core::backend::DatabaseExt;
 use revm::{ContextPrecompiles, InnerEvmContext};
-use spec::Status;
+use spec::{Requires, Status};
 
 pub use config::CheatsConfig;
 pub use error::{Error, ErrorKind, Result};
@@ -128,6 +128,10 @@ impl dyn DynCheatcode {
 
     pub(crate) fn status(&self) -> &Status<'static> {
         &self.cheatcode().status
+    }
+
+    pub(crate) fn requires(&self) -> &Requires {
+        &self.cheatcode().requires
     }
 }
 

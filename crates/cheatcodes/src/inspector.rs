@@ -485,7 +485,11 @@ pub struct Cheatcodes {
     pub arbitrary_storage: Option<ArbitraryStorage>,
 
     /// Deprecated cheatcodes mapped to the reason. Used to report warnings on test results.
-    pub deprecated: HashMap<&'static str, Option<&'static str>>,
+    pub deprecated_cheatcodes: HashMap<&'static str, Option<&'static str>>,
+
+    /// Isolated cheatcodes. Used to report warnings on test results.
+    pub isolated_cheatcodes: Vec<&'static str>,
+
     /// Unlocked wallets used in scripts and testing of scripts.
     pub wallets: Option<Wallets>,
 }
@@ -535,7 +539,8 @@ impl Cheatcodes {
             test_runner: Default::default(),
             ignored_traces: Default::default(),
             arbitrary_storage: Default::default(),
-            deprecated: Default::default(),
+            deprecated_cheatcodes: Default::default(),
+            isolated_cheatcodes: Default::default(),
             wallets: Default::default(),
         }
     }
@@ -2231,7 +2236,11 @@ fn apply_dispatch(
     trace!(target: "cheatcodes", cheat = ?cheat.as_debug(), "applying");
 
     if let spec::Status::Deprecated(replacement) = *cheat.status() {
-        ccx.state.deprecated.insert(cheat.signature(), replacement);
+        ccx.state.deprecated_cheatcodes.insert(cheat.signature(), replacement);
+    }
+
+    if !ccx.state.config.evm_opts.isolate && *cheat.requires() == spec::Requires::Isolation {
+        ccx.state.isolated_cheatcodes.push(cheat.signature());
     }
 
     // Apply the cheatcode.

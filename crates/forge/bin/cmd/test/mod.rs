@@ -737,11 +737,33 @@ impl TestArgs {
 
                 // Write gas snapshots to disk per group.
                 gas_snapshots.clone().into_iter().for_each(|(group, snapshots)| {
-                    fs::write_pretty_json_file(
+                    fs::read_json_file::<BTreeMap<String, String>>(
                         &config.snapshots.join(format!("{group}.json")),
-                        &snapshots,
                     )
-                    .expect("Failed to write gas snapshots to disk");
+                    .map(|previous_snapshots| {
+                        let mut merged_snapshots = BTreeMap::new();
+
+                        for (k, v) in &previous_snapshots {
+                            merged_snapshots.insert(k.clone(), v.clone());
+                        }
+
+                        for (k, v) in &snapshots {
+                            merged_snapshots.insert(k.clone(), v.clone());
+                        }
+
+                        fs::write_pretty_json_file(
+                            &config.snapshots.join(format!("{group}.json")),
+                            &merged_snapshots,
+                        )
+                        .expect("Failed to write gas snapshots to disk");
+                    })
+                    .unwrap_or_else(|_| {
+                        fs::write_pretty_json_file(
+                            &config.snapshots.join(format!("{group}.json")),
+                            &snapshots,
+                        )
+                        .expect("Failed to write gas snapshots to disk");
+                    });
                 });
             }
 

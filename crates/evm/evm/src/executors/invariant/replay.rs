@@ -31,6 +31,7 @@ pub fn replay_run(
     traces: &mut Traces,
     coverage: &mut Option<HitMaps>,
     deprecated_cheatcodes: &mut HashMap<&'static str, Option<&'static str>>,
+    isolated_cheatcodes: &mut Vec<&'static str>,
     inputs: &[BasicTxDetails],
 ) -> Result<Vec<BaseCounterExample>> {
     // We want traces for a failed case.
@@ -83,7 +84,13 @@ pub fn replay_run(
         invariant_result
             .cheatcodes
             .as_ref()
-            .map_or_else(Default::default, |cheats| cheats.deprecated.clone()),
+            .map_or_else(Default::default, |cheats| cheats.deprecated_cheatcodes.clone()),
+    );
+    isolated_cheatcodes.extend(
+        invariant_result
+            .cheatcodes
+            .as_ref()
+            .map_or_else(Default::default, |cheats| cheats.isolated_cheatcodes.clone()),
     );
 
     // Collect after invariant logs and traces.
@@ -109,6 +116,7 @@ pub fn replay_error(
     traces: &mut Traces,
     coverage: &mut Option<HitMaps>,
     deprecated_cheatcodes: &mut HashMap<&'static str, Option<&'static str>>,
+    isolated_cheatcodes: &mut Vec<&'static str>,
     progress: Option<&ProgressBar>,
 ) -> Result<Vec<BaseCounterExample>> {
     match failed_case.test_error {
@@ -136,6 +144,7 @@ pub fn replay_error(
                 traces,
                 coverage,
                 deprecated_cheatcodes,
+                isolated_cheatcodes,
                 &calls,
             )
         }

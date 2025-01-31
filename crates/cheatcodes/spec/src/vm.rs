@@ -2,7 +2,7 @@
 // module. Instead, we emit custom diagnostics in `#[derive(Cheatcode)]`.
 #![allow(missing_docs)]
 
-use super::*;
+use super::{Requires::Isolation, *};
 use crate::Vm::ForgeContext;
 use alloy_sol_types::sol;
 use foundry_macros::Cheatcode;
@@ -674,33 +674,33 @@ interface Vm {
     // -------- Gas Snapshots --------
 
     /// Snapshot capture the gas usage of the last call by name from the callee perspective.
-    #[cheatcode(group = Evm, safety = Unsafe)]
+    #[cheatcode(group = Evm, safety = Unsafe, requires = Isolation)]
     function snapshotGasLastCall(string calldata name) external returns (uint256 gasUsed);
 
     /// Snapshot capture the gas usage of the last call by name in a group from the callee perspective.
-    #[cheatcode(group = Evm, safety = Unsafe)]
+    #[cheatcode(group = Evm, safety = Unsafe, requires = Isolation)]
     function snapshotGasLastCall(string calldata group, string calldata name) external returns (uint256 gasUsed);
 
     /// Start a snapshot capture of the current gas usage by name.
     /// The group name is derived from the contract name.
-    #[cheatcode(group = Evm, safety = Unsafe)]
+    #[cheatcode(group = Evm, safety = Unsafe, requires = Isolation)]
     function startSnapshotGas(string calldata name) external;
 
     /// Start a snapshot capture of the current gas usage by name in a group.
-    #[cheatcode(group = Evm, safety = Unsafe)]
+    #[cheatcode(group = Evm, safety = Unsafe, requires = Isolation)]
     function startSnapshotGas(string calldata group, string calldata name) external;
 
     /// Stop the snapshot capture of the current gas by latest snapshot name, capturing the gas used since the start.
-    #[cheatcode(group = Evm, safety = Unsafe)]
+    #[cheatcode(group = Evm, safety = Unsafe, requires = Isolation)]
     function stopSnapshotGas() external returns (uint256 gasUsed);
 
     /// Stop the snapshot capture of the current gas usage by name, capturing the gas used since the start.
     /// The group name is derived from the contract name.
-    #[cheatcode(group = Evm, safety = Unsafe)]
+    #[cheatcode(group = Evm, safety = Unsafe, requires = Isolation)]
     function stopSnapshotGas(string calldata name) external returns (uint256 gasUsed);
 
     /// Stop the snapshot capture of the current gas usage by name in a group, capturing the gas used since the start.
-    #[cheatcode(group = Evm, safety = Unsafe)]
+    #[cheatcode(group = Evm, safety = Unsafe, requires = Isolation)]
     function stopSnapshotGas(string calldata group, string calldata name) external returns (uint256 gasUsed);
 
     // -------- State Snapshots --------
@@ -716,7 +716,7 @@ interface Vm {
     function snapshotState() external returns (uint256 snapshotId);
 
     /// `revertTo` is being deprecated in favor of `revertToState`. It will be removed in future versions.
-    #[cheatcode(group = Evm, safety = Unsafe, status = Deprecated(Some("replaced by `revertToState`")))]
+    #[cheatcode(group = Evm, safety = Unsafe, status =  Deprecated(Some("replaced by `revertToState`")))]
     function revertTo(uint256 snapshotId) external returns (bool success);
 
     /// Revert the state of the EVM to a previous snapshot
