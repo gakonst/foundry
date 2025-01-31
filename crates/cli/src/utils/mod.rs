@@ -14,6 +14,7 @@ use std::{
     future::Future,
     path::{Path, PathBuf},
     process::{Command, Output, Stdio},
+    str::FromStr,
     time::{Duration, SystemTime, UNIX_EPOCH},
 };
 use tracing_subscriber::prelude::*;
@@ -375,8 +376,19 @@ impl<'a> Git<'a> {
             .map(drop)
     }
 
+    pub fn checkout_at(self, tag: impl AsRef<OsStr>, at: &Path) -> Result<()> {
+        self.cmd_at(at).arg("checkout").arg(tag).exec().map(drop)
+    }
+
     pub fn init(self) -> Result<()> {
         self.cmd().arg("init").exec().map(drop)
+    }
+
+    pub fn current_rev_branch(self, at: &Path) -> Result<(String, String)> {
+        let rev = self.cmd_at(at).args(["rev-parse", "HEAD"]).get_stdout_lossy()?;
+        let branch =
+            self.cmd_at(at).args(["rev-parse", "--abbrev-ref", "HEAD"]).get_stdout_lossy()?;
+        Ok((rev, branch))
     }
 
     #[allow(clippy::should_implement_trait)] // this is not std::ops::Add clippy
@@ -452,6 +464,26 @@ impl<'a> Git<'a> {
             .map(|stdout| !stdout.is_empty())
     }
 
+    pub fn has_tag(self, tag: impl AsRef<OsStr>, at: &Path) -> Result<bool> {
+        self.cmd_at(at)
+            .args(["tag", "--list"])
+            .arg(tag)
+            .get_stdout_lossy()
+            .map(|stdout| !stdout.is_empty())
+    }
+
+    pub fn has_rev(self, rev: impl AsRef<OsStr>, at: &Path) -> Result<bool> {
+        self.cmd_at(at)
+            .args(["cat-file", "-t"])
+            .arg(rev)
+            .get_stdout_lossy()
+            .map(|stdout| &stdout == "commit")
+    }
+
+    pub fn get_rev(self, tag_or_branch: impl AsRef<OsStr>, at: &Path) -> Result<String> {
+        self.cmd_at(at).args(["rev-list", "-n", "1"]).arg(tag_or_branch).get_stdout_lossy()
+    }
+
     pub fn ensure_clean(self) -> Result<()> {
         if self.is_clean()? {
             Ok(())
@@ -478,6 +510,21 @@ ignore them in the `.gitignore` file, or run this command again with the `--no-c
 
     pub fn tag(self) -> Result<String> {
         self.cmd().arg("tag").get_stdout_lossy()
+    }
+
+    /// Returns the tag the commit first appeared in.
+    ///
+    /// E.g Take rev = `abc1234`. This commit can be found in multiple releases (tags).
+    /// Consider releases: `v0.1.0`, `v0.2.0`, `v0.3.0` in chronological order, `rev` first appeared
+    /// in `v0.2.0`.
+    ///
+    /// Hence, `tag_for_commit("abc1234")` will return `v0.2.0`.
+    pub fn tag_for_commit(self, rev: &str, at: &Path) -> Result<Option<String>> {
+        self.cmd_at(at)
+            .args(["tag", "--contains"])
+            .arg(rev)
+            .get_stdout_lossy()
+            .map(|stdout| stdout.lines().next().map(str::to_string))
     }
 
     pub fn has_missing_dependencies<I, S>(self, paths: I) -> Result<bool>
@@ -561,6 +608,19 @@ ignore them in the `.gitignore` file, or run this command again with the `--no-c
         self.cmd().stderr(self.stderr()).args(["submodule", "init"]).exec().map(drop)
     }
 
+    pub fn default_branch(&self, at: &Path) -> Result<String> {
+        self.cmd_at(at).args(["remote", "show", "origin"]).get_stdout_lossy().map(|stdout| {
+            let re = regex::Regex::new(r"HEAD branch: (.*)")?;
+            let caps =
+                re.captures(&stdout).ok_or_else(|| eyre::eyre!("Could not find HEAD branch"))?;
+            Ok(caps.get(1).unwrap().as_str().to_string())
+        })?
+    }
+
+    pub fn submodules(&self) -> Result<Submodules> {
+        self.cmd().args(["submodule", "status"]).get_stdout_lossy().map(|stdout| stdout.parse())?
+    }
+
     pub fn cmd(self) -> Command {
         let mut cmd = Self::cmd_no_root();
         cmd.current_dir(self.root);
@@ -589,12 +649,112 @@ ignore them in the `.gitignore` file, or run this command again with the `--no-c
     }
 }
 
+/// Deserialized `git submodule status lib/dep` output.
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Eq)]
+pub struct Submodule {
+    /// Current commit hash the submodule is checked out at.
+    rev: String,
+    /// Relative path to the submodule.
+    path: PathBuf,
+}
+
+impl Submodule {
+    pub fn new(rev: String, path: PathBuf) -> Self {
+        Self { rev, path }
+    }
+
+    pub fn rev(&self) -> &str {
+        &self.rev
+    }
+
+    pub fn path(&self) -> &PathBuf {
+        &self.path
+    }
+}
+
+impl FromStr for Submodule {
+    type Err = eyre::Report;
+
+    fn from_str(s: &str) -> Result<Self> {
+        let re = regex::Regex::new(r"^[\s+-]?([a-f0-9]+)\s+([^\s]+)(?:\s+\([^)]+\))?$")?;
+
+        let caps = re.captures(s).ok_or_else(|| eyre::eyre!("Invalid submodule status format"))?;
+
+        Ok(Self {
+            rev: caps.get(1).unwrap().as_str().to_string(),
+            path: PathBuf::from(caps.get(2).unwrap().as_str()),
+        })
+    }
+}
+
+/// Deserialized `git submodule status` output.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct Submodules(pub Vec<Submodule>);
+
+impl Submodules {
+    pub fn len(&self) -> usize {
+        self.0.len()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.0.is_empty()
+    }
+}
+
+impl FromStr for Submodules {
+    type Err = eyre::Report;
+
+    fn from_str(s: &str) -> Result<Self> {
+        let subs = s.lines().map(str::parse).collect::<Result<Vec<Submodule>>>()?;
+        Ok(Self(subs))
+    }
+}
+
+impl<'a> IntoIterator for &'a Submodules {
+    type Item = &'a Submodule;
+    type IntoIter = std::slice::Iter<'a, Submodule>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.0.iter()
+    }
+}
 #[cfg(test)]
 mod tests {
     use super::*;
     use foundry_common::fs;
     use std::{env, fs::File, io::Write};
     use tempfile::tempdir;
+
+    #[test]
+    fn parse_submodule_status() {
+        let s = "+8829465a08cac423dcf59852f21e448449c1a1a8 lib/openzeppelin-contracts (v4.8.0-791-g8829465a)";
+        let sub = Submodule::from_str(s).unwrap();
+        assert_eq!(sub.rev(), "8829465a08cac423dcf59852f21e448449c1a1a8");
+        assert_eq!(sub.path(), Path::new("lib/openzeppelin-contracts"));
+
+        let s = "-8829465a08cac423dcf59852f21e448449c1a1a8 lib/openzeppelin-contracts";
+        let sub = Submodule::from_str(s).unwrap();
+        assert_eq!(sub.rev(), "8829465a08cac423dcf59852f21e448449c1a1a8");
+        assert_eq!(sub.path(), Path::new("lib/openzeppelin-contracts"));
+
+        let s = "8829465a08cac423dcf59852f21e448449c1a1a8 lib/openzeppelin-contracts";
+        let sub = Submodule::from_str(s).unwrap();
+        assert_eq!(sub.rev(), "8829465a08cac423dcf59852f21e448449c1a1a8");
+        assert_eq!(sub.path(), Path::new("lib/openzeppelin-contracts"));
+    }
+
+    #[test]
+    fn parse_multiline_submodule_status() {
+        let s = r#"+d3db4ef90a72b7d24aa5a2e5c649593eaef7801d lib/forge-std (v1.9.4-6-gd3db4ef)
++8829465a08cac423dcf59852f21e448449c1a1a8 lib/openzeppelin-contracts (v4.8.0-791-g8829465a)
+"#;
+        let subs = Submodules::from_str(s).unwrap().0;
+        assert_eq!(subs.len(), 2);
+        assert_eq!(subs[0].rev(), "d3db4ef90a72b7d24aa5a2e5c649593eaef7801d");
+        assert_eq!(subs[0].path(), Path::new("lib/forge-std"));
+        assert_eq!(subs[1].rev(), "8829465a08cac423dcf59852f21e448449c1a1a8");
+        assert_eq!(subs[1].path(), Path::new("lib/openzeppelin-contracts"));
+    }
 
     #[test]
     fn foundry_path_ext_works() {

@@ -1,5 +1,6 @@
 use clap::{Parser, ValueHint};
 use eyre::Result;
+use forge::Lockfile;
 use foundry_cli::{
     opts::Dependency,
     utils::{Git, LoadConfig},
@@ -30,17 +31,24 @@ impl_figment_convert_basic!(RemoveArgs);
 impl RemoveArgs {
     pub fn run(self) -> Result<()> {
         let config = self.load_config()?;
-        let (root, paths) = super::update::dependencies_paths(&self.dependencies, &config)?;
+        let (root, paths, _) = super::update::dependencies_paths(&self.dependencies, &config)?;
         let git_modules = root.join(".git/modules");
 
+        let git = Git::new(&root);
+        let mut lockfile = Lockfile::new(&config.root).with_git(&git);
+        let _synced = lockfile.sync()?;
+
         // remove all the dependencies by invoking `git rm` only once with all the paths
-        Git::new(&root).rm(self.force, &paths)?;
+        git.rm(self.force, &paths)?;
 
         // remove all the dependencies from .git/modules
         for (Dependency { name, url, tag, .. }, path) in self.dependencies.iter().zip(&paths) {
             sh_println!("Removing '{name}' in {}, (url: {url:?}, tag: {tag:?})", path.display())?;
+            let _ = lockfile.remove(path);
             std::fs::remove_dir_all(git_modules.join(path))?;
         }
+
+        lockfile.write()?;
 
         Ok(())
     }

@@ -1,5 +1,6 @@
 use clap::{Parser, ValueHint};
 use eyre::{Context, Result};
+use forge::{DepIdentifier, Lockfile, FOUNDRY_LOCK};
 use foundry_cli::{
     opts::Dependency,
     utils::{CommandUtils, Git, LoadConfig},
@@ -116,7 +117,12 @@ impl DependencyInstallOpts {
         let install_lib_dir = config.install_lib_dir();
         let libs = git.root.join(install_lib_dir);
 
-        if dependencies.is_empty() && !self.no_git {
+        let mut lockfile = Lockfile::new(&config.root);
+        if !no_git {
+            lockfile = lockfile.with_git(&git);
+        }
+
+        if dependencies.is_empty() && !no_git {
             // Use the root of the git repository to look for submodules.
             let root = Git::root_of(git.root)?;
             match git.has_submodules(Some(&root)) {
@@ -136,6 +142,8 @@ impl DependencyInstallOpts {
             }
         }
 
+        let _out_of_sync_deps = lockfile.sync()?;
+
         fs::create_dir_all(&libs)?;
 
         let installer = Installer { git, no_commit };
@@ -154,6 +162,7 @@ impl DependencyInstallOpts {
 
             // this tracks the actual installed tag
             let installed_tag;
+            let mut dep_id = None;
             if no_git {
                 installed_tag = installer.install_as_folder(&dep, &path)?;
             } else {
@@ -163,20 +172,39 @@ impl DependencyInstallOpts {
                 installed_tag = installer.install_as_submodule(&dep, &path)?;
 
                 // Pin branch to submodule if branch is used
-                if let Some(branch) = &installed_tag {
+                if let Some(tag_or_branch) = &installed_tag {
                     // First, check if this tag has a branch
-                    if git.has_branch(branch, &path)? {
+                    dep_id = Some(DepIdentifier::resolve_type(&git, &path, tag_or_branch)?);
+                    if git.has_branch(tag_or_branch, &path)? &&
+                        dep_id.as_ref().is_some_and(|id| id.is_branch())
+                    {
                         // always work with relative paths when directly modifying submodules
                         git.cmd()
-                            .args(["submodule", "set-branch", "-b", branch])
+                            .args(["submodule", "set-branch", "-b", tag_or_branch])
                             .arg(rel_path)
                             .exec()?;
+
+                        let rev = git.get_rev(tag_or_branch, &path)?;
+
+                        dep_id = Some(DepIdentifier::Branch {
+                            name: tag_or_branch.to_string(),
+                            rev,
+                            r#override: false,
+                        });
                     }
 
+                    trace!(?dep_id, ?tag_or_branch, "resolved dep id");
+                    if let Some(dep_id) = &dep_id {
+                        lockfile.insert(rel_path.to_path_buf(), dep_id.clone());
+                    }
                     // update .gitmodules which is at the root of the repo,
                     // not necessarily at the root of the current Foundry project
                     let root = Git::root_of(git.root)?;
                     git.root(&root).add(Some(".gitmodules"))?;
+                }
+
+                if !lockfile.is_empty() {
+                    lockfile.write()?;
                 }
 
                 // commit the installation
@@ -185,8 +213,17 @@ impl DependencyInstallOpts {
                     msg.push_str("forge install: ");
                     msg.push_str(dep.name());
                     if let Some(tag) = &installed_tag {
-                        msg.push_str("\n\n");
-                        msg.push_str(tag);
+                        if let Some(dep_id) = &dep_id {
+                            msg.push_str("\n\n");
+                            msg.push_str(dep_id.to_string().as_str());
+                        } else {
+                            msg.push_str("\n\n");
+                            msg.push_str(tag);
+                        }
+                    }
+
+                    if !lockfile.is_empty() {
+                        git.root(&config.root).add(Some(FOUNDRY_LOCK))?;
                     }
                     git.commit(&msg)?;
                 }
@@ -194,8 +231,13 @@ impl DependencyInstallOpts {
 
             let mut msg = format!("    {} {}", "Installed".green(), dep.name);
             if let Some(tag) = dep.tag.or(installed_tag) {
-                msg.push(' ');
-                msg.push_str(tag.as_str());
+                if let Some(dep_id) = dep_id {
+                    msg.push(' ');
+                    msg.push_str(dep_id.to_string().as_str());
+                } else {
+                    msg.push(' ');
+                    msg.push_str(tag.as_str());
+                }
             }
             sh_println!("{msg}")?;
         }
@@ -205,6 +247,7 @@ impl DependencyInstallOpts {
             config.libs.push(install_lib_dir.to_path_buf());
             config.update_libs()?;
         }
+
         Ok(())
     }
 }

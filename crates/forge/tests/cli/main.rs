@@ -19,6 +19,7 @@ mod eip712;
 mod failure_assertions;
 mod geiger;
 mod inline_config;
+mod install;
 mod multi_script;
 mod odyssey;
 mod script;
