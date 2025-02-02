@@ -5,7 +5,9 @@ use crate::{
 use alloy_chains::Chain;
 use alloy_consensus::TxEnvelope;
 use alloy_eips::{eip2718::Encodable2718, BlockId};
-use alloy_network::{AnyNetwork, EthereumWallet, TransactionBuilder};
+use alloy_network::{
+    primitives::BlockTransactionsKind, AnyNetwork, EthereumWallet, TransactionBuilder,
+};
 use alloy_primitives::{
     map::{AddressHashMap, AddressHashSet},
     utils::format_units,
@@ -47,6 +49,20 @@ where
             100,
     );
     Ok(())
+}
+
+pub async fn get_block_gas_limit(provider_url: &str, block_number: Option<u64>) -> Result<u64> {
+    let provider = try_get_http_provider(provider_url)
+        .wrap_err_with(|| format!("bad fork_url provider: {provider_url}"))?;
+
+    let block_id = block_number.map_or(BlockId::latest(), BlockId::number);
+    let block = provider.get_block(block_id, BlockTransactionsKind::Hashes).await?;
+
+    if let Some(block) = block {
+        Ok(block.header.gas_limit)
+    } else {
+        bail!("Failed to get block for block number: {}", block_number.unwrap_or_default())
+    }
 }
 
 pub async fn next_nonce(

@@ -11,7 +11,7 @@ extern crate foundry_common;
 #[macro_use]
 extern crate tracing;
 
-use crate::runner::ScriptRunner;
+use crate::{broadcast::get_block_gas_limit, runner::ScriptRunner};
 use alloy_json_abi::{Function, JsonAbi};
 use alloy_primitives::{
     hex,
@@ -553,13 +553,18 @@ pub struct ScriptConfig {
 }
 
 impl ScriptConfig {
-    pub async fn new(config: Config, evm_opts: EvmOpts) -> Result<Self> {
+    pub async fn new(config: Config, mut evm_opts: EvmOpts) -> Result<Self> {
         let sender_nonce = if let Some(fork_url) = evm_opts.fork_url.as_ref() {
             next_nonce(evm_opts.sender, fork_url, evm_opts.fork_block_number).await?
         } else {
             // dapptools compatibility
             1
         };
+
+        if let Some(fork_url) = evm_opts.fork_url.as_ref() {
+            evm_opts.env.gas_limit =
+                get_block_gas_limit(fork_url, evm_opts.fork_block_number).await?.into();
+        }
 
         Ok(Self { config, evm_opts, sender_nonce, backends: HashMap::default() })
     }
