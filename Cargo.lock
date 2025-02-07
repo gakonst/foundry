@@ -3348,6 +3348,7 @@ dependencies = [
  "eyre",
  "forge-doc",
  "forge-fmt",
+ "forge-lint",
  "forge-script",
  "forge-script-sequence",
  "forge-sol-macro-gen",
@@ -3386,6 +3387,7 @@ dependencies = [
  "similar",
  "similar-asserts",
  "solang-parser",
+ "solar-interface",
  "solar-parse",
  "soldeer-commands",
  "strum",
@@ -3442,6 +3444,26 @@ dependencies = [
  "toml 0.8.19",
  "tracing",
  "tracing-subscriber",
+]
+
+[[package]]
+name = "forge-lint"
+version = "0.3.0"
+dependencies = [
+ "auto_impl",
+ "clap",
+ "eyre",
+ "foundry-common",
+ "foundry-compilers",
+ "rayon",
+ "regex",
+ "serde",
+ "serde_json",
+ "solar-ast",
+ "solar-interface",
+ "solar-parse",
+ "thiserror 2.0.11",
+ "yansi",
 ]
 
 [[package]]

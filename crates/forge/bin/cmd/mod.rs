@@ -23,6 +23,7 @@ pub mod generate;
 pub mod init;
 pub mod inspect;
 pub mod install;
+pub mod lint;
 pub mod remappings;
 pub mod remove;
 pub mod selectors;

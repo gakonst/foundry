@@ -43,6 +43,7 @@ chrono.workspace = true
 # bin
 forge-doc.workspace = true
 forge-fmt.workspace = true
+forge-lint.workspace = true
 forge-verify.workspace = true
 forge-script.workspace = true
 forge-sol-macro-gen.workspace = true
@@ -81,6 +82,7 @@ serde_json.workspace = true
 similar = { version = "2", features = ["inline"] }
 solang-parser.workspace = true
 solar-parse.workspace = true
+solar-interface.workspace = true
 strum = { workspace = true, features = ["derive"] }
 thiserror.workspace = true
 tokio = { workspace = true, features = ["time"] }
