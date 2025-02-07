@@ -8,9 +8,9 @@ use foundry_compilers::{
         BytecodeObject, CompactBytecode, CompactContractBytecode, CompactDeployedBytecode,
         ContractBytecodeSome, Offsets,
     },
-    ArtifactId,
+    ArtifactId, ProjectCompileOutput,
 };
-use std::{collections::BTreeMap, ops::Deref, str::FromStr, sync::Arc};
+use std::{collections::BTreeMap, ops::Deref, path::PathBuf, str::FromStr, sync::Arc};
 
 /// Libraries' runtime code always starts with the following instruction:
 /// `PUSH20 0x0000000000000000000000000000000000000000`
@@ -268,6 +268,17 @@ impl ContractsByArtifact {
             .map(|(_, contract)| contract.abi.clone())
     }
 
+    /// Finds abi by name or source path
+    ///
+    /// Returns the abi and the contract name.
+    pub fn find_abi_by_name_or_src_path(&self, name_or_path: &str) -> Option<(JsonAbi, String)> {
+        self.iter()
+            .find(|(artifact, _)| {
+                artifact.name == name_or_path || artifact.source == PathBuf::from(name_or_path)
+            })
+            .map(|(_, contract)| (contract.abi.clone(), contract.name.clone()))
+    }
+
     /// Flattens the contracts into functions, events and errors.
     pub fn flatten(&self) -> (BTreeMap<Selector, Function>, BTreeMap<B256, Event>, JsonAbi) {
         let mut funcs = BTreeMap::new();
@@ -285,6 +296,21 @@ impl ContractsByArtifact {
             }
         }
         (funcs, events, errors_abi)
+    }
+}
+
+impl From<ProjectCompileOutput> for ContractsByArtifact {
+    fn from(value: ProjectCompileOutput) -> Self {
+        Self::new(value.into_artifacts().map(|(id, ar)| {
+            (
+                id,
+                CompactContractBytecode {
+                    abi: ar.abi,
+                    bytecode: ar.bytecode,
+                    deployed_bytecode: ar.deployed_bytecode,
+                },
+            )
+        }))
     }
 }
 

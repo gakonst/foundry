@@ -5,27 +5,29 @@ use comfy_table::{modifiers::UTF8_ROUND_CORNERS, Cell, Table};
 use eyre::{Context, Result};
 use forge::revm::primitives::Eof;
 use foundry_cli::opts::{BuildOpts, CompilerOpts};
-use foundry_common::{compile::ProjectCompiler, fmt::pretty_eof, shell};
-use foundry_compilers::{
-    artifacts::{
-        output_selection::{
-            BytecodeOutputSelection, ContractOutputSelection, DeployedBytecodeOutputSelection,
-            EvmOutputSelection, EwasmOutputSelection,
-        },
-        CompactBytecode, StorageLayout,
+use foundry_common::{
+    compile::{PathOrContractInfo, ProjectCompiler},
+    find_matching_contract_artifact, find_target_path,
+    fmt::pretty_eof,
+    shell,
+};
+use foundry_compilers::artifacts::{
+    output_selection::{
+        BytecodeOutputSelection, ContractOutputSelection, DeployedBytecodeOutputSelection,
+        EvmOutputSelection, EwasmOutputSelection,
     },
-    info::ContractInfo,
-    utils::canonicalize,
+    CompactBytecode, StorageLayout,
 };
 use regex::Regex;
 use serde_json::{Map, Value};
-use std::{collections::BTreeMap, fmt, sync::LazyLock};
+use std::{collections::BTreeMap, fmt, str::FromStr, sync::LazyLock};
 
 /// CLI arguments for `forge inspect`.
 #[derive(Clone, Debug, Parser)]
 pub struct InspectArgs {
     /// The identifier of the contract to inspect in the form `(<path>:)?<contractname>`.
-    pub contract: ContractInfo,
+    #[arg(value_parser = PathOrContractInfo::from_str)]
+    pub contract: PathOrContractInfo,
 
     /// The contract artifact field to inspect.
     #[arg(value_enum)]
@@ -64,17 +66,11 @@ impl InspectArgs {
         // Build the project
         let project = modified_build_args.project()?;
         let compiler = ProjectCompiler::new().quiet(true);
-        let target_path = if let Some(path) = &contract.path {
-            canonicalize(project.root().join(path))?
-        } else {
-            project.find_contract_path(&contract.name)?
-        };
+        let target_path = find_target_path(&project, &contract)?;
         let mut output = compiler.files([target_path.clone()]).compile(&project)?;
 
         // Find the artifact
-        let artifact = output.remove(&target_path, &contract.name).ok_or_else(|| {
-            eyre::eyre!("Could not find artifact `{contract}` in the compiled artifacts")
-        })?;
+        let artifact = find_matching_contract_artifact(&mut output, &target_path, contract.name())?;
 
         // Match on ContractArtifactFields and pretty-print
         match field {

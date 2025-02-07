@@ -122,7 +122,7 @@ mod bind_json;
 use bind_json::BindJsonConfig;
 
 mod compilation;
-use compilation::{CompilationRestrictions, SettingsOverrides};
+pub use compilation::{CompilationRestrictions, SettingsOverrides};
 
 /// Foundry configuration
 ///
