@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"mod":["call_override","filters"],"struct":["ArtifactFilters","BasicTxDetails","CallDetails","FuzzRunIdentifiedContracts","InvariantContract","RandomCallGenerator","SenderFilters","TargetedContract","TargetedContracts"]};

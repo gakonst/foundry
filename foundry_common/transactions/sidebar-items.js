@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["TransactionMaybeSigned"],"fn":["extract_revert_reason","get_pretty_tx_receipt_attr"],"struct":["TransactionReceiptWithRevertReason"]};

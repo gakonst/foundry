@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["CoverageItemKind"],"fn":["format_cell"],"mod":["analysis","anchors"],"struct":["BytecodeReporter","ContractId","CoverageCollector","CoverageItem","CoverageReport","CoverageSummary","CoverageSummaryReporter","DebugReporter","HitMap","HitMaps","ItemAnchor","LcovReporter","LineNumberCache","SourceLocation"],"trait":["CoverageReporter"]};

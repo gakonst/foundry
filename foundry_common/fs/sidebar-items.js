@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["canonicalize_path","copy","create_dir","create_dir_all","create_file","files_with_ext","json_files","normalize_path","open","read","read_json_file","read_link","read_to_string","remove_dir","remove_dir_all","remove_file","write","write_json_file","write_pretty_json_file"],"type":["Result"]};

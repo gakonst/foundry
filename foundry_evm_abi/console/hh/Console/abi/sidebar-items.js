@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["constructor","contract","errors","events","fallback","functions","receive"]};

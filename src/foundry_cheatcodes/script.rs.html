@@ -1,0 +1,587 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/cheatcodes/src/script.rs`."><title>script.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-cf3c48c1.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="foundry_cheatcodes" data-themes="" data-resource-suffix="" data-rustdoc-version="1.86.0-nightly (942db6782 2025-02-06)" data-channel="nightly" data-search-js="search-581efc7a.js" data-settings-js="settings-6dad6058.js" ><script src="../../static.files/storage-3a5871a4.js"></script><script defer src="../../static.files/src-script-8fee9dc5.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-4d63596a.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-893ab5e7.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">foundry_cheatcodes/</div>script.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
+<a href="#1" id="1">1</a>
+<a href="#2" id="2">2</a>
+<a href="#3" id="3">3</a>
+<a href="#4" id="4">4</a>
+<a href="#5" id="5">5</a>
+<a href="#6" id="6">6</a>
+<a href="#7" id="7">7</a>
+<a href="#8" id="8">8</a>
+<a href="#9" id="9">9</a>
+<a href="#10" id="10">10</a>
+<a href="#11" id="11">11</a>
+<a href="#12" id="12">12</a>
+<a href="#13" id="13">13</a>
+<a href="#14" id="14">14</a>
+<a href="#15" id="15">15</a>
+<a href="#16" id="16">16</a>
+<a href="#17" id="17">17</a>
+<a href="#18" id="18">18</a>
+<a href="#19" id="19">19</a>
+<a href="#20" id="20">20</a>
+<a href="#21" id="21">21</a>
+<a href="#22" id="22">22</a>
+<a href="#23" id="23">23</a>
+<a href="#24" id="24">24</a>
+<a href="#25" id="25">25</a>
+<a href="#26" id="26">26</a>
+<a href="#27" id="27">27</a>
+<a href="#28" id="28">28</a>
+<a href="#29" id="29">29</a>
+<a href="#30" id="30">30</a>
+<a href="#31" id="31">31</a>
+<a href="#32" id="32">32</a>
+<a href="#33" id="33">33</a>
+<a href="#34" id="34">34</a>
+<a href="#35" id="35">35</a>
+<a href="#36" id="36">36</a>
+<a href="#37" id="37">37</a>
+<a href="#38" id="38">38</a>
+<a href="#39" id="39">39</a>
+<a href="#40" id="40">40</a>
+<a href="#41" id="41">41</a>
+<a href="#42" id="42">42</a>
+<a href="#43" id="43">43</a>
+<a href="#44" id="44">44</a>
+<a href="#45" id="45">45</a>
+<a href="#46" id="46">46</a>
+<a href="#47" id="47">47</a>
+<a href="#48" id="48">48</a>
+<a href="#49" id="49">49</a>
+<a href="#50" id="50">50</a>
+<a href="#51" id="51">51</a>
+<a href="#52" id="52">52</a>
+<a href="#53" id="53">53</a>
+<a href="#54" id="54">54</a>
+<a href="#55" id="55">55</a>
+<a href="#56" id="56">56</a>
+<a href="#57" id="57">57</a>
+<a href="#58" id="58">58</a>
+<a href="#59" id="59">59</a>
+<a href="#60" id="60">60</a>
+<a href="#61" id="61">61</a>
+<a href="#62" id="62">62</a>
+<a href="#63" id="63">63</a>
+<a href="#64" id="64">64</a>
+<a href="#65" id="65">65</a>
+<a href="#66" id="66">66</a>
+<a href="#67" id="67">67</a>
+<a href="#68" id="68">68</a>
+<a href="#69" id="69">69</a>
+<a href="#70" id="70">70</a>
+<a href="#71" id="71">71</a>
+<a href="#72" id="72">72</a>
+<a href="#73" id="73">73</a>
+<a href="#74" id="74">74</a>
+<a href="#75" id="75">75</a>
+<a href="#76" id="76">76</a>
+<a href="#77" id="77">77</a>
+<a href="#78" id="78">78</a>
+<a href="#79" id="79">79</a>
+<a href="#80" id="80">80</a>
+<a href="#81" id="81">81</a>
+<a href="#82" id="82">82</a>
+<a href="#83" id="83">83</a>
+<a href="#84" id="84">84</a>
+<a href="#85" id="85">85</a>
+<a href="#86" id="86">86</a>
+<a href="#87" id="87">87</a>
+<a href="#88" id="88">88</a>
+<a href="#89" id="89">89</a>
+<a href="#90" id="90">90</a>
+<a href="#91" id="91">91</a>
+<a href="#92" id="92">92</a>
+<a href="#93" id="93">93</a>
+<a href="#94" id="94">94</a>
+<a href="#95" id="95">95</a>
+<a href="#96" id="96">96</a>
+<a href="#97" id="97">97</a>
+<a href="#98" id="98">98</a>
+<a href="#99" id="99">99</a>
+<a href="#100" id="100">100</a>
+<a href="#101" id="101">101</a>
+<a href="#102" id="102">102</a>
+<a href="#103" id="103">103</a>
+<a href="#104" id="104">104</a>
+<a href="#105" id="105">105</a>
+<a href="#106" id="106">106</a>
+<a href="#107" id="107">107</a>
+<a href="#108" id="108">108</a>
+<a href="#109" id="109">109</a>
+<a href="#110" id="110">110</a>
+<a href="#111" id="111">111</a>
+<a href="#112" id="112">112</a>
+<a href="#113" id="113">113</a>
+<a href="#114" id="114">114</a>
+<a href="#115" id="115">115</a>
+<a href="#116" id="116">116</a>
+<a href="#117" id="117">117</a>
+<a href="#118" id="118">118</a>
+<a href="#119" id="119">119</a>
+<a href="#120" id="120">120</a>
+<a href="#121" id="121">121</a>
+<a href="#122" id="122">122</a>
+<a href="#123" id="123">123</a>
+<a href="#124" id="124">124</a>
+<a href="#125" id="125">125</a>
+<a href="#126" id="126">126</a>
+<a href="#127" id="127">127</a>
+<a href="#128" id="128">128</a>
+<a href="#129" id="129">129</a>
+<a href="#130" id="130">130</a>
+<a href="#131" id="131">131</a>
+<a href="#132" id="132">132</a>
+<a href="#133" id="133">133</a>
+<a href="#134" id="134">134</a>
+<a href="#135" id="135">135</a>
+<a href="#136" id="136">136</a>
+<a href="#137" id="137">137</a>
+<a href="#138" id="138">138</a>
+<a href="#139" id="139">139</a>
+<a href="#140" id="140">140</a>
+<a href="#141" id="141">141</a>
+<a href="#142" id="142">142</a>
+<a href="#143" id="143">143</a>
+<a href="#144" id="144">144</a>
+<a href="#145" id="145">145</a>
+<a href="#146" id="146">146</a>
+<a href="#147" id="147">147</a>
+<a href="#148" id="148">148</a>
+<a href="#149" id="149">149</a>
+<a href="#150" id="150">150</a>
+<a href="#151" id="151">151</a>
+<a href="#152" id="152">152</a>
+<a href="#153" id="153">153</a>
+<a href="#154" id="154">154</a>
+<a href="#155" id="155">155</a>
+<a href="#156" id="156">156</a>
+<a href="#157" id="157">157</a>
+<a href="#158" id="158">158</a>
+<a href="#159" id="159">159</a>
+<a href="#160" id="160">160</a>
+<a href="#161" id="161">161</a>
+<a href="#162" id="162">162</a>
+<a href="#163" id="163">163</a>
+<a href="#164" id="164">164</a>
+<a href="#165" id="165">165</a>
+<a href="#166" id="166">166</a>
+<a href="#167" id="167">167</a>
+<a href="#168" id="168">168</a>
+<a href="#169" id="169">169</a>
+<a href="#170" id="170">170</a>
+<a href="#171" id="171">171</a>
+<a href="#172" id="172">172</a>
+<a href="#173" id="173">173</a>
+<a href="#174" id="174">174</a>
+<a href="#175" id="175">175</a>
+<a href="#176" id="176">176</a>
+<a href="#177" id="177">177</a>
+<a href="#178" id="178">178</a>
+<a href="#179" id="179">179</a>
+<a href="#180" id="180">180</a>
+<a href="#181" id="181">181</a>
+<a href="#182" id="182">182</a>
+<a href="#183" id="183">183</a>
+<a href="#184" id="184">184</a>
+<a href="#185" id="185">185</a>
+<a href="#186" id="186">186</a>
+<a href="#187" id="187">187</a>
+<a href="#188" id="188">188</a>
+<a href="#189" id="189">189</a>
+<a href="#190" id="190">190</a>
+<a href="#191" id="191">191</a>
+<a href="#192" id="192">192</a>
+<a href="#193" id="193">193</a>
+<a href="#194" id="194">194</a>
+<a href="#195" id="195">195</a>
+<a href="#196" id="196">196</a>
+<a href="#197" id="197">197</a>
+<a href="#198" id="198">198</a>
+<a href="#199" id="199">199</a>
+<a href="#200" id="200">200</a>
+<a href="#201" id="201">201</a>
+<a href="#202" id="202">202</a>
+<a href="#203" id="203">203</a>
+<a href="#204" id="204">204</a>
+<a href="#205" id="205">205</a>
+<a href="#206" id="206">206</a>
+<a href="#207" id="207">207</a>
+<a href="#208" id="208">208</a>
+<a href="#209" id="209">209</a>
+<a href="#210" id="210">210</a>
+<a href="#211" id="211">211</a>
+<a href="#212" id="212">212</a>
+<a href="#213" id="213">213</a>
+<a href="#214" id="214">214</a>
+<a href="#215" id="215">215</a>
+<a href="#216" id="216">216</a>
+<a href="#217" id="217">217</a>
+<a href="#218" id="218">218</a>
+<a href="#219" id="219">219</a>
+<a href="#220" id="220">220</a>
+<a href="#221" id="221">221</a>
+<a href="#222" id="222">222</a>
+<a href="#223" id="223">223</a>
+<a href="#224" id="224">224</a>
+<a href="#225" id="225">225</a>
+<a href="#226" id="226">226</a>
+<a href="#227" id="227">227</a>
+<a href="#228" id="228">228</a>
+<a href="#229" id="229">229</a>
+<a href="#230" id="230">230</a>
+<a href="#231" id="231">231</a>
+<a href="#232" id="232">232</a>
+<a href="#233" id="233">233</a>
+<a href="#234" id="234">234</a>
+<a href="#235" id="235">235</a>
+<a href="#236" id="236">236</a>
+<a href="#237" id="237">237</a>
+<a href="#238" id="238">238</a>
+<a href="#239" id="239">239</a>
+<a href="#240" id="240">240</a>
+<a href="#241" id="241">241</a>
+<a href="#242" id="242">242</a>
+<a href="#243" id="243">243</a>
+<a href="#244" id="244">244</a>
+<a href="#245" id="245">245</a>
+<a href="#246" id="246">246</a>
+<a href="#247" id="247">247</a>
+<a href="#248" id="248">248</a>
+<a href="#249" id="249">249</a>
+<a href="#250" id="250">250</a>
+<a href="#251" id="251">251</a>
+<a href="#252" id="252">252</a>
+<a href="#253" id="253">253</a>
+<a href="#254" id="254">254</a>
+<a href="#255" id="255">255</a>
+<a href="#256" id="256">256</a>
+<a href="#257" id="257">257</a>
+<a href="#258" id="258">258</a>
+<a href="#259" id="259">259</a>
+<a href="#260" id="260">260</a>
+<a href="#261" id="261">261</a>
+<a href="#262" id="262">262</a>
+<a href="#263" id="263">263</a>
+<a href="#264" id="264">264</a>
+<a href="#265" id="265">265</a>
+<a href="#266" id="266">266</a>
+<a href="#267" id="267">267</a>
+<a href="#268" id="268">268</a>
+<a href="#269" id="269">269</a>
+<a href="#270" id="270">270</a>
+<a href="#271" id="271">271</a>
+<a href="#272" id="272">272</a>
+<a href="#273" id="273">273</a>
+<a href="#274" id="274">274</a>
+<a href="#275" id="275">275</a>
+<a href="#276" id="276">276</a>
+<a href="#277" id="277">277</a>
+<a href="#278" id="278">278</a>
+<a href="#279" id="279">279</a>
+<a href="#280" id="280">280</a>
+<a href="#281" id="281">281</a>
+<a href="#282" id="282">282</a>
+<a href="#283" id="283">283</a>
+<a href="#284" id="284">284</a>
+<a href="#285" id="285">285</a>
+<a href="#286" id="286">286</a>
+<a href="#287" id="287">287</a>
+<a href="#288" id="288">288</a>
+<a href="#289" id="289">289</a>
+<a href="#290" id="290">290</a>
+<a href="#291" id="291">291</a>
+<a href="#292" id="292">292</a>
+<a href="#293" id="293">293</a></pre></div><pre class="rust"><code><span class="doccomment">//! Implementations of [`Scripting`](spec::Group::Scripting) cheatcodes.
+
+</span><span class="kw">use crate</span>::{<a href="lib.rs.html#64-89">Cheatcode</a>, <a href="lib.rs.html#135-146">CheatsCtxt</a>, <a class="prelude-ty" href="error.rs.html#17">Result</a>, <a href="../../foundry_cheatcodes/Vm/index.html">Vm</a>::<span class="kw-2">*</span>};
+<span class="kw">use </span>alloy_primitives::{Address, PrimitiveSignature, B256, U256};
+<span class="kw">use </span>alloy_rpc_types::Authorization;
+<span class="kw">use </span>alloy_signer::SignerSync;
+<span class="kw">use </span>alloy_signer_local::PrivateKeySigner;
+<span class="kw">use </span>alloy_sol_types::SolValue;
+<span class="kw">use </span>foundry_wallets::{<a href="../../foundry_wallets/multi_wallet/struct.MultiWallet.html">multi_wallet::MultiWallet</a>, <a href="../../foundry_wallets/wallet_signer/enum.WalletSigner.html">WalletSigner</a>};
+<span class="kw">use </span>parking_lot::Mutex;
+<span class="kw">use </span>revm::primitives::{Bytecode, SignedAuthorization};
+<span class="kw">use </span><a href="https://doc.rust-lang.org/nightly/alloc/sync/struct.Arc.html">std::sync::Arc</a>;
+
+<span class="kw">impl </span><a href="lib.rs.html#64-89">Cheatcode</a> <span class="kw">for </span><a href="../../foundry_cheatcodes/Vm/struct.broadcast_0Call.html">broadcast_0Call</a> {
+    <span class="kw">fn </span>apply_stateful(<span class="kw-2">&amp;</span><span class="self">self</span>, ccx: <span class="kw-2">&amp;mut </span><a href="lib.rs.html#135-146">CheatsCtxt</a>) -&gt; <a class="prelude-ty" href="error.rs.html#17">Result</a> {
+        <span class="kw">let </span><span class="self">Self </span>{} = <a class="self" href="#15">self</a>;
+        <a href="#246-278">broadcast</a>(<a href="#15">ccx</a>, <a class="prelude-val" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html#variant.None">None</a>, <span class="bool-val">true</span>)
+    }
+}
+
+<span class="kw">impl </span><a href="lib.rs.html#64-89">Cheatcode</a> <span class="kw">for </span><a href="../../foundry_cheatcodes/Vm/struct.broadcast_1Call.html">broadcast_1Call</a> {
+    <span class="kw">fn </span>apply_stateful(<span class="kw-2">&amp;</span><span class="self">self</span>, ccx: <span class="kw-2">&amp;mut </span><a href="lib.rs.html#135-146">CheatsCtxt</a>) -&gt; <a class="prelude-ty" href="error.rs.html#17">Result</a> {
+        <span class="kw">let </span><span class="self">Self </span>{ signer } = <a class="self" href="#22">self</a>;
+        <a href="#246-278">broadcast</a>(<a href="#22">ccx</a>, <a class="prelude-val" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html#variant.Some">Some</a>(<a href="#23">signer</a>), <span class="bool-val">true</span>)
+    }
+}
+
+<span class="kw">impl </span><a href="lib.rs.html#64-89">Cheatcode</a> <span class="kw">for </span><a href="../../foundry_cheatcodes/Vm/struct.broadcast_2Call.html">broadcast_2Call</a> {
+    <span class="kw">fn </span>apply_stateful(<span class="kw-2">&amp;</span><span class="self">self</span>, ccx: <span class="kw-2">&amp;mut </span><a href="lib.rs.html#135-146">CheatsCtxt</a>) -&gt; <a class="prelude-ty" href="error.rs.html#17">Result</a> {
+        <span class="kw">let </span><span class="self">Self </span>{ privateKey } = <a class="self" href="#29">self</a>;
+        <a href="#283-293">broadcast_key</a>(<a href="#29">ccx</a>, <a href="#30">privateKey</a>, <span class="bool-val">true</span>)
+    }
+}
+
+<span class="kw">impl </span><a href="lib.rs.html#64-89">Cheatcode</a> <span class="kw">for </span><a href="../../foundry_cheatcodes/Vm/struct.attachDelegationCall.html">attachDelegationCall</a> {
+    <span class="kw">fn </span>apply_stateful(<span class="kw-2">&amp;</span><span class="self">self</span>, ccx: <span class="kw-2">&amp;mut </span><a href="lib.rs.html#135-146">CheatsCtxt</a>) -&gt; <a class="prelude-ty" href="error.rs.html#17">Result</a> {
+        <span class="kw">let </span><span class="self">Self </span>{ signedDelegation } = <a class="self" href="#36">self</a>;
+        <span class="kw">let </span><a href="../../foundry_cheatcodes/Vm/struct.SignedDelegation.html">SignedDelegation</a> { v, r, s, nonce, implementation } = <a href="#37">signedDelegation</a>;
+
+        <span class="kw">let </span>auth = Authorization {
+            address: <span class="kw-2">*</span><a href="#38">implementation</a>,
+            nonce: <span class="kw-2">*</span><a href="#38">nonce</a>,
+            chain_id: U256::from(<a href="#36">ccx</a>.ecx.env.cfg.chain_id),
+        };
+        <span class="kw">let </span>signed_auth = SignedAuthorization::new_unchecked(
+            <a href="#40">auth</a>,
+            <span class="kw-2">*</span><a href="#38">v</a>,
+            U256::from_be_bytes(<a href="#38">r</a>.<span class="number">0</span>),
+            U256::from_be_bytes(<a href="#38">s</a>.<span class="number">0</span>),
+        );
+        <a href="#99-109">write_delegation</a>(<a href="#36">ccx</a>, <a href="#45">signed_auth</a>.<a href="https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#tymethod.clone">clone</a>())<span class="question-mark">?</span>;
+        <a href="#36">ccx</a>.state.active_delegation = <a class="prelude-val" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html#variant.Some">Some</a>(<a href="#45">signed_auth</a>);
+        <a class="prelude-val" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html#variant.Ok">Ok</a>(<a href="https://doc.rust-lang.org/nightly/core/default/trait.Default.html#tymethod.default">Default::default</a>())
+    }
+}
+
+<span class="kw">impl </span><a href="lib.rs.html#64-89">Cheatcode</a> <span class="kw">for </span><a href="../../foundry_cheatcodes/Vm/struct.signDelegationCall.html">signDelegationCall</a> {
+    <span class="kw">fn </span>apply_stateful(<span class="kw-2">&amp;</span><span class="self">self</span>, ccx: <span class="kw-2">&amp;mut </span><a href="lib.rs.html#135-146">CheatsCtxt</a>) -&gt; <a class="prelude-ty" href="error.rs.html#17">Result</a> {
+        <span class="kw">let </span><span class="self">Self </span>{ implementation, privateKey } = <a class="self" href="#58">self</a>;
+        <span class="kw">let </span>signer = PrivateKeySigner::from_bytes(<span class="kw-2">&amp;</span><a href="https://doc.rust-lang.org/nightly/core/convert/trait.From.html#tymethod.from">B256::from</a>(<span class="kw-2">*</span><a href="#59">privateKey</a>))<span class="question-mark">?</span>;
+        <span class="kw">let </span>authority = <a href="#60">signer</a>.address();
+        <span class="kw">let </span>(auth, nonce) = <a href="#82-97">create_auth</a>(<a href="#58">ccx</a>, <span class="kw-2">*</span><a href="#59">implementation</a>, <a href="#61">authority</a>)<span class="question-mark">?</span>;
+        <span class="kw">let </span>sig = <a href="#60">signer</a>.sign_hash_sync(<span class="kw-2">&amp;</span><a href="#62">auth</a>.signature_hash())<span class="question-mark">?</span>;
+        <a class="prelude-val" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html#variant.Ok">Ok</a>(<a href="#111-123">sig_to_delegation</a>(<a href="#63">sig</a>, <a href="#62">nonce</a>, <span class="kw-2">*</span><a href="#59">implementation</a>).abi_encode())
+    }
+}
+
+<span class="kw">impl </span><a href="lib.rs.html#64-89">Cheatcode</a> <span class="kw">for </span><a href="../../foundry_cheatcodes/Vm/struct.signAndAttachDelegationCall.html">signAndAttachDelegationCall</a> {
+    <span class="kw">fn </span>apply_stateful(<span class="kw-2">&amp;</span><span class="self">self</span>, ccx: <span class="kw-2">&amp;mut </span><a href="lib.rs.html#135-146">CheatsCtxt</a>) -&gt; <a class="prelude-ty" href="error.rs.html#17">Result</a> {
+        <span class="kw">let </span><span class="self">Self </span>{ implementation, privateKey } = <a class="self" href="#69">self</a>;
+        <span class="kw">let </span>signer = PrivateKeySigner::from_bytes(<span class="kw-2">&amp;</span><a href="https://doc.rust-lang.org/nightly/core/convert/trait.From.html#tymethod.from">B256::from</a>(<span class="kw-2">*</span><a href="#70">privateKey</a>))<span class="question-mark">?</span>;
+        <span class="kw">let </span>authority = <a href="#71">signer</a>.address();
+        <span class="kw">let </span>(auth, nonce) = <a href="#82-97">create_auth</a>(<a href="#69">ccx</a>, <span class="kw-2">*</span><a href="#70">implementation</a>, <a href="#72">authority</a>)<span class="question-mark">?</span>;
+        <span class="kw">let </span>sig = <a href="#71">signer</a>.sign_hash_sync(<span class="kw-2">&amp;</span><a href="#73">auth</a>.signature_hash())<span class="question-mark">?</span>;
+        <span class="kw">let </span>signed_auth = <a href="#125-127">sig_to_auth</a>(<a href="#74">sig</a>, <a href="#73">auth</a>);
+        <a href="#99-109">write_delegation</a>(<a href="#69">ccx</a>, <a href="#75">signed_auth</a>.<a href="https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#tymethod.clone">clone</a>())<span class="question-mark">?</span>;
+        <a href="#69">ccx</a>.state.active_delegation = <a class="prelude-val" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html#variant.Some">Some</a>(<a href="#75">signed_auth</a>);
+        <a class="prelude-val" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html#variant.Ok">Ok</a>(<a href="#111-123">sig_to_delegation</a>(<a href="#74">sig</a>, <a href="#73">nonce</a>, <span class="kw-2">*</span><a href="#70">implementation</a>).abi_encode())
+    }
+}
+
+<span class="kw">fn </span><a href="../../foundry_cheatcodes/script/fn.create_auth.html">create_auth</a>(
+    ccx: <span class="kw-2">&amp;mut </span><a href="lib.rs.html#135-146">CheatsCtxt</a>,
+    implementation: Address,
+    authority: Address,
+) -&gt; <a class="prelude-ty" href="error.rs.html#17">Result</a>&lt;(Authorization, <a href="https://doc.rust-lang.org/nightly/std/primitive.u64.html">u64</a>)&gt; {
+    <span class="kw">let </span>authority_acc = <a href="#83">ccx</a>.ecx.journaled_state.load_account(<a href="#85">authority</a>, <span class="kw-2">&amp;mut </span><a href="#83">ccx</a>.ecx.db)<span class="question-mark">?</span>;
+    <span class="kw">let </span>nonce = <a href="#87">authority_acc</a>.data.info.nonce;
+    <a class="prelude-val" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html#variant.Ok">Ok</a>((
+        Authorization {
+            address: <a href="#84">implementation</a>,
+            <a href="#88">nonce</a>,
+            chain_id: U256::from(<a href="#83">ccx</a>.ecx.env.cfg.chain_id),
+        },
+        <a href="#88">nonce</a>,
+    ))
+}
+
+<span class="kw">fn </span><a href="../../foundry_cheatcodes/script/fn.write_delegation.html">write_delegation</a>(ccx: <span class="kw-2">&amp;mut </span><a href="lib.rs.html#135-146">CheatsCtxt</a>, auth: SignedAuthorization) -&gt; <a class="prelude-ty" href="error.rs.html#17">Result</a>&lt;()&gt; {
+    <span class="kw">let </span>authority = <a href="#99">auth</a>.recover_authority().<a href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html#method.map_err">map_err</a>(|e| <a class="macro" href="https://doc.rust-lang.org/nightly/alloc/macro.format.html">format!</a>(<span class="string">"{e}"</span>))<span class="question-mark">?</span>;
+    <span class="kw">let </span>authority_acc = <a href="#99">ccx</a>.ecx.journaled_state.load_account(<a href="#100">authority</a>, <span class="kw-2">&amp;mut </span><a href="#99">ccx</a>.ecx.db)<span class="question-mark">?</span>;
+    <span class="kw">if </span>authority_acc.data.info.nonce != auth.nonce {
+        <span class="kw">return </span><a class="prelude-val" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html#variant.Err">Err</a>(<span class="string">"invalid nonce"</span>.<a href="https://doc.rust-lang.org/nightly/core/convert/trait.Into.html#tymethod.into">into</a>());
+    }
+    <a href="#101">authority_acc</a>.data.info.nonce += <span class="number">1</span>;
+    <span class="kw">let </span>bytecode = Bytecode::new_eip7702(<span class="kw-2">*</span><a href="#99">auth</a>.address());
+    <a href="#99">ccx</a>.ecx.journaled_state.set_code(<a href="#100">authority</a>, <a href="#106">bytecode</a>);
+    <a class="prelude-val" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html#variant.Ok">Ok</a>(())
+}
+
+<span class="kw">fn </span><a href="../../foundry_cheatcodes/script/fn.sig_to_delegation.html">sig_to_delegation</a>(
+    sig: PrimitiveSignature,
+    nonce: <a href="https://doc.rust-lang.org/nightly/std/primitive.u64.html">u64</a>,
+    implementation: Address,
+) -&gt; <a href="../../foundry_cheatcodes/Vm/struct.SignedDelegation.html">SignedDelegation</a> {
+    <a href="../../foundry_cheatcodes/Vm/struct.SignedDelegation.html">SignedDelegation</a> {
+        v: <a href="#112">sig</a>.v() <span class="kw">as </span><a href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a>,
+        r: <a href="#112">sig</a>.r().<a href="https://doc.rust-lang.org/nightly/core/convert/trait.Into.html#tymethod.into">into</a>(),
+        s: <a href="#112">sig</a>.s().<a href="https://doc.rust-lang.org/nightly/core/convert/trait.Into.html#tymethod.into">into</a>(),
+        <a href="#113">nonce</a>,
+        <a href="#114">implementation</a>,
+    }
+}
+
+<span class="kw">fn </span><a href="../../foundry_cheatcodes/script/fn.sig_to_auth.html">sig_to_auth</a>(sig: PrimitiveSignature, auth: Authorization) -&gt; SignedAuthorization {
+    SignedAuthorization::new_unchecked(<a href="#125">auth</a>, <a href="#125">sig</a>.v() <span class="kw">as </span><a href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a>, <a href="#125">sig</a>.r(), <a href="#125">sig</a>.s())
+}
+
+<span class="kw">impl </span><a href="lib.rs.html#64-89">Cheatcode</a> <span class="kw">for </span><a href="../../foundry_cheatcodes/Vm/struct.startBroadcast_0Call.html">startBroadcast_0Call</a> {
+    <span class="kw">fn </span>apply_stateful(<span class="kw-2">&amp;</span><span class="self">self</span>, ccx: <span class="kw-2">&amp;mut </span><a href="lib.rs.html#135-146">CheatsCtxt</a>) -&gt; <a class="prelude-ty" href="error.rs.html#17">Result</a> {
+        <span class="kw">let </span><span class="self">Self </span>{} = <a class="self" href="#130">self</a>;
+        <a href="#246-278">broadcast</a>(<a href="#130">ccx</a>, <a class="prelude-val" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html#variant.None">None</a>, <span class="bool-val">false</span>)
+    }
+}
+
+<span class="kw">impl </span><a href="lib.rs.html#64-89">Cheatcode</a> <span class="kw">for </span><a href="../../foundry_cheatcodes/Vm/struct.startBroadcast_1Call.html">startBroadcast_1Call</a> {
+    <span class="kw">fn </span>apply_stateful(<span class="kw-2">&amp;</span><span class="self">self</span>, ccx: <span class="kw-2">&amp;mut </span><a href="lib.rs.html#135-146">CheatsCtxt</a>) -&gt; <a class="prelude-ty" href="error.rs.html#17">Result</a> {
+        <span class="kw">let </span><span class="self">Self </span>{ signer } = <a class="self" href="#137">self</a>;
+        <a href="#246-278">broadcast</a>(<a href="#137">ccx</a>, <a class="prelude-val" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html#variant.Some">Some</a>(<a href="#138">signer</a>), <span class="bool-val">false</span>)
+    }
+}
+
+<span class="kw">impl </span><a href="lib.rs.html#64-89">Cheatcode</a> <span class="kw">for </span><a href="../../foundry_cheatcodes/Vm/struct.startBroadcast_2Call.html">startBroadcast_2Call</a> {
+    <span class="kw">fn </span>apply_stateful(<span class="kw-2">&amp;</span><span class="self">self</span>, ccx: <span class="kw-2">&amp;mut </span><a href="lib.rs.html#135-146">CheatsCtxt</a>) -&gt; <a class="prelude-ty" href="error.rs.html#17">Result</a> {
+        <span class="kw">let </span><span class="self">Self </span>{ privateKey } = <a class="self" href="#144">self</a>;
+        <a href="#283-293">broadcast_key</a>(<a href="#144">ccx</a>, <a href="#145">privateKey</a>, <span class="bool-val">false</span>)
+    }
+}
+
+<span class="kw">impl </span><a href="lib.rs.html#64-89">Cheatcode</a> <span class="kw">for </span><a href="../../foundry_cheatcodes/Vm/struct.stopBroadcastCall.html">stopBroadcastCall</a> {
+    <span class="kw">fn </span>apply_stateful(<span class="kw-2">&amp;</span><span class="self">self</span>, ccx: <span class="kw-2">&amp;mut </span><a href="lib.rs.html#135-146">CheatsCtxt</a>) -&gt; <a class="prelude-ty" href="error.rs.html#17">Result</a> {
+        <span class="kw">let </span><span class="self">Self </span>{} = <a class="self" href="#151">self</a>;
+        <span class="kw">let </span><a class="prelude-val" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html#variant.Some">Some</a>(broadcast) = <a href="#151">ccx</a>.state.broadcast.<a href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html#method.take">take</a>() <span class="kw">else </span>{
+            <a class="macro" href="error.rs.html#31-41">bail!</a>(<span class="string">"no broadcast in progress to stop"</span>);
+        };
+        <span class="macro">debug!</span>(target: <span class="string">"cheatcodes"</span>, <span class="question-mark">?</span>broadcast, <span class="string">"stopped"</span>);
+        <a class="prelude-val" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html#variant.Ok">Ok</a>(<a href="https://doc.rust-lang.org/nightly/core/default/trait.Default.html#tymethod.default">Default::default</a>())
+    }
+}
+
+<span class="kw">impl </span><a href="lib.rs.html#64-89">Cheatcode</a> <span class="kw">for </span><a href="../../foundry_cheatcodes/Vm/struct.getWalletsCall.html">getWalletsCall</a> {
+    <span class="kw">fn </span>apply_stateful(<span class="kw-2">&amp;</span><span class="self">self</span>, ccx: <span class="kw-2">&amp;mut </span><a href="lib.rs.html#135-146">CheatsCtxt</a>) -&gt; <a class="prelude-ty" href="error.rs.html#17">Result</a> {
+        <span class="kw">let </span>wallets = <a href="#162">ccx</a>.state.<a href="inspector.rs.html#544-546">wallets</a>().<a href="#225-227">signers</a>().<a href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html#method.unwrap_or_default">unwrap_or_default</a>();
+        <a class="prelude-val" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html#variant.Ok">Ok</a>(<a href="#163">wallets</a>.abi_encode())
+    }
+}
+
+<span class="attr">#[derive(Clone, Debug, Default)]
+</span><span class="kw">pub struct </span><a href="../../foundry_cheatcodes/script/struct.Broadcast.html">Broadcast</a> {
+    <span class="doccomment">/// Address of the transaction origin
+    </span><span class="kw">pub </span>new_origin: Address,
+    <span class="doccomment">/// Original caller
+    </span><span class="kw">pub </span>original_caller: Address,
+    <span class="doccomment">/// Original `tx.origin`
+    </span><span class="kw">pub </span>original_origin: Address,
+    <span class="doccomment">/// Depth of the broadcast
+    </span><span class="kw">pub </span>depth: <a href="https://doc.rust-lang.org/nightly/std/primitive.u64.html">u64</a>,
+    <span class="doccomment">/// Whether the prank stops by itself after the next call
+    </span><span class="kw">pub </span>single_call: <a href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a>,
+}
+
+<span class="doccomment">/// Contains context for wallet management.
+</span><span class="attr">#[derive(Debug)]
+</span><span class="kw">pub struct </span><a href="../../foundry_cheatcodes/struct.WalletsInner.html">WalletsInner</a> {
+    <span class="doccomment">/// All signers in scope of the script.
+    </span><span class="kw">pub </span>multi_wallet: <a href="../../foundry_wallets/multi_wallet/struct.MultiWallet.html">MultiWallet</a>,
+    <span class="doccomment">/// Optional signer provided as `--sender` flag.
+    </span><span class="kw">pub </span>provided_sender: <a class="prelude-ty" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html">Option</a>&lt;Address&gt;,
+}
+
+<span class="doccomment">/// Clonable wrapper around [`WalletsInner`].
+</span><span class="attr">#[derive(Debug, Clone)]
+</span><span class="kw">pub struct </span><a href="../../foundry_cheatcodes/struct.Wallets.html">Wallets</a> {
+    <span class="doccomment">/// Inner data.
+    </span><span class="kw">pub </span>inner: <a href="https://doc.rust-lang.org/nightly/alloc/sync/struct.Arc.html">Arc</a>&lt;Mutex&lt;<a href="#184-189">WalletsInner</a>&gt;&gt;,
+}
+
+<span class="kw">impl </span><a href="#193-196">Wallets</a> {
+    <span class="attr">#[allow(missing_docs)]
+    </span><span class="kw">pub fn </span>new(multi_wallet: <a href="../../foundry_wallets/multi_wallet/struct.MultiWallet.html">MultiWallet</a>, provided_sender: <a class="prelude-ty" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html">Option</a>&lt;Address&gt;) -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{ inner: <a href="https://doc.rust-lang.org/nightly/alloc/sync/struct.Arc.html#method.new">Arc::new</a>(Mutex::new(<a href="#184-189">WalletsInner</a> { <a href="#200">multi_wallet</a>, <a href="#200">provided_sender</a> })) }
+    }
+
+    <span class="doccomment">/// Consumes [Wallets] and returns [MultiWallet].
+    ///
+    /// Panics if [Wallets] is still in use.
+    </span><span class="kw">pub fn </span>into_multi_wallet(<span class="self">self</span>) -&gt; <a href="../../foundry_wallets/multi_wallet/struct.MultiWallet.html">MultiWallet</a> {
+        <a href="https://doc.rust-lang.org/nightly/alloc/sync/struct.Arc.html#method.into_inner">Arc::into_inner</a>(<a class="self" href="#207">self</a>.inner)
+            .<a href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html#method.map">map</a>(|m| <a href="#209">m</a>.into_inner().multi_wallet)
+            .<a href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html#method.unwrap_or_else">unwrap_or_else</a>(|| <a class="macro" href="https://doc.rust-lang.org/nightly/std/macro.panic.html">panic!</a>(<span class="string">"not all instances were dropped"</span>))
+    }
+
+    <span class="doccomment">/// Locks inner Mutex and adds a signer to the [MultiWallet].
+    </span><span class="kw">pub fn </span>add_private_key(<span class="kw-2">&amp;</span><span class="self">self</span>, private_key: <span class="kw-2">&amp;</span>B256) -&gt; <a class="prelude-ty" href="error.rs.html#17">Result</a>&lt;()&gt; {
+        <a class="self" href="#214">self</a>.<a href="#220-222">add_local_signer</a>(PrivateKeySigner::from_bytes(<a href="#214">private_key</a>)<span class="question-mark">?</span>);
+        <a class="prelude-val" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html#variant.Ok">Ok</a>(())
+    }
+
+    <span class="doccomment">/// Locks inner Mutex and adds a signer to the [MultiWallet].
+    </span><span class="kw">pub fn </span>add_local_signer(<span class="kw-2">&amp;</span><span class="self">self</span>, wallet: PrivateKeySigner) {
+        <a class="self" href="#220">self</a>.inner.lock().multi_wallet.<a href="../../foundry_wallets/multi_wallet/struct.MultiWallet.html#method.add_signer">add_signer</a>(<a href="../../foundry_wallets/wallet_signer/enum.WalletSigner.html#variant.Local">WalletSigner::Local</a>(<a href="#220">wallet</a>));
+    }
+
+    <span class="doccomment">/// Locks inner Mutex and returns all signer addresses in the [MultiWallet].
+    </span><span class="kw">pub fn </span>signers(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <a class="prelude-ty" href="error.rs.html#17">Result</a>&lt;<a href="https://doc.rust-lang.org/nightly/alloc/vec/struct.Vec.html">Vec</a>&lt;Address&gt;&gt; {
+        <a class="prelude-val" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html#variant.Ok">Ok</a>(<a class="self" href="#225">self</a>.inner.lock().multi_wallet.<a href="../../foundry_wallets/multi_wallet/struct.MultiWallet.html#method.signers">signers</a>()<span class="question-mark">?</span>.<a href="https://doc.rust-lang.org/nightly/std/collections/hash/map/struct.HashMap.html#method.keys">keys</a>().<a href="https://doc.rust-lang.org/nightly/core/iter/traits/iterator/trait.Iterator.html#tymethod.cloned">cloned</a>().<a href="https://doc.rust-lang.org/nightly/core/iter/traits/iterator/trait.Iterator.html#tymethod.collect">collect</a>())
+    }
+
+    <span class="doccomment">/// Number of signers in the [MultiWallet].
+    </span><span class="kw">pub fn </span>len(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <a href="https://doc.rust-lang.org/nightly/std/primitive.usize.html">usize</a> {
+        <span class="kw">let </span><span class="kw-2">mut </span>inner = <a class="self" href="#230">self</a>.inner.lock();
+        <span class="kw">let </span>signers = <a href="#231">inner</a>.multi_wallet.<a href="../../foundry_wallets/multi_wallet/struct.MultiWallet.html#method.signers">signers</a>();
+        <span class="kw">if </span>signers.is_err() {
+            <span class="kw">return </span><span class="number">0</span>;
+        }
+        <a href="#232">signers</a>.<a href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html#method.unwrap">unwrap</a>().<a href="https://doc.rust-lang.org/nightly/std/collections/hash/map/struct.HashMap.html#method.len">len</a>()
+    }
+
+    <span class="doccomment">/// Whether the [MultiWallet] is empty.
+    </span><span class="kw">pub fn </span>is_empty(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <a href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a> {
+        <a class="self" href="#240">self</a>.<a href="#230-237">len</a>() == <span class="number">0
+    </span>}
+}
+
+<span class="doccomment">/// Sets up broadcasting from a script using `new_origin` as the sender.
+</span><span class="kw">fn </span><a href="../../foundry_cheatcodes/script/fn.broadcast.html">broadcast</a>(ccx: <span class="kw-2">&amp;mut </span><a href="lib.rs.html#135-146">CheatsCtxt</a>, new_origin: <a class="prelude-ty" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html">Option</a>&lt;<span class="kw-2">&amp;</span>Address&gt;, single_call: <a href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a>) -&gt; <a class="prelude-ty" href="error.rs.html#17">Result</a> {
+    <a class="macro" href="error.rs.html#43-66">ensure!</a>(
+        ccx.state.prank.is_none(),
+        <span class="string">"you have an active prank; broadcasting and pranks are not compatible"
+    </span>);
+    <a class="macro" href="error.rs.html#43-66">ensure!</a>(ccx.state.broadcast.is_none(), <span class="string">"a broadcast is active already"</span>);
+
+    <span class="kw">let </span><span class="kw-2">mut </span>new_origin = <a href="#246">new_origin</a>.<a href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html#method.cloned">cloned</a>();
+
+    <span class="kw">if </span>new_origin.is_none() {
+        <span class="kw">let </span><span class="kw-2">mut </span>wallets = <a href="#246">ccx</a>.state.<a href="inspector.rs.html#544-546">wallets</a>().inner.lock();
+        <span class="kw">if let </span><a class="prelude-val" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html#variant.Some">Some</a>(provided_sender) = <a href="#256">wallets</a>.provided_sender {
+            <a href="#253">new_origin</a> = <a class="prelude-val" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html#variant.Some">Some</a>(<a href="#257">provided_sender</a>);
+        } <span class="kw">else </span>{
+            <span class="kw">let </span>signers = <a href="#256">wallets</a>.multi_wallet.<a href="../../foundry_wallets/multi_wallet/struct.MultiWallet.html#method.signers">signers</a>()<span class="question-mark">?</span>;
+            <span class="kw">if </span>signers.len() == <span class="number">1 </span>{
+                <span class="kw">let </span>address = <a href="#260">signers</a>.<a href="https://doc.rust-lang.org/nightly/std/collections/hash/map/struct.HashMap.html#method.keys">keys</a>().<a href="https://doc.rust-lang.org/nightly/core/iter/traits/iterator/trait.Iterator.html#tymethod.next">next</a>().<a href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html#method.unwrap">unwrap</a>();
+                <a href="#253">new_origin</a> = <a class="prelude-val" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html#variant.Some">Some</a>(<span class="kw-2">*</span><a href="#262">address</a>);
+            }
+        }
+    }
+
+    <span class="kw">let </span>broadcast = <a href="#169-180">Broadcast</a> {
+        new_origin: <a href="#253">new_origin</a>.<a href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html#method.unwrap_or">unwrap_or</a>(<a href="#246">ccx</a>.ecx.env.tx.caller),
+        original_caller: <a href="#246">ccx</a>.caller,
+        original_origin: <a href="#246">ccx</a>.ecx.env.tx.caller,
+        depth: <a href="#246">ccx</a>.ecx.journaled_state.depth(),
+        <a href="#246">single_call</a>,
+    };
+    <span class="macro">debug!</span>(target: <span class="string">"cheatcodes"</span>, <span class="question-mark">?</span>broadcast, <span class="string">"started"</span>);
+    <a href="#246">ccx</a>.state.broadcast = <a class="prelude-val" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html#variant.Some">Some</a>(<a href="#268">broadcast</a>);
+    <a class="prelude-val" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html#variant.Ok">Ok</a>(<a href="https://doc.rust-lang.org/nightly/core/default/trait.Default.html#tymethod.default">Default::default</a>())
+}
+
+<span class="doccomment">/// Sets up broadcasting from a script with the sender derived from `private_key`.
+/// Adds this private key to `state`'s `wallets` vector to later be used for signing
+/// if broadcast is successful.
+</span><span class="kw">fn </span><a href="../../foundry_cheatcodes/script/fn.broadcast_key.html">broadcast_key</a>(ccx: <span class="kw-2">&amp;mut </span><a href="lib.rs.html#135-146">CheatsCtxt</a>, private_key: <span class="kw-2">&amp;</span>U256, single_call: <a href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a>) -&gt; <a class="prelude-ty" href="error.rs.html#17">Result</a> {
+    <span class="kw">let </span>wallet = <a href="crypto.rs.html#307-309"><span class="kw">super</span>::crypto::parse_wallet</a>(<a href="#283">private_key</a>)<span class="question-mark">?</span>;
+    <span class="kw">let </span>new_origin = <a href="#284">wallet</a>.address();
+
+    <span class="kw">let </span>result = <a href="#246-278">broadcast</a>(<a href="#283">ccx</a>, <a class="prelude-val" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html#variant.Some">Some</a>(<span class="kw-2">&amp;</span><a href="#285">new_origin</a>), <a href="#283">single_call</a>);
+    <span class="kw">if </span>result.is_ok() {
+        <span class="kw">let </span>wallets = <a href="#283">ccx</a>.state.<a href="inspector.rs.html#544-546">wallets</a>();
+        <a href="#289">wallets</a>.<a href="#220-222">add_local_signer</a>(<a href="#284">wallet</a>);
+    }
+    <a href="#287">result</a>
+}
+</code></pre></div></section></main></body></html>

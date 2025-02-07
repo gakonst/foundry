@@ -1,0 +1,54 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="A macro to implement converters from a type to `Config` and `figment::Figment`."><title>impl_figment_convert in foundry_config - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../static.files/rustdoc-cf3c48c1.css"><meta name="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="foundry_config" data-themes="" data-resource-suffix="" data-rustdoc-version="1.86.0-nightly (942db6782 2025-02-06)" data-channel="nightly" data-search-js="search-581efc7a.js" data-settings-js="settings-6dad6058.js" ><script src="../static.files/storage-3a5871a4.js"></script><script defer src="sidebar-items.js"></script><script defer src="../static.files/main-4d63596a.js"></script><noscript><link rel="stylesheet" href="../static.files/noscript-893ab5e7.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-044be391.svg"></head><body class="rustdoc macro"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../foundry_config/index.html">foundry_<wbr>config</a><span class="version">1.0.0</span></h2></div><div class="sidebar-elems"><section id="rustdoc-toc"><h2 class="location"><a href="#">impl_<wbr>figment_<wbr>convert</a></h2><h3><a href="#">Sections</a></h3><ul class="block top-toc"><li><a href="#example" title="Example">Example</a></li></ul></section><div id="rustdoc-modnav"><h2 class="in-crate"><a href="index.html">In crate foundry_<wbr>config</a></h2></div></div></nav><div class="sidebar-resizer"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><div class="rustdoc-breadcrumbs"><a href="index.html">foundry_config</a></div><h1>Macro <span class="macro">impl_figment_convert</span><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><rustdoc-toolbar></rustdoc-toolbar><span class="sub-heading"><a class="src" href="../src/foundry_config/macros.rs.html#57-88">Source</a> </span></div><pre class="rust item-decl"><code>macro_rules! impl_figment_convert {
+    ($name:ty) =&gt; { ... };
+    ($name:ty, $start:ident $(, $more:ident)*) =&gt; { ... };
+    ($name:ty, self, $start:ident $(, $more:ident)*) =&gt; { ... };
+}</code></pre><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>A macro to implement converters from a type to <a href="struct.Config.html" title="struct foundry_config::Config"><code>Config</code></a> and
+[<code>figment::Figment</code>].</p>
+<p>This can be used to remove some boilerplate code that’s necessary to add additional layer(s) to
+the <code>Config</code>’s default <code>Figment</code>.</p>
+<p><code>impl_figment</code> takes the default <code>Config</code> and merges additional <code>Provider</code>, therefore the
+targeted type, requires an implementation of <code>figment::Profile</code>.</p>
+<h2 id="example"><a class="doc-anchor" href="#example">§</a>Example</h2>
+<p>Use <code>impl_figment</code> on a type with a <code>root: Option&lt;PathBuf&gt;</code> field, which will be used for
+<a href="struct.Config.html#method.figment_with_root" title="associated function foundry_config::Config::figment_with_root"><code>Config::figment_with_root()</code></a>.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>std::path::PathBuf;
+<span class="kw">use </span>serde::Serialize;
+<span class="kw">use </span>foundry_config::{Config, impl_figment_convert};
+<span class="kw">use </span>foundry_config::figment::<span class="kw-2">*</span>;
+<span class="kw">use </span>foundry_config::figment::error::Kind::InvalidType;
+<span class="kw">use </span>foundry_config::figment::value::<span class="kw-2">*</span>;
+<span class="attr">#[derive(Default, Serialize)]
+</span><span class="kw">struct </span>MyArgs {
+    <span class="attr">#[serde(skip_serializing_if = <span class="string">"Option::is_none"</span>)]
+    </span>root: <span class="prelude-ty">Option</span>&lt;PathBuf&gt;,
+}
+<span class="macro">impl_figment_convert!</span>(MyArgs);
+
+<span class="kw">impl </span>Provider <span class="kw">for </span>MyArgs {
+    <span class="kw">fn </span>metadata(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Metadata {
+        Metadata::default()
+    }
+
+    <span class="kw">fn </span>data(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; std::result::Result&lt;Map&lt;Profile, Dict&gt;, Error&gt; {
+        <span class="kw">let </span>value = Value::serialize(<span class="self">self</span>)<span class="question-mark">?</span>;
+        <span class="kw">let </span>error = InvalidType(value.to_actual(), <span class="string">"map"</span>.into());
+        <span class="kw">let </span><span class="kw-2">mut </span>dict = value.into_dict().ok_or(error)<span class="question-mark">?</span>;
+        <span class="prelude-val">Ok</span>(Map::from([(Config::selected_profile(), dict)]))
+    }
+}
+
+<span class="kw">let </span>figment: Figment = From::from(<span class="kw-2">&amp;</span>MyArgs::default());
+
+ <span class="comment">// Use `impl_figment` on a type that has several nested `Provider` as fields but is _not_ a `Provider` itself
+
+</span><span class="attr">#[derive(Default)]
+</span><span class="kw">struct </span>Outer {
+    start: MyArgs,
+    second: MyArgs,
+    third: MyArgs,
+}
+<span class="macro">impl_figment_convert!</span>(Outer, start, second, third);
+
+<span class="kw">let </span>figment: Figment = From::from(<span class="kw-2">&amp;</span>Outer::default());</code></pre></div>
+</div></details></section></div></main></body></html>

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["build_typed_transaction"],"struct":["DevSigner"],"trait":["Signer"]};

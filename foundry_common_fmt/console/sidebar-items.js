@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["FormatSpec","ParseArgError","Piece"],"fn":["console_format","format_spec"],"struct":["Parser"],"trait":["ConsoleFmt"]};

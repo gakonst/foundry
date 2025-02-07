@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":["Enum","EnumVariant","Error","Event","Struct","StructField"]};

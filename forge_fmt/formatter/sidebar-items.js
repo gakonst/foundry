@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["FormatterError"],"macro":["bail","format_err"],"struct":["Context","Formatter","Transaction"],"type":["Result"]};

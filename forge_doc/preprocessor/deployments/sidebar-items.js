@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["DEPLOYMENTS_ID"],"struct":["Deployment","Deployments"]};

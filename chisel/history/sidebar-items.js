@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["CHISEL_HISTORY_FILE_NAME"],"fn":["chisel_history_file"]};

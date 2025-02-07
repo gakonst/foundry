@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"macro":["node_info"]};

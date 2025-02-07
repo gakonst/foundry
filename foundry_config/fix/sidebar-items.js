@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["fix_toml_non_strict_profiles","fix_tomls"],"struct":["InsertProfileError","TomlFile"]};

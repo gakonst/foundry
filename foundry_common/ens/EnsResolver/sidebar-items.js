@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["EnsResolverCalls"],"fn":["new"],"struct":["EnsResolverInstance","addrCall","addrReturn","nameCall","nameReturn"]};

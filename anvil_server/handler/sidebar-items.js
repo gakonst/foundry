@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["handle","handle_call","handle_request"]};

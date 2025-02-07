@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":["Block","BlockInfo","PartialHeader"],"type":["Transaction"]};

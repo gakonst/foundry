@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["find_anchor_branch","find_anchor_simple","find_anchors"]};

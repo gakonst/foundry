@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["prank"],"struct":["Prank"]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["BackendError","DatabaseError"],"type":["BackendResult","DatabaseResult"]};

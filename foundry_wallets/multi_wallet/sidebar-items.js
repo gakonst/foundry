@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["MultiWalletOptsBuilderError"],"macro":["create_hw_wallets"],"struct":["MultiWallet","MultiWalletOpts","MultiWalletOptsBuilder"]};

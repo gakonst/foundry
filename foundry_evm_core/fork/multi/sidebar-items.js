@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["ForkTask","Request"],"fn":["create_fork"],"struct":["CreatedFork","ForkId","MultiFork","MultiForkHandler","ShutDownMultiFork"],"type":["CreateFuture","CreateSender","GetEnvSender","Handler"]};

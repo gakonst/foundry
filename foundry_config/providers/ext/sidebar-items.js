@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":["BackwardsCompatTomlProvider","DappEnvCompatProvider","DappHardhatDirProvider","FallbackProfileProvider","ForcedSnakeCaseData","OptionalStrictProfileProvider","RenameProfileProvider","TomlFileProvider","UnwrapProfileProvider","WrapProfileProvider"],"trait":["ProviderExt"]};

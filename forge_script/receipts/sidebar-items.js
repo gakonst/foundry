@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["TxStatus"],"fn":["check_tx_status","format_receipt"]};

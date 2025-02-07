@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["INLINE_CONFIG_PREFIX"],"enum":["InlineConfigErrorKind"],"fn":["extend_data_map","extend_dict","extend_value"],"mod":["natspec"],"struct":["InlineConfig","InlineConfigError","InlineConfigProvider"],"type":["DataMap"]};

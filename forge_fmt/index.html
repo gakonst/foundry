@@ -1,0 +1,170 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Formatter (`fmt`)"><title>forge_fmt - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../static.files/rustdoc-cf3c48c1.css"><meta name="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="forge_fmt" data-themes="" data-resource-suffix="" data-rustdoc-version="1.86.0-nightly (942db6782 2025-02-06)" data-channel="nightly" data-search-js="search-581efc7a.js" data-settings-js="settings-6dad6058.js" ><script src="../static.files/storage-3a5871a4.js"></script><script defer src="../crates.js"></script><script defer src="../static.files/main-4d63596a.js"></script><noscript><link rel="stylesheet" href="../static.files/noscript-893ab5e7.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-044be391.svg"></head><body class="rustdoc mod crate"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../forge_fmt/index.html">forge_<wbr>fmt</a><span class="version">1.0.0</span></h2></div><div class="sidebar-elems"><ul class="block"><li><a id="all-types" href="all.html">All Items</a></li></ul><section id="rustdoc-toc"><h3><a href="#">Sections</a></h3><ul class="block top-toc"><li><a href="#formatter-fmt" title="Formatter (`fmt`)">Formatter (<code>fmt</code>)</a><ul><li><a href="#architecture" title="Architecture">Architecture</a></li><li><a href="#contributing" title="Contributing">Contributing</a></li></ul></li></ul><h3><a href="#reexports">Crate Items</a></h3><ul class="block"><li><a href="#reexports" title="Re-exports">Re-exports</a></li><li><a href="#modules" title="Modules">Modules</a></li><li><a href="#structs" title="Structs">Structs</a></li><li><a href="#enums" title="Enums">Enums</a></li><li><a href="#functions" title="Functions">Functions</a></li></ul></section><div id="rustdoc-modnav"></div></div></nav><div class="sidebar-resizer"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1>Crate <span>forge_fmt</span><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><rustdoc-toolbar></rustdoc-toolbar><span class="sub-heading"><a class="src" href="../src/forge_fmt/lib.rs.html#1-27">Source</a> </span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><h2 id="formatter-fmt"><a class="doc-anchor" href="#formatter-fmt">§</a>Formatter (<code>fmt</code>)</h2>
+<p>Solidity formatter that respects (some parts of)
+the <a href="https://docs.soliditylang.org/en/latest/style-guide.html">Style Guide</a> and
+is tested on the <a href="https://github.com/prettier-solidity/prettier-plugin-solidity">Prettier Solidity Plugin</a> cases.</p>
+<h3 id="architecture"><a class="doc-anchor" href="#architecture">§</a>Architecture</h3>
+<p>The formatter works in two steps:</p>
+<ol>
+<li>Parse Solidity source code with <a href="https://github.com/hyperledger-labs/solang">solang</a> into the PT (Parse Tree)
+(not the same as Abstract Syntax Tree, <a href="https://stackoverflow.com/a/9864571">see difference</a>).</li>
+<li>Walk the PT and output new source code that’s compliant with provided config and rule set.</li>
+</ol>
+<p>The technique for walking the tree is based on <a href="https://en.wikipedia.org/wiki/Visitor_pattern">Visitor Pattern</a>
+and works as following:</p>
+<ol>
+<li>Implement <code>Formatter</code> callback functions for each PT node type.
+Every callback function should write formatted output for the current node
+and call <code>Visitable::visit</code> function for child nodes delegating the output writing.</li>
+<li>Implement <code>Visitable</code> trait and its <code>visit</code> function for each PT node type. Every <code>visit</code> function should call
+corresponding <code>Formatter</code>’s callback function.</li>
+</ol>
+<h4 id="output"><a class="doc-anchor" href="#output">§</a>Output</h4>
+<p>The formatted output is written into the output buffer in <em>chunks</em>. The <code>Chunk</code> struct holds the content to be written &amp;
+metadata for it. This includes the comments surrounding the content as well as the <code>needs_space</code> flag specifying whether
+this <em>chunk</em> needs a space. The flag overrides the default behavior of <code>Formatter::next_char_needs_space</code> method.</p>
+<p>The content gets written into the <code>FormatBuffer</code> which contains the information about the current indentation level,
+indentation length, current state as well as the other data determining the rules for writing the content.
+<code>FormatBuffer</code> implements the <code>std::fmt::Write</code> trait where it evaluates the current information and decides how the
+content should be written to the destination.</p>
+<h4 id="comments"><a class="doc-anchor" href="#comments">§</a>Comments</h4>
+<p>The solang parser does not output comments as a type of parse tree node, but rather
+in a list alongside the parse tree with location information. It is therefore necessary
+to infer where to insert the comments and how to format them while traversing the parse tree.</p>
+<p>To handle this, the formatter pre-parses the comments and puts them into two categories:
+Prefix and Postfix comments. Prefix comments refer to the node directly after them, and
+postfix comments refer to the node before them. As an illustration:</p>
+<div class="example-wrap"><pre class="language-solidity"><code>// This is a prefix comment
+/* This is also a prefix comment */
+uint variable = 1 + 2; /* this is postfix */ // this is postfix too
+    // and this is a postfix comment on the next line</code></pre></div>
+<p>To insert the comments into the appropriate areas, strings get converted to chunks
+before being written to the buffer. A chunk is any string that cannot be split by
+whitespace. A chunk also carries with it the surrounding comment information. Thereby
+when writing the chunk the comments can be added before and after the chunk as well
+as any any whitespace surrounding.</p>
+<p>To construct a chunk, the string and the location of the string is given to the
+Formatter and the pre-parsed comments before the start and end of the string are
+associated with that string. The source code can then further be chunked before the
+chunks are written to the buffer.</p>
+<p>To write the chunk, first the comments associated with the start of the chunk get
+written to the buffer. Then the Formatter checks if any whitespace is needed between
+what’s been written to the buffer and what’s in the chunk and inserts it where appropriate.
+If the chunk content fits on the same line, it will be written directly to the buffer,
+otherwise it will be written on the next line. Finally, any associated postfix
+comments also get written.</p>
+<h4 id="example"><a class="doc-anchor" href="#example">§</a>Example</h4>
+<p>Source code</p>
+<div class="example-wrap"><pre class="language-solidity"><code>pragma   solidity ^0.8.10 ;
+contract  HelloWorld {
+    string   public message;
+    constructor(  string memory initMessage) { message = initMessage;}
+}
+
+
+event    Greet( string  indexed  name) ;</code></pre></div>
+<p>Parse Tree (simplified)</p>
+<div class="example-wrap"><pre class="language-text"><code>SourceUnit
+ | PragmaDirective(&quot;solidity&quot;, &quot;^0.8.10&quot;)
+ | ContractDefinition(&quot;HelloWorld&quot;)
+    | VariableDefinition(&quot;string&quot;, &quot;message&quot;, null, [&quot;public&quot;])
+    | FunctionDefinition(&quot;constructor&quot;)
+       | Parameter(&quot;string&quot;, &quot;initMessage&quot;, [&quot;memory&quot;])
+ | EventDefinition(&quot;string&quot;, &quot;Greet&quot;, [&quot;indexed&quot;], [&quot;name&quot;])</code></pre></div>
+<p>Formatted source code that was reconstructed from the Parse Tree</p>
+<div class="example-wrap"><pre class="language-solidity"><code>pragma solidity ^0.8.10;
+
+contract HelloWorld {
+    string public message;
+
+    constructor(string memory initMessage) {
+        message = initMessage;
+    }
+}
+
+event Greet(string indexed name);</code></pre></div><h4 id="configuration"><a class="doc-anchor" href="#configuration">§</a>Configuration</h4>
+<p>The formatter supports multiple configuration options defined in <code>FormatterConfig</code>.</p>
+<div><table><thead><tr><th>Option</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td>line_length</td><td>120</td><td>Maximum line length where formatter will try to wrap the line</td></tr>
+<tr><td>tab_width</td><td>4</td><td>Number of spaces per indentation level</td></tr>
+<tr><td>bracket_spacing</td><td>false</td><td>Print spaces between brackets</td></tr>
+<tr><td>int_types</td><td>long</td><td>Style of uint/int256 types. Available options: <code>long</code>, <code>short</code>, <code>preserve</code></td></tr>
+<tr><td>multiline_func_header</td><td>attributes_first</td><td>Style of multiline function header in case it doesn’t fit. Available options: <code>params_first</code>, <code>params_first_multi</code>, <code>attributes_first</code>, <code>all</code>, <code>all_params</code></td></tr>
+<tr><td>quote_style</td><td>double</td><td>Style of quotation marks. Available options: <code>double</code>, <code>single</code>, <code>preserve</code></td></tr>
+<tr><td>number_underscore</td><td>preserve</td><td>Style of underscores in number literals. Available options: <code>preserve</code>, <code>remove</code>, <code>thousands</code></td></tr>
+<tr><td>hex_underscore</td><td>remove</td><td>Style of underscores in hex literals. Available options: <code>preserve</code>, <code>remove</code>, <code>bytes</code></td></tr>
+<tr><td>single_line_statement_blocks</td><td>preserve</td><td>Style of single line blocks in statements. Available options: <code>single</code>, <code>multi</code>, <code>preserve</code></td></tr>
+<tr><td>override_spacing</td><td>false</td><td>Print space in state variable, function and modifier <code>override</code> attribute</td></tr>
+<tr><td>wrap_comments</td><td>false</td><td>Wrap comments on <code>line_length</code> reached</td></tr>
+<tr><td>ignore</td><td>[]</td><td>Globs to ignore</td></tr>
+<tr><td>contract_new_lines</td><td>false</td><td>Add new line at start and end of contract declarations</td></tr>
+<tr><td>sort_imports</td><td>false</td><td>Sort import statements alphabetically in groups</td></tr>
+</tbody></table>
+</div><h4 id="disable-line"><a class="doc-anchor" href="#disable-line">§</a>Disable Line</h4>
+<p>The formatter can be disabled on specific lines by adding a comment <code>// forgefmt: disable-next-line</code>, like this:</p>
+<div class="example-wrap"><pre class="language-solidity"><code>// forgefmt: disable-next-line
+uint x = 100;</code></pre></div>
+<p>Alternatively, the comment can also be placed at the end of the line. In this case, you’d have to use <code>disable-line</code>
+instead:</p>
+<div class="example-wrap"><pre class="language-solidity"><code>uint x = 100; // forgefmt: disable-line</code></pre></div><h4 id="disable-block"><a class="doc-anchor" href="#disable-block">§</a>Disable Block</h4>
+<p>The formatter can be disabled for a section of code by adding a comment <code>// forgefmt: disable-start</code> before and a
+comment <code>// forgefmt: disable-end</code> after, like this:</p>
+<div class="example-wrap"><pre class="language-solidity"><code>// forgefmt: disable-start
+uint x = 100;
+uint y = 101;
+// forgefmt: disable-end</code></pre></div><h4 id="testing"><a class="doc-anchor" href="#testing">§</a>Testing</h4>
+<p>Tests reside under the <code>fmt/testdata</code> folder and specify the malformatted &amp; expected Solidity code. The source code file
+is named <code>original.sol</code> and expected file(s) are named in a format <code>({prefix}.)?fmt.sol</code>. Multiple expected files are
+needed for tests covering available configuration options.</p>
+<p>The default configuration values can be overridden from within the expected file by adding a comment in the format
+<code>// config: {config_entry} = {config_value}</code>. For example:</p>
+<div class="example-wrap"><pre class="language-solidity"><code>// config: line_length = 160</code></pre></div>
+<p>The <code>test_directory</code> macro is used to specify a new folder with source files for the test suite. Each test suite has the
+following process:</p>
+<ol>
+<li>Preparse comments with config values</li>
+<li>Parse and compare the AST for source &amp; expected files.
+<ul>
+<li>The <code>AstEq</code> trait defines the comparison rules for the AST nodes</li>
+</ul>
+</li>
+<li>Format the source file and assert the equality of the output with the expected file.</li>
+<li>Format the expected files and assert the idempotency of the formatting operation.</li>
+</ol>
+<h3 id="contributing"><a class="doc-anchor" href="#contributing">§</a>Contributing</h3>
+<p>Check out the <a href="https://github.com/foundry-rs/foundry/blob/master/CONTRIBUTING.md">foundry contribution guide</a>.</p>
+<p>Guidelines for contributing to <code>forge fmt</code>:</p>
+<h4 id="opening-an-issue"><a class="doc-anchor" href="#opening-an-issue">§</a>Opening an issue</h4>
+<ol>
+<li>Create a short concise title describing an issue.
+<ul>
+<li>Bad Title Examples<div class="example-wrap"><pre class="language-text"><code>Forge fmt does not work
+Forge fmt breaks
+Forge fmt unexpected behavior</code></pre></div></li>
+<li>Good Title Examples<div class="example-wrap"><pre class="language-text"><code>Forge fmt postfix comment misplaced
+Forge fmt does not inline short yul blocks</code></pre></div></li>
+</ul>
+</li>
+<li>Fill in the issue template fields that include foundry version, platform &amp; component info.</li>
+<li>Provide the code snippets showing the current &amp; expected behaviors.</li>
+<li>If it’s a feature request, specify why this feature is needed.</li>
+<li>Besides the default label (<code>T-Bug</code> for bugs or <code>T-feature</code> for features), add <code>C-forge</code> and <code>Cmd-forge-fmt</code> labels.</li>
+</ol>
+<h4 id="fixing-a-bug"><a class="doc-anchor" href="#fixing-a-bug">§</a>Fixing A Bug</h4>
+<ol>
+<li>Specify an issue that is being addressed in the PR description.</li>
+<li>Add a note on the solution in the PR description.</li>
+<li>Make sure the PR includes the acceptance test(s).</li>
+</ol>
+<h4 id="developing-a-feature"><a class="doc-anchor" href="#developing-a-feature">§</a>Developing A Feature</h4>
+<ol>
+<li>Specify an issue that is being addressed in the PR description.</li>
+<li>Add a note on the solution in the PR description.</li>
+<li>Provide the test coverage for the new feature. These should include:
+<ul>
+<li>Adding malformatted &amp; expected solidity code under <code>fmt/testdata/$dir/</code></li>
+<li>Testing the behavior of pre and postfix comments</li>
+<li>If it’s a new config value, tests covering <strong>all</strong> available options</li>
+</ul>
+</li>
+</ol>
+</div></details><h2 id="reexports" class="section-header">Re-exports<a href="#reexports" class="anchor">§</a></h2><dl class="item-table reexports"><dt id="reexport.InlineConfig"><code>pub use inline_config::<a class="struct" href="inline_config/struct.InlineConfig.html" title="struct forge_fmt::inline_config::InlineConfig">InlineConfig</a>;</code></dt><dt id="reexport.Visitable"><code>pub use visit::<a class="trait" href="visit/trait.Visitable.html" title="trait forge_fmt::visit::Visitable">Visitable</a>;</code></dt><dt id="reexport.Visitor"><code>pub use visit::<a class="trait" href="visit/trait.Visitor.html" title="trait forge_fmt::visit::Visitor">Visitor</a>;</code></dt></dl><h2 id="modules" class="section-header">Modules<a href="#modules" class="anchor">§</a></h2><dl class="item-table"><dt><a class="mod" href="buffer/index.html" title="mod forge_fmt::buffer">buffer</a><span title="Restricted Visibility">&nbsp;🔒</span> </dt><dd>Format buffer.</dd><dt><a class="mod" href="chunk/index.html" title="mod forge_fmt::chunk">chunk</a></dt><dt><a class="mod" href="comments/index.html" title="mod forge_fmt::comments">comments</a><span title="Restricted Visibility">&nbsp;🔒</span> </dt><dt><a class="mod" href="formatter/index.html" title="mod forge_fmt::formatter">formatter</a><span title="Restricted Visibility">&nbsp;🔒</span> </dt><dd>A Solidity formatter</dd><dt><a class="mod" href="helpers/index.html" title="mod forge_fmt::helpers">helpers</a><span title="Restricted Visibility">&nbsp;🔒</span> </dt><dt><a class="mod" href="inline_config/index.html" title="mod forge_fmt::inline_config">inline_<wbr>config</a></dt><dt><a class="mod" href="macros/index.html" title="mod forge_fmt::macros">macros</a><span title="Restricted Visibility">&nbsp;🔒</span> </dt><dt><a class="mod" href="solang_ext/index.html" title="mod forge_fmt::solang_ext">solang_<wbr>ext</a></dt><dd>Extension traits and modules to the [<code>solang_parser</code>] crate.</dd><dt><a class="mod" href="string/index.html" title="mod forge_fmt::string">string</a><span title="Restricted Visibility">&nbsp;🔒</span> </dt><dd>Helpers for dealing with quoted strings</dd><dt><a class="mod" href="visit/index.html" title="mod forge_fmt::visit">visit</a></dt><dd>Visitor helpers to traverse the <a href="solang_parser::pt">solang Solidity Parse Tree</a>.</dd></dl><h2 id="structs" class="section-header">Structs<a href="#structs" class="anchor">§</a></h2><dl class="item-table"><dt><a class="struct" href="struct.Comments.html" title="struct forge_fmt::Comments">Comments</a></dt><dd>A list of comments</dd><dt><a class="struct" href="struct.Formatter.html" title="struct forge_fmt::Formatter">Formatter</a></dt><dd>A Solidity formatter</dd><dt><a class="struct" href="struct.FormatterConfig.html" title="struct forge_fmt::FormatterConfig">Formatter<wbr>Config</a></dt><dd>Contains the config and rule set</dd><dt><a class="struct" href="struct.Parsed.html" title="struct forge_fmt::Parsed">Parsed</a></dt><dd>Result of parsing the source code</dd></dl><h2 id="enums" class="section-header">Enums<a href="#enums" class="anchor">§</a></h2><dl class="item-table"><dt><a class="enum" href="enum.FormatterError.html" title="enum forge_fmt::FormatterError">Formatter<wbr>Error</a></dt><dd>A custom Error thrown by the Formatter</dd><dt><a class="enum" href="enum.HexUnderscore.html" title="enum forge_fmt::HexUnderscore">HexUnderscore</a></dt><dd>Style of underscores in hex literals</dd><dt><a class="enum" href="enum.IntTypes.html" title="enum forge_fmt::IntTypes">IntTypes</a></dt><dd>Style of uint/int256 types</dd><dt><a class="enum" href="enum.MultilineFuncHeaderStyle.html" title="enum forge_fmt::MultilineFuncHeaderStyle">Multiline<wbr>Func<wbr>Header<wbr>Style</a></dt><dd>Style of function header in case it doesn’t fit</dd><dt><a class="enum" href="enum.NumberUnderscore.html" title="enum forge_fmt::NumberUnderscore">Number<wbr>Underscore</a></dt><dd>Style of underscores in number literals</dd><dt><a class="enum" href="enum.QuoteStyle.html" title="enum forge_fmt::QuoteStyle">Quote<wbr>Style</a></dt><dd>Style of string quotes</dd><dt><a class="enum" href="enum.SingleLineBlockStyle.html" title="enum forge_fmt::SingleLineBlockStyle">Single<wbr>Line<wbr>Block<wbr>Style</a></dt><dd>Style of single line blocks in statements</dd></dl><h2 id="functions" class="section-header">Functions<a href="#functions" class="anchor">§</a></h2><dl class="item-table"><dt><a class="fn" href="fn.format.html" title="fn forge_fmt::format">format</a></dt><dd>Parse and format a string with default settings</dd><dt><a class="fn" href="fn.format_diagnostics_report.html" title="fn forge_fmt::format_diagnostics_report">format_<wbr>diagnostics_<wbr>report</a></dt><dd>Formats parser diagnostics</dd><dt><a class="fn" href="fn.format_to.html" title="fn forge_fmt::format_to">format_<wbr>to</a></dt><dd>Format parsed code</dd><dt><a class="fn" href="fn.offset_to_line_column.html" title="fn forge_fmt::offset_to_line_column">offset_<wbr>to_<wbr>line_<wbr>column</a></dt><dd>Converts the start offset of a <code>Loc</code> to <code>(line, col)</code></dd><dt><a class="fn" href="fn.parse.html" title="fn forge_fmt::parse">parse</a></dt><dd>Parse source code.</dd><dt><a class="fn" href="fn.parse2.html" title="fn forge_fmt::parse2">parse2</a></dt><dd>Parse source code with a path for diagnostics.</dd></dl></section></div></main></body></html>

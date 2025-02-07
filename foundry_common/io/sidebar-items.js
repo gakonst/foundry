@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"mod":["macros","shell","stdin","style"]};

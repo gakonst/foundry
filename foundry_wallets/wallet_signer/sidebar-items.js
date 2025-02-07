@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["PendingSigner","WalletSigner"],"macro":["delegate"],"type":["Result"]};

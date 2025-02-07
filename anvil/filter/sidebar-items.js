@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["ACTIVE_FILTER_TIMEOUT_SECS"],"enum":["EthFilter"],"fn":["new_id"],"struct":["Filters","LogsFilter"],"type":["FilterMap"]};

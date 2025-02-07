@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"mod":["sol_macro_gen"]};

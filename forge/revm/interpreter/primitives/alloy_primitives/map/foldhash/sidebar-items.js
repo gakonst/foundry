@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"mod":["fast","quality"],"trait":["HashMapExt","HashSetExt"],"type":["HashMap","HashSet"]};

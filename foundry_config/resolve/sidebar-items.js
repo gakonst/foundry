@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["interpolate"],"static":["RE_PLACEHOLDER"],"struct":["UnresolvedEnvVarError"]};

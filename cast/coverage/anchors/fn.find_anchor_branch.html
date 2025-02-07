@@ -1,0 +1,25 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Finds the anchor corresponding to a branch item."><title>find_anchor_branch in cast::coverage::anchors - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../../static.files/rustdoc-cf3c48c1.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="cast" data-themes="" data-resource-suffix="" data-rustdoc-version="1.86.0-nightly (942db6782 2025-02-06)" data-channel="nightly" data-search-js="search-581efc7a.js" data-settings-js="settings-6dad6058.js" ><script src="../../../static.files/storage-3a5871a4.js"></script><script defer src="sidebar-items.js"></script><script defer src="../../../static.files/main-4d63596a.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-893ab5e7.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-044be391.svg"></head><body class="rustdoc fn"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../../cast/index.html">cast</a><span class="version">1.0.0</span></h2></div><div class="sidebar-elems"><div id="rustdoc-modnav"><h2><a href="index.html">In cast::<wbr>coverage::<wbr>anchors</a></h2></div></div></nav><div class="sidebar-resizer"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><div class="rustdoc-breadcrumbs"><a href="../../index.html">cast</a>::<wbr><a href="../index.html">coverage</a>::<wbr><a href="index.html">anchors</a></div><h1>Function <span class="fn">find_anchor_branch</span><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><rustdoc-toolbar></rustdoc-toolbar><span class="sub-heading"><a class="src" href="../../../src/foundry_evm_coverage/anchors.rs.html#89-94">Source</a> </span></div><pre class="rust item-decl"><code>pub fn find_anchor_branch(
+    bytecode: &amp;[<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a>],
+    source_map: &amp;<a class="struct" href="https://doc.rust-lang.org/nightly/alloc/vec/struct.Vec.html" title="struct alloc::vec::Vec">Vec</a>&lt;SourceElement&gt;,
+    item_id: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    loc: &amp;<a class="struct" href="../struct.SourceLocation.html" title="struct cast::coverage::SourceLocation">SourceLocation</a>,
+) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;(<a class="struct" href="../struct.ItemAnchor.html" title="struct cast::coverage::ItemAnchor">ItemAnchor</a>, <a class="struct" href="../struct.ItemAnchor.html" title="struct cast::coverage::ItemAnchor">ItemAnchor</a>), <a class="struct" href="https://docs.rs/eyre/0.6.12/eyre/struct.Report.html" title="struct eyre::Report">Report</a>&gt;</code></pre><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Finds the anchor corresponding to a branch item.</p>
+<p>This finds the relevant anchors for a branch coverage item. These anchors
+are found using the bytecode of the contract in the range of the branching node.</p>
+<p>For <code>IfStatement</code> nodes, the template is generally:</p>
+<div class="example-wrap"><pre class="language-text"><code>&lt;condition&gt;
+PUSH &lt;ic if false&gt;
+JUMPI
+&lt;true branch&gt;
+&lt;...&gt;
+&lt;false branch&gt;</code></pre></div>
+<p>For <code>assert</code> and <code>require</code>, the template is generally:</p>
+<div class="example-wrap"><pre class="language-text"><code>PUSH &lt;ic if true&gt;
+JUMPI
+&lt;revert&gt;
+&lt;...&gt;
+&lt;true branch&gt;</code></pre></div>
+<p>This function will look for the last JUMPI instruction, backtrack to find the program
+counter of the first branch, and return an item for that program counter, and the
+program counter immediately after the JUMPI instruction.</p>
+</div></details></section></div></main></body></html>

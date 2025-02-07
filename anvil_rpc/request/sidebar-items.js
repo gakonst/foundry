@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["Id","Request","RequestParams","RpcCall","Version"],"fn":["no_params","null_id"],"struct":["RpcMethodCall","RpcNotification"]};

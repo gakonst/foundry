@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["eof_panic","get_or_insert_contract_hash","set_contract_hash"],"struct":["CoverageCollector"]};

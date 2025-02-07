@@ -1,0 +1,411 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/cheatcodes/src/string.rs`."><title>string.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-cf3c48c1.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="foundry_cheatcodes" data-themes="" data-resource-suffix="" data-rustdoc-version="1.86.0-nightly (942db6782 2025-02-06)" data-channel="nightly" data-search-js="search-581efc7a.js" data-settings-js="settings-6dad6058.js" ><script src="../../static.files/storage-3a5871a4.js"></script><script defer src="../../static.files/src-script-8fee9dc5.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-4d63596a.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-893ab5e7.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">foundry_cheatcodes/</div>string.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
+<a href="#1" id="1">1</a>
+<a href="#2" id="2">2</a>
+<a href="#3" id="3">3</a>
+<a href="#4" id="4">4</a>
+<a href="#5" id="5">5</a>
+<a href="#6" id="6">6</a>
+<a href="#7" id="7">7</a>
+<a href="#8" id="8">8</a>
+<a href="#9" id="9">9</a>
+<a href="#10" id="10">10</a>
+<a href="#11" id="11">11</a>
+<a href="#12" id="12">12</a>
+<a href="#13" id="13">13</a>
+<a href="#14" id="14">14</a>
+<a href="#15" id="15">15</a>
+<a href="#16" id="16">16</a>
+<a href="#17" id="17">17</a>
+<a href="#18" id="18">18</a>
+<a href="#19" id="19">19</a>
+<a href="#20" id="20">20</a>
+<a href="#21" id="21">21</a>
+<a href="#22" id="22">22</a>
+<a href="#23" id="23">23</a>
+<a href="#24" id="24">24</a>
+<a href="#25" id="25">25</a>
+<a href="#26" id="26">26</a>
+<a href="#27" id="27">27</a>
+<a href="#28" id="28">28</a>
+<a href="#29" id="29">29</a>
+<a href="#30" id="30">30</a>
+<a href="#31" id="31">31</a>
+<a href="#32" id="32">32</a>
+<a href="#33" id="33">33</a>
+<a href="#34" id="34">34</a>
+<a href="#35" id="35">35</a>
+<a href="#36" id="36">36</a>
+<a href="#37" id="37">37</a>
+<a href="#38" id="38">38</a>
+<a href="#39" id="39">39</a>
+<a href="#40" id="40">40</a>
+<a href="#41" id="41">41</a>
+<a href="#42" id="42">42</a>
+<a href="#43" id="43">43</a>
+<a href="#44" id="44">44</a>
+<a href="#45" id="45">45</a>
+<a href="#46" id="46">46</a>
+<a href="#47" id="47">47</a>
+<a href="#48" id="48">48</a>
+<a href="#49" id="49">49</a>
+<a href="#50" id="50">50</a>
+<a href="#51" id="51">51</a>
+<a href="#52" id="52">52</a>
+<a href="#53" id="53">53</a>
+<a href="#54" id="54">54</a>
+<a href="#55" id="55">55</a>
+<a href="#56" id="56">56</a>
+<a href="#57" id="57">57</a>
+<a href="#58" id="58">58</a>
+<a href="#59" id="59">59</a>
+<a href="#60" id="60">60</a>
+<a href="#61" id="61">61</a>
+<a href="#62" id="62">62</a>
+<a href="#63" id="63">63</a>
+<a href="#64" id="64">64</a>
+<a href="#65" id="65">65</a>
+<a href="#66" id="66">66</a>
+<a href="#67" id="67">67</a>
+<a href="#68" id="68">68</a>
+<a href="#69" id="69">69</a>
+<a href="#70" id="70">70</a>
+<a href="#71" id="71">71</a>
+<a href="#72" id="72">72</a>
+<a href="#73" id="73">73</a>
+<a href="#74" id="74">74</a>
+<a href="#75" id="75">75</a>
+<a href="#76" id="76">76</a>
+<a href="#77" id="77">77</a>
+<a href="#78" id="78">78</a>
+<a href="#79" id="79">79</a>
+<a href="#80" id="80">80</a>
+<a href="#81" id="81">81</a>
+<a href="#82" id="82">82</a>
+<a href="#83" id="83">83</a>
+<a href="#84" id="84">84</a>
+<a href="#85" id="85">85</a>
+<a href="#86" id="86">86</a>
+<a href="#87" id="87">87</a>
+<a href="#88" id="88">88</a>
+<a href="#89" id="89">89</a>
+<a href="#90" id="90">90</a>
+<a href="#91" id="91">91</a>
+<a href="#92" id="92">92</a>
+<a href="#93" id="93">93</a>
+<a href="#94" id="94">94</a>
+<a href="#95" id="95">95</a>
+<a href="#96" id="96">96</a>
+<a href="#97" id="97">97</a>
+<a href="#98" id="98">98</a>
+<a href="#99" id="99">99</a>
+<a href="#100" id="100">100</a>
+<a href="#101" id="101">101</a>
+<a href="#102" id="102">102</a>
+<a href="#103" id="103">103</a>
+<a href="#104" id="104">104</a>
+<a href="#105" id="105">105</a>
+<a href="#106" id="106">106</a>
+<a href="#107" id="107">107</a>
+<a href="#108" id="108">108</a>
+<a href="#109" id="109">109</a>
+<a href="#110" id="110">110</a>
+<a href="#111" id="111">111</a>
+<a href="#112" id="112">112</a>
+<a href="#113" id="113">113</a>
+<a href="#114" id="114">114</a>
+<a href="#115" id="115">115</a>
+<a href="#116" id="116">116</a>
+<a href="#117" id="117">117</a>
+<a href="#118" id="118">118</a>
+<a href="#119" id="119">119</a>
+<a href="#120" id="120">120</a>
+<a href="#121" id="121">121</a>
+<a href="#122" id="122">122</a>
+<a href="#123" id="123">123</a>
+<a href="#124" id="124">124</a>
+<a href="#125" id="125">125</a>
+<a href="#126" id="126">126</a>
+<a href="#127" id="127">127</a>
+<a href="#128" id="128">128</a>
+<a href="#129" id="129">129</a>
+<a href="#130" id="130">130</a>
+<a href="#131" id="131">131</a>
+<a href="#132" id="132">132</a>
+<a href="#133" id="133">133</a>
+<a href="#134" id="134">134</a>
+<a href="#135" id="135">135</a>
+<a href="#136" id="136">136</a>
+<a href="#137" id="137">137</a>
+<a href="#138" id="138">138</a>
+<a href="#139" id="139">139</a>
+<a href="#140" id="140">140</a>
+<a href="#141" id="141">141</a>
+<a href="#142" id="142">142</a>
+<a href="#143" id="143">143</a>
+<a href="#144" id="144">144</a>
+<a href="#145" id="145">145</a>
+<a href="#146" id="146">146</a>
+<a href="#147" id="147">147</a>
+<a href="#148" id="148">148</a>
+<a href="#149" id="149">149</a>
+<a href="#150" id="150">150</a>
+<a href="#151" id="151">151</a>
+<a href="#152" id="152">152</a>
+<a href="#153" id="153">153</a>
+<a href="#154" id="154">154</a>
+<a href="#155" id="155">155</a>
+<a href="#156" id="156">156</a>
+<a href="#157" id="157">157</a>
+<a href="#158" id="158">158</a>
+<a href="#159" id="159">159</a>
+<a href="#160" id="160">160</a>
+<a href="#161" id="161">161</a>
+<a href="#162" id="162">162</a>
+<a href="#163" id="163">163</a>
+<a href="#164" id="164">164</a>
+<a href="#165" id="165">165</a>
+<a href="#166" id="166">166</a>
+<a href="#167" id="167">167</a>
+<a href="#168" id="168">168</a>
+<a href="#169" id="169">169</a>
+<a href="#170" id="170">170</a>
+<a href="#171" id="171">171</a>
+<a href="#172" id="172">172</a>
+<a href="#173" id="173">173</a>
+<a href="#174" id="174">174</a>
+<a href="#175" id="175">175</a>
+<a href="#176" id="176">176</a>
+<a href="#177" id="177">177</a>
+<a href="#178" id="178">178</a>
+<a href="#179" id="179">179</a>
+<a href="#180" id="180">180</a>
+<a href="#181" id="181">181</a>
+<a href="#182" id="182">182</a>
+<a href="#183" id="183">183</a>
+<a href="#184" id="184">184</a>
+<a href="#185" id="185">185</a>
+<a href="#186" id="186">186</a>
+<a href="#187" id="187">187</a>
+<a href="#188" id="188">188</a>
+<a href="#189" id="189">189</a>
+<a href="#190" id="190">190</a>
+<a href="#191" id="191">191</a>
+<a href="#192" id="192">192</a>
+<a href="#193" id="193">193</a>
+<a href="#194" id="194">194</a>
+<a href="#195" id="195">195</a>
+<a href="#196" id="196">196</a>
+<a href="#197" id="197">197</a>
+<a href="#198" id="198">198</a>
+<a href="#199" id="199">199</a>
+<a href="#200" id="200">200</a>
+<a href="#201" id="201">201</a>
+<a href="#202" id="202">202</a>
+<a href="#203" id="203">203</a>
+<a href="#204" id="204">204</a>
+<a href="#205" id="205">205</a></pre></div><pre class="rust"><code><span class="doccomment">//! Implementations of [`String`](spec::Group::String) cheatcodes.
+
+</span><span class="kw">use crate</span>::{<a href="lib.rs.html#64-89">Cheatcode</a>, <a href="inspector.rs.html#374-491">Cheatcodes</a>, <a class="prelude-ty" href="error.rs.html#17">Result</a>, <a href="../../foundry_cheatcodes/Vm/index.html">Vm</a>::<span class="kw-2">*</span>};
+<span class="kw">use </span>alloy_dyn_abi::{DynSolType, DynSolValue};
+<span class="kw">use </span>alloy_primitives::{hex, U256};
+<span class="kw">use </span>alloy_sol_types::SolValue;
+
+<span class="comment">// address
+</span><span class="kw">impl </span><a href="lib.rs.html#64-89">Cheatcode</a> <span class="kw">for </span><a href="../../foundry_cheatcodes/Vm/struct.toString_0Call.html">toString_0Call</a> {
+    <span class="kw">fn </span>apply(<span class="kw-2">&amp;</span><span class="self">self</span>, _state: <span class="kw-2">&amp;mut </span><a href="inspector.rs.html#374-491">Cheatcodes</a>) -&gt; <a class="prelude-ty" href="error.rs.html#17">Result</a> {
+        <span class="kw">let </span><span class="self">Self </span>{ value } = <a class="self" href="#10">self</a>;
+        <a class="prelude-val" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html#variant.Ok">Ok</a>(<a href="#11">value</a>.<a href="https://doc.rust-lang.org/nightly/alloc/string/trait.ToString.html#tymethod.to_string">to_string</a>().abi_encode())
+    }
+}
+
+<span class="comment">// bytes
+</span><span class="kw">impl </span><a href="lib.rs.html#64-89">Cheatcode</a> <span class="kw">for </span><a href="../../foundry_cheatcodes/Vm/struct.toString_1Call.html">toString_1Call</a> {
+    <span class="kw">fn </span>apply(<span class="kw-2">&amp;</span><span class="self">self</span>, _state: <span class="kw-2">&amp;mut </span><a href="inspector.rs.html#374-491">Cheatcodes</a>) -&gt; <a class="prelude-ty" href="error.rs.html#17">Result</a> {
+        <span class="kw">let </span><span class="self">Self </span>{ value } = <a class="self" href="#18">self</a>;
+        <a class="prelude-val" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html#variant.Ok">Ok</a>(<a href="#19">value</a>.<a href="https://doc.rust-lang.org/nightly/alloc/string/trait.ToString.html#tymethod.to_string">to_string</a>().abi_encode())
+    }
+}
+
+<span class="comment">// bytes32
+</span><span class="kw">impl </span><a href="lib.rs.html#64-89">Cheatcode</a> <span class="kw">for </span><a href="../../foundry_cheatcodes/Vm/struct.toString_2Call.html">toString_2Call</a> {
+    <span class="kw">fn </span>apply(<span class="kw-2">&amp;</span><span class="self">self</span>, _state: <span class="kw-2">&amp;mut </span><a href="inspector.rs.html#374-491">Cheatcodes</a>) -&gt; <a class="prelude-ty" href="error.rs.html#17">Result</a> {
+        <span class="kw">let </span><span class="self">Self </span>{ value } = <a class="self" href="#26">self</a>;
+        <a class="prelude-val" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html#variant.Ok">Ok</a>(<a href="#27">value</a>.<a href="https://doc.rust-lang.org/nightly/alloc/string/trait.ToString.html#tymethod.to_string">to_string</a>().abi_encode())
+    }
+}
+
+<span class="comment">// bool
+</span><span class="kw">impl </span><a href="lib.rs.html#64-89">Cheatcode</a> <span class="kw">for </span><a href="../../foundry_cheatcodes/Vm/struct.toString_3Call.html">toString_3Call</a> {
+    <span class="kw">fn </span>apply(<span class="kw-2">&amp;</span><span class="self">self</span>, _state: <span class="kw-2">&amp;mut </span><a href="inspector.rs.html#374-491">Cheatcodes</a>) -&gt; <a class="prelude-ty" href="error.rs.html#17">Result</a> {
+        <span class="kw">let </span><span class="self">Self </span>{ value } = <a class="self" href="#34">self</a>;
+        <a class="prelude-val" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html#variant.Ok">Ok</a>(<a href="#35">value</a>.<a href="https://doc.rust-lang.org/nightly/alloc/string/trait.ToString.html#tymethod.to_string">to_string</a>().abi_encode())
+    }
+}
+
+<span class="comment">// uint256
+</span><span class="kw">impl </span><a href="lib.rs.html#64-89">Cheatcode</a> <span class="kw">for </span><a href="../../foundry_cheatcodes/Vm/struct.toString_4Call.html">toString_4Call</a> {
+    <span class="kw">fn </span>apply(<span class="kw-2">&amp;</span><span class="self">self</span>, _state: <span class="kw-2">&amp;mut </span><a href="inspector.rs.html#374-491">Cheatcodes</a>) -&gt; <a class="prelude-ty" href="error.rs.html#17">Result</a> {
+        <span class="kw">let </span><span class="self">Self </span>{ value } = <a class="self" href="#42">self</a>;
+        <a class="prelude-val" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html#variant.Ok">Ok</a>(<a href="#43">value</a>.<a href="https://doc.rust-lang.org/nightly/alloc/string/trait.ToString.html#tymethod.to_string">to_string</a>().abi_encode())
+    }
+}
+
+<span class="comment">// int256
+</span><span class="kw">impl </span><a href="lib.rs.html#64-89">Cheatcode</a> <span class="kw">for </span><a href="../../foundry_cheatcodes/Vm/struct.toString_5Call.html">toString_5Call</a> {
+    <span class="kw">fn </span>apply(<span class="kw-2">&amp;</span><span class="self">self</span>, _state: <span class="kw-2">&amp;mut </span><a href="inspector.rs.html#374-491">Cheatcodes</a>) -&gt; <a class="prelude-ty" href="error.rs.html#17">Result</a> {
+        <span class="kw">let </span><span class="self">Self </span>{ value } = <a class="self" href="#50">self</a>;
+        <a class="prelude-val" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html#variant.Ok">Ok</a>(<a href="#51">value</a>.<a href="https://doc.rust-lang.org/nightly/alloc/string/trait.ToString.html#tymethod.to_string">to_string</a>().abi_encode())
+    }
+}
+
+<span class="kw">impl </span><a href="lib.rs.html#64-89">Cheatcode</a> <span class="kw">for </span><a href="../../foundry_cheatcodes/Vm/struct.parseBytesCall.html">parseBytesCall</a> {
+    <span class="kw">fn </span>apply(<span class="kw-2">&amp;</span><span class="self">self</span>, _state: <span class="kw-2">&amp;mut </span><a href="inspector.rs.html#374-491">Cheatcodes</a>) -&gt; <a class="prelude-ty" href="error.rs.html#17">Result</a> {
+        <span class="kw">let </span><span class="self">Self </span>{ stringifiedValue } = <a class="self" href="#57">self</a>;
+        <a href="#148-150">parse</a>(<a href="#58">stringifiedValue</a>, <span class="kw-2">&amp;</span>DynSolType::Bytes)
+    }
+}
+
+<span class="kw">impl </span><a href="lib.rs.html#64-89">Cheatcode</a> <span class="kw">for </span><a href="../../foundry_cheatcodes/Vm/struct.parseAddressCall.html">parseAddressCall</a> {
+    <span class="kw">fn </span>apply(<span class="kw-2">&amp;</span><span class="self">self</span>, _state: <span class="kw-2">&amp;mut </span><a href="inspector.rs.html#374-491">Cheatcodes</a>) -&gt; <a class="prelude-ty" href="error.rs.html#17">Result</a> {
+        <span class="kw">let </span><span class="self">Self </span>{ stringifiedValue } = <a class="self" href="#64">self</a>;
+        <a href="#148-150">parse</a>(<a href="#65">stringifiedValue</a>, <span class="kw-2">&amp;</span>DynSolType::Address)
+    }
+}
+
+<span class="kw">impl </span><a href="lib.rs.html#64-89">Cheatcode</a> <span class="kw">for </span><a href="../../foundry_cheatcodes/Vm/struct.parseUintCall.html">parseUintCall</a> {
+    <span class="kw">fn </span>apply(<span class="kw-2">&amp;</span><span class="self">self</span>, _state: <span class="kw-2">&amp;mut </span><a href="inspector.rs.html#374-491">Cheatcodes</a>) -&gt; <a class="prelude-ty" href="error.rs.html#17">Result</a> {
+        <span class="kw">let </span><span class="self">Self </span>{ stringifiedValue } = <a class="self" href="#71">self</a>;
+        <a href="#148-150">parse</a>(<a href="#72">stringifiedValue</a>, <span class="kw-2">&amp;</span>DynSolType::Uint(<span class="number">256</span>))
+    }
+}
+
+<span class="kw">impl </span><a href="lib.rs.html#64-89">Cheatcode</a> <span class="kw">for </span><a href="../../foundry_cheatcodes/Vm/struct.parseIntCall.html">parseIntCall</a> {
+    <span class="kw">fn </span>apply(<span class="kw-2">&amp;</span><span class="self">self</span>, _state: <span class="kw-2">&amp;mut </span><a href="inspector.rs.html#374-491">Cheatcodes</a>) -&gt; <a class="prelude-ty" href="error.rs.html#17">Result</a> {
+        <span class="kw">let </span><span class="self">Self </span>{ stringifiedValue } = <a class="self" href="#78">self</a>;
+        <a href="#148-150">parse</a>(<a href="#79">stringifiedValue</a>, <span class="kw-2">&amp;</span>DynSolType::Int(<span class="number">256</span>))
+    }
+}
+
+<span class="kw">impl </span><a href="lib.rs.html#64-89">Cheatcode</a> <span class="kw">for </span><a href="../../foundry_cheatcodes/Vm/struct.parseBytes32Call.html">parseBytes32Call</a> {
+    <span class="kw">fn </span>apply(<span class="kw-2">&amp;</span><span class="self">self</span>, _state: <span class="kw-2">&amp;mut </span><a href="inspector.rs.html#374-491">Cheatcodes</a>) -&gt; <a class="prelude-ty" href="error.rs.html#17">Result</a> {
+        <span class="kw">let </span><span class="self">Self </span>{ stringifiedValue } = <a class="self" href="#85">self</a>;
+        <a href="#148-150">parse</a>(<a href="#86">stringifiedValue</a>, <span class="kw-2">&amp;</span>DynSolType::FixedBytes(<span class="number">32</span>))
+    }
+}
+
+<span class="kw">impl </span><a href="lib.rs.html#64-89">Cheatcode</a> <span class="kw">for </span><a href="../../foundry_cheatcodes/Vm/struct.parseBoolCall.html">parseBoolCall</a> {
+    <span class="kw">fn </span>apply(<span class="kw-2">&amp;</span><span class="self">self</span>, _state: <span class="kw-2">&amp;mut </span><a href="inspector.rs.html#374-491">Cheatcodes</a>) -&gt; <a class="prelude-ty" href="error.rs.html#17">Result</a> {
+        <span class="kw">let </span><span class="self">Self </span>{ stringifiedValue } = <a class="self" href="#92">self</a>;
+        <a href="#148-150">parse</a>(<a href="#93">stringifiedValue</a>, <span class="kw-2">&amp;</span>DynSolType::Bool)
+    }
+}
+
+<span class="kw">impl </span><a href="lib.rs.html#64-89">Cheatcode</a> <span class="kw">for </span><a href="../../foundry_cheatcodes/Vm/struct.toLowercaseCall.html">toLowercaseCall</a> {
+    <span class="kw">fn </span>apply(<span class="kw-2">&amp;</span><span class="self">self</span>, _state: <span class="kw-2">&amp;mut </span><a href="inspector.rs.html#374-491">Cheatcodes</a>) -&gt; <a class="prelude-ty" href="error.rs.html#17">Result</a> {
+        <span class="kw">let </span><span class="self">Self </span>{ input } = <a class="self" href="#99">self</a>;
+        <a class="prelude-val" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html#variant.Ok">Ok</a>(<a href="#100">input</a>.<a href="https://doc.rust-lang.org/nightly/alloc/foreigntype.str.html#method.to_lowercase">to_lowercase</a>().abi_encode())
+    }
+}
+
+<span class="kw">impl </span><a href="lib.rs.html#64-89">Cheatcode</a> <span class="kw">for </span><a href="../../foundry_cheatcodes/Vm/struct.toUppercaseCall.html">toUppercaseCall</a> {
+    <span class="kw">fn </span>apply(<span class="kw-2">&amp;</span><span class="self">self</span>, _state: <span class="kw-2">&amp;mut </span><a href="inspector.rs.html#374-491">Cheatcodes</a>) -&gt; <a class="prelude-ty" href="error.rs.html#17">Result</a> {
+        <span class="kw">let </span><span class="self">Self </span>{ input } = <a class="self" href="#106">self</a>;
+        <a class="prelude-val" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html#variant.Ok">Ok</a>(<a href="#107">input</a>.<a href="https://doc.rust-lang.org/nightly/alloc/foreigntype.str.html#method.to_uppercase">to_uppercase</a>().abi_encode())
+    }
+}
+
+<span class="kw">impl </span><a href="lib.rs.html#64-89">Cheatcode</a> <span class="kw">for </span><a href="../../foundry_cheatcodes/Vm/struct.trimCall.html">trimCall</a> {
+    <span class="kw">fn </span>apply(<span class="kw-2">&amp;</span><span class="self">self</span>, _state: <span class="kw-2">&amp;mut </span><a href="inspector.rs.html#374-491">Cheatcodes</a>) -&gt; <a class="prelude-ty" href="error.rs.html#17">Result</a> {
+        <span class="kw">let </span><span class="self">Self </span>{ input } = <a class="self" href="#113">self</a>;
+        <a class="prelude-val" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html#variant.Ok">Ok</a>(<a href="#114">input</a>.<a href="https://doc.rust-lang.org/nightly/core/foreigntype.str.html#method.trim">trim</a>().abi_encode())
+    }
+}
+
+<span class="kw">impl </span><a href="lib.rs.html#64-89">Cheatcode</a> <span class="kw">for </span><a href="../../foundry_cheatcodes/Vm/struct.replaceCall.html">replaceCall</a> {
+    <span class="kw">fn </span>apply(<span class="kw-2">&amp;</span><span class="self">self</span>, _state: <span class="kw-2">&amp;mut </span><a href="inspector.rs.html#374-491">Cheatcodes</a>) -&gt; <a class="prelude-ty" href="error.rs.html#17">Result</a> {
+        <span class="kw">let </span><span class="self">Self </span>{ input, from, to } = <a class="self" href="#120">self</a>;
+        <a class="prelude-val" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html#variant.Ok">Ok</a>(<a href="#121">input</a>.<a href="https://doc.rust-lang.org/nightly/alloc/foreigntype.str.html#method.replace">replace</a>(<a href="#121">from</a>, <a href="#121">to</a>).abi_encode())
+    }
+}
+
+<span class="kw">impl </span><a href="lib.rs.html#64-89">Cheatcode</a> <span class="kw">for </span><a href="../../foundry_cheatcodes/Vm/struct.splitCall.html">splitCall</a> {
+    <span class="kw">fn </span>apply(<span class="kw-2">&amp;</span><span class="self">self</span>, _state: <span class="kw-2">&amp;mut </span><a href="inspector.rs.html#374-491">Cheatcodes</a>) -&gt; <a class="prelude-ty" href="error.rs.html#17">Result</a> {
+        <span class="kw">let </span><span class="self">Self </span>{ input, delimiter } = <a class="self" href="#127">self</a>;
+        <span class="kw">let </span>parts: <a href="https://doc.rust-lang.org/nightly/alloc/vec/struct.Vec.html">Vec</a>&lt;<span class="kw-2">&amp;</span><a href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a>&gt; = <a href="#128">input</a>.<a href="https://doc.rust-lang.org/nightly/core/foreigntype.str.html#method.split">split</a>(<a href="#128">delimiter</a>).<a href="https://doc.rust-lang.org/nightly/core/iter/traits/iterator/trait.Iterator.html#tymethod.collect">collect</a>();
+        <a class="prelude-val" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html#variant.Ok">Ok</a>(<a href="#129">parts</a>.abi_encode())
+    }
+}
+
+<span class="kw">impl </span><a href="lib.rs.html#64-89">Cheatcode</a> <span class="kw">for </span><a href="../../foundry_cheatcodes/Vm/struct.indexOfCall.html">indexOfCall</a> {
+    <span class="kw">fn </span>apply(<span class="kw-2">&amp;</span><span class="self">self</span>, _state: <span class="kw-2">&amp;mut </span><a href="inspector.rs.html#374-491">Cheatcodes</a>) -&gt; <a class="prelude-ty" href="error.rs.html#17">Result</a> {
+        <span class="kw">let </span><span class="self">Self </span>{ input, key } = <a class="self" href="#135">self</a>;
+        <a class="prelude-val" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html#variant.Ok">Ok</a>(<a href="#136">input</a>.<a href="https://doc.rust-lang.org/nightly/core/foreigntype.str.html#method.find">find</a>(<a href="#136">key</a>).<a href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html#method.map">map</a>(U256::from).<a href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html#method.unwrap_or">unwrap_or</a>(U256::MAX).abi_encode())
+    }
+}
+
+<span class="kw">impl </span><a href="lib.rs.html#64-89">Cheatcode</a> <span class="kw">for </span><a href="../../foundry_cheatcodes/Vm/struct.containsCall.html">containsCall</a> {
+    <span class="kw">fn </span>apply(<span class="kw-2">&amp;</span><span class="self">self</span>, _state: <span class="kw-2">&amp;mut </span><a href="inspector.rs.html#374-491">Cheatcodes</a>) -&gt; <a class="prelude-ty" href="error.rs.html#17">Result</a> {
+        <span class="kw">let </span><span class="self">Self </span>{ subject, search } = <a class="self" href="#142">self</a>;
+        <a class="prelude-val" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html#variant.Ok">Ok</a>(<a href="#143">subject</a>.<a href="https://doc.rust-lang.org/nightly/core/foreigntype.str.html#method.contains">contains</a>(<a href="#143">search</a>).abi_encode())
+    }
+}
+
+<span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span><a href="../../foundry_cheatcodes/string/fn.parse.html">parse</a>(s: <span class="kw-2">&amp;</span><a href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a>, ty: <span class="kw-2">&amp;</span>DynSolType) -&gt; <a class="prelude-ty" href="error.rs.html#17">Result</a> {
+    <a href="#169">parse_value</a>(<a href="#148">s</a>, <a href="#148">ty</a>).<a href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html#method.map">map</a>(|v| <a href="#149">v</a>.abi_encode())
+}
+
+<span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span><a href="../../foundry_cheatcodes/string/fn.parse_array.html">parse_array</a>&lt;I, S&gt;(values: I, ty: <span class="kw-2">&amp;</span>DynSolType) -&gt; <a class="prelude-ty" href="error.rs.html#17">Result</a>
+<span class="kw">where
+    </span>I: <a href="https://doc.rust-lang.org/nightly/core/iter/traits/collect/trait.IntoIterator.html">IntoIterator</a>&lt;Item = S&gt;,
+    S: <a href="https://doc.rust-lang.org/nightly/core/convert/trait.AsRef.html">AsRef</a>&lt;<a href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a>&gt;,
+{
+    <span class="kw">let </span><span class="kw-2">mut </span>values = <a href="#152">values</a>.<a href="https://doc.rust-lang.org/nightly/core/iter/traits/collect/trait.IntoIterator.html#tymethod.into_iter">into_iter</a>();
+    <span class="kw">match </span><a href="#157">values</a>.<a href="https://doc.rust-lang.org/nightly/core/iter/traits/iterator/trait.Iterator.html#tymethod.next">next</a>() {
+        <a class="prelude-val" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html#variant.Some">Some</a>(first) <span class="kw">if </span>!<a href="#159">first</a>.<a href="https://doc.rust-lang.org/nightly/core/convert/trait.AsRef.html#tymethod.as_ref">as_ref</a>().<a href="https://doc.rust-lang.org/nightly/core/foreigntype.str.html#method.is_empty">is_empty</a>() =&gt; <a href="https://doc.rust-lang.org/nightly/core/iter/sources/once/fn.once.html">std::iter::once</a>(<a href="#159">first</a>)
+            .<a href="https://doc.rust-lang.org/nightly/core/iter/traits/iterator/trait.Iterator.html#tymethod.chain">chain</a>(<a href="#157">values</a>)
+            .<a href="https://doc.rust-lang.org/nightly/core/iter/traits/iterator/trait.Iterator.html#tymethod.map">map</a>(|s| <a href="#169">parse_value</a>(<a href="#161">s</a>.<a href="https://doc.rust-lang.org/nightly/core/convert/trait.AsRef.html#tymethod.as_ref">as_ref</a>(), <a href="#152">ty</a>))
+            .<a href="https://doc.rust-lang.org/nightly/core/iter/traits/iterator/trait.Iterator.html#tymethod.collect">collect</a>::&lt;<a class="prelude-ty" href="error.rs.html#17">Result</a>&lt;<a href="https://doc.rust-lang.org/nightly/alloc/vec/struct.Vec.html">Vec</a>&lt;<span class="kw">_</span>&gt;, <span class="kw">_</span>&gt;&gt;()
+            .<a href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html#method.map">map</a>(|vec| DynSolValue::Array(<a href="#163">vec</a>).abi_encode()),
+        <span class="comment">// return the empty encoded Bytes when values is empty or the first element is empty
+        </span><span class="kw">_ </span>=&gt; <a class="prelude-val" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html#variant.Ok">Ok</a>(<span class="string">""</span>.abi_encode()),
+    }
+}
+
+<span class="attr">#[instrument(target = <span class="string">"cheatcodes"</span>, level = <span class="string">"debug"</span>, skip(ty), fields(%ty), ret)]
+</span><span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span><a href="../../foundry_cheatcodes/string/fn.parse_value.html">parse_value</a>(s: <span class="kw-2">&amp;</span><a href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a>, ty: <span class="kw-2">&amp;</span>DynSolType) -&gt; <a class="prelude-ty" href="error.rs.html#17">Result</a>&lt;DynSolValue&gt; {
+    <span class="kw">match </span>ty.coerce_str(s) {
+        <span class="prelude-val">Ok</span>(value) =&gt; <span class="prelude-val">Ok</span>(value),
+        <span class="prelude-val">Err</span>(e) =&gt; <span class="kw">match </span>parse_value_fallback(s, ty) {
+            <span class="prelude-val">Some</span>(<span class="prelude-val">Ok</span>(value)) =&gt; <span class="prelude-val">Ok</span>(value),
+            <span class="prelude-val">Some</span>(<span class="prelude-val">Err</span>(e2)) =&gt; <span class="prelude-val">Err</span>(<span class="macro">fmt_err!</span>(<span class="string">"failed parsing {s:?} as type `{ty}`: {e2}"</span>)),
+            <span class="prelude-val">None </span>=&gt; <span class="prelude-val">Err</span>(<span class="macro">fmt_err!</span>(<span class="string">"failed parsing {s:?} as type `{ty}`: {e}"</span>)),
+        },
+    }
+}
+
+<span class="comment">// More lenient parsers than `coerce_str`.
+</span><span class="kw">fn </span><a href="../../foundry_cheatcodes/string/fn.parse_value_fallback.html">parse_value_fallback</a>(s: <span class="kw-2">&amp;</span><a href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a>, ty: <span class="kw-2">&amp;</span>DynSolType) -&gt; <a class="prelude-ty" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html">Option</a>&lt;<a class="prelude-ty" href="error.rs.html#17">Result</a>&lt;DynSolValue, <span class="kw-2">&amp;</span><span class="lifetime">'static </span><a href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a>&gt;&gt; {
+    <span class="kw">match </span><a href="#182">ty</a> {
+        DynSolType::Bool =&gt; {
+            <span class="kw">let </span>b = <span class="kw">match </span><a href="#182">s</a> {
+                <span class="string">"1" </span>=&gt; <span class="bool-val">true</span>,
+                <span class="string">"0" </span>=&gt; <span class="bool-val">false</span>,
+                s <span class="kw">if </span><a href="#188">s</a>.<a href="https://doc.rust-lang.org/nightly/core/foreigntype.str.html#method.eq_ignore_ascii_case">eq_ignore_ascii_case</a>(<span class="string">"true"</span>) =&gt; <span class="bool-val">true</span>,
+                s <span class="kw">if </span><a href="#189">s</a>.<a href="https://doc.rust-lang.org/nightly/core/foreigntype.str.html#method.eq_ignore_ascii_case">eq_ignore_ascii_case</a>(<span class="string">"false"</span>) =&gt; <span class="bool-val">false</span>,
+                <span class="kw">_ </span>=&gt; <span class="kw">return </span><a class="prelude-val" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html#variant.None">None</a>,
+            };
+            <span class="kw">return </span><a class="prelude-val" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html#variant.Some">Some</a>(<a class="prelude-val" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html#variant.Ok">Ok</a>(DynSolValue::Bool(<a href="#185">b</a>)));
+        }
+        DynSolType::Int(<span class="kw">_</span>) |
+        DynSolType::Uint(<span class="kw">_</span>) |
+        DynSolType::FixedBytes(<span class="kw">_</span>) |
+        DynSolType::Bytes =&gt; {
+            <span class="kw">if </span>!s.starts_with(<span class="string">"0x"</span>) &amp;&amp; hex::check_raw(s) {
+                <span class="kw">return </span><a class="prelude-val" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html#variant.Some">Some</a>(<a class="prelude-val" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html#variant.Err">Err</a>(<span class="string">"missing hex prefix (\"0x\") for hex string"</span>));
+            }
+        }
+        <span class="kw">_ </span>=&gt; {}
+    }
+    <a class="prelude-val" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html#variant.None"><a href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html#variant.None">None</a>
+</a>}
+</code></pre></div></section></main></body></html>

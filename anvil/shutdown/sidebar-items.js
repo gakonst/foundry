@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["signal"],"struct":["Shutdown","Signal"]};

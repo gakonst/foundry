@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"macro":["buf_fn","return_source_if_disabled","visit_source_if_disabled_else","write_chunk","write_chunk_spaced","writeln_chunk"]};

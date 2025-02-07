@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["decimal_digits","hex_bytes_spans","hex_digits"],"struct":["SourceLines"]};

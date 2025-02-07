@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["InnerTransport","RuntimeTransportError"],"fn":["build_auth","url_to_file_path"],"struct":["RuntimeTransport","RuntimeTransportBuilder"]};

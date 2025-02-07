@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["invalid"],"macro":["impl_"],"trait":["SafeUnwrap"]};

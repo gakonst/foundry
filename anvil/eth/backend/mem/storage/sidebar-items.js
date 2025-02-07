@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["DEFAULT_HISTORY_LIMIT","MAX_ON_DISK_HISTORY_LIMIT","MIN_HISTORY_LIMIT"],"struct":["Blockchain","BlockchainStorage","InMemoryBlockStates","MinedBlockOutcome","MinedTransaction","MinedTransactionReceipt"]};

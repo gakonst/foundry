@@ -1,0 +1,55 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/fmt/src/lib.rs`."><title>lib.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-cf3c48c1.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="forge_fmt" data-themes="" data-resource-suffix="" data-rustdoc-version="1.86.0-nightly (942db6782 2025-02-06)" data-channel="nightly" data-search-js="search-581efc7a.js" data-settings-js="settings-6dad6058.js" ><script src="../../static.files/storage-3a5871a4.js"></script><script defer src="../../static.files/src-script-8fee9dc5.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-4d63596a.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-893ab5e7.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">forge_fmt/</div>lib.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
+<a href="#1" id="1">1</a>
+<a href="#2" id="2">2</a>
+<a href="#3" id="3">3</a>
+<a href="#4" id="4">4</a>
+<a href="#5" id="5">5</a>
+<a href="#6" id="6">6</a>
+<a href="#7" id="7">7</a>
+<a href="#8" id="8">8</a>
+<a href="#9" id="9">9</a>
+<a href="#10" id="10">10</a>
+<a href="#11" id="11">11</a>
+<a href="#12" id="12">12</a>
+<a href="#13" id="13">13</a>
+<a href="#14" id="14">14</a>
+<a href="#15" id="15">15</a>
+<a href="#16" id="16">16</a>
+<a href="#17" id="17">17</a>
+<a href="#18" id="18">18</a>
+<a href="#19" id="19">19</a>
+<a href="#20" id="20">20</a>
+<a href="#21" id="21">21</a>
+<a href="#22" id="22">22</a>
+<a href="#23" id="23">23</a>
+<a href="#24" id="24">24</a>
+<a href="#25" id="25">25</a>
+<a href="#26" id="26">26</a>
+<a href="#27" id="27">27</a></pre></div><pre class="rust"><code><span class="attr">#![doc = <span class="macro">include_str!</span>(<span class="string">"../README.md"</span>)]
+#![cfg_attr(not(test), warn(unused_crate_dependencies))]
+#![cfg_attr(docsrs, feature(doc_cfg, doc_auto_cfg))]
+
+#[macro_use]
+</span><span class="kw">extern crate </span>tracing;
+
+<span class="kw">mod </span><a href="buffer.rs.html#1-442">buffer</a>;
+<span class="kw">pub mod </span><a href="chunk.rs.html#1-60">chunk</a>;
+<span class="kw">mod </span><a href="comments.rs.html#1-456">comments</a>;
+<span class="kw">mod </span><a href="formatter.rs.html#1-3888">formatter</a>;
+<span class="kw">mod </span><a href="helpers.rs.html#1-135">helpers</a>;
+<span class="kw">pub mod </span><a href="inline_config.rs.html#1-156">inline_config</a>;
+<span class="kw">mod </span><a href="macros.rs.html#1-125">macros</a>;
+<span class="kw">pub mod </span><a href="solang_ext/mod.rs.html#1-28">solang_ext</a>;
+<span class="kw">mod </span><a href="string.rs.html#1-181">string</a>;
+<span class="kw">pub mod </span><a href="visit.rs.html#1-642">visit</a>;
+
+<span class="kw">pub use </span>foundry_config::fmt::<span class="kw-2">*</span>;
+
+<span class="kw">pub use </span><a href="comments.rs.html#212-215">comments::Comments</a>;
+<span class="kw">pub use </span>formatter::{<a href="formatter.rs.html#97-105">Formatter</a>, <a href="formatter.rs.html#28-41">FormatterError</a>};
+<span class="kw">pub use </span>helpers::{
+    <a href="helpers.rs.html#59-66">format</a>, <a href="helpers.rs.html#87-116">format_diagnostics_report</a>, <a href="helpers.rs.html#47-56">format_to</a>, <a href="helpers.rs.html#69-84">offset_to_line_column</a>, <a href="helpers.rs.html#26-28">parse</a>, <a href="helpers.rs.html#31-34">parse2</a>, <a href="helpers.rs.html#12-23">Parsed</a>,
+};
+<span class="kw">pub use </span><a href="inline_config.rs.html#69-71">inline_config::InlineConfig</a>;
+<span class="kw">pub use </span>visit::{<a href="visit.rs.html#394-398">Visitable</a>, <a href="visit.rs.html#9-384">Visitor</a>};
+</code></pre></div></section></main></body></html>

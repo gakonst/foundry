@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["EnsRegistryCalls"],"fn":["new"],"struct":["EnsRegistryInstance","resolverCall","resolverReturn"]};

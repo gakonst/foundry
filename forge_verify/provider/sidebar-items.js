@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["VerificationProviderType"],"struct":["VerificationContext"],"trait":["VerificationProvider"]};

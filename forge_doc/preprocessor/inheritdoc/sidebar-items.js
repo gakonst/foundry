@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["INHERITDOC_ID"],"struct":["Inheritdoc"]};

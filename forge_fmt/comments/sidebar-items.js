@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["CommentPosition","CommentState","CommentType"],"struct":["CommentStateCharIndices","CommentWithMetadata","Comments","NonCommentChars"],"trait":["CommentStringExt"]};

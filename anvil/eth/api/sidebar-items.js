@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["CLIENT_VERSION"],"enum":["GasEstimationCallResult"],"fn":["convert_transact_out","determine_base_gas_by_kind","ensure_return_ok","required_marker"],"struct":["EthApi"]};

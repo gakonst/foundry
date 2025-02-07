@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"static":["SOURCIFY_URL"],"struct":["SourcifyResponseElement","SourcifyVerificationProvider","SourcifyVerificationResponse","SourcifyVerifyRequest"]};

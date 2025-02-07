@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["Group","Safety","Status"],"struct":["Cheatcode"],"trait":["CheatcodeDef"]};

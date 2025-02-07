@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["QuoteState"],"struct":["QuoteStateCharIndices","QuotedRanges"],"trait":["QuotedStringExt"]};

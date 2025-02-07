@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["NumberOrHexU256","Numeric","NumericSeq"],"fn":["deserialize_number","deserialize_number_opt","deserialize_number_seq","from_int_or_hex","from_int_or_hex_opt"]};
