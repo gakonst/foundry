@@ -213,10 +213,6 @@ impl RemappingsProvider<'_> {
         // resolve that
         if self.auto_detect_remappings {
             let mut lib_remappings = BTreeMap::new();
-            // find all remappings of from libs that use a foundry.toml
-            for r in self.lib_foundry_toml_remappings() {
-                insert_closest(&mut lib_remappings, r.context, r.name, r.path.into());
-            }
             // use auto detection for all libs
             for r in self
                 .lib_paths
@@ -231,6 +227,12 @@ impl RemappingsProvider<'_> {
                     continue
                 }
                 insert_closest(&mut lib_remappings, r.context, r.name, r.path.into());
+            }
+
+            // Find all remappings from libs that use a foundry.toml
+            // Explicit remappings should override auto-detected remappings.
+            for r in self.lib_foundry_toml_remappings() {
+                lib_remappings.entry(r.context).or_default().insert(r.name, r.path.into());
             }
 
             all_remappings.extend(
