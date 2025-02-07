@@ -104,7 +104,13 @@ fn run() -> Result<()> {
                 utils::block_on(cmd.run())
             }
         }
-        ForgeSubcommand::Fmt(cmd) => cmd.run(),
+        ForgeSubcommand::Fmt(cmd) => {
+            if cmd.is_watch() {
+                utils::block_on(watch::watch_fmt(cmd))
+            } else {
+                cmd.run()
+            }
+        }
         ForgeSubcommand::Config(cmd) => cmd.run(),
         ForgeSubcommand::Flatten(cmd) => cmd.run(),
         ForgeSubcommand::Inspect(cmd) => cmd.run(),

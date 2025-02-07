@@ -1,3 +1,4 @@
+use super::watch::WatchArgs;
 use clap::{Parser, ValueHint};
 use eyre::{Context, Result};
 use forge_fmt::{format_to, parse};
@@ -39,6 +40,9 @@ pub struct FmtArgs {
     /// In 'check' and stdin modes, outputs raw formatted code instead of the diff.
     #[arg(long, short)]
     raw: bool,
+
+    #[command(flatten)]
+    pub watch: WatchArgs,
 }
 
 impl_figment_convert_basic!(FmtArgs);
@@ -185,6 +189,11 @@ impl FmtArgs {
         }
 
         Ok(())
+    }
+
+    /// Returns whether `FmtArgs` was configured with `--watch`
+    pub fn is_watch(&self) -> bool {
+        self.watch.watch.is_some()
     }
 }
 
