@@ -2040,6 +2040,7 @@ dependencies = [
  "clap_complete",
  "clap_complete_fig",
  "comfy-table",
+ "dirs 5.0.1",
  "divan",
  "dunce",
  "evmole",

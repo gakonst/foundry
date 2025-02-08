@@ -91,6 +91,7 @@ alloy-node-bindings.workspace = true
 
 async-trait.workspace = true
 divan.workspace = true
+dirs = "5"
 
 [features]
 default = ["jemalloc"]

@@ -167,6 +167,35 @@ Created new encrypted keystore file: [..]
     ]);
 });
 
+// tests that we can create a new wallet with default keystore location
+casttest!(new_wallet_default_keystore, |_prj, cmd| {
+    cmd.args(["wallet", "new", "--unsafe-password", "test"]).assert_success().stdout_eq(str![[
+        r#"
+Created new encrypted keystore file: [..]
+[ADDRESS]
+
+"#
+    ]]);
+
+    // Verify the default keystore directory was created
+    let keystore_path = dirs::home_dir().unwrap().join(".foundry").join("keystores");
+    assert!(keystore_path.exists());
+    assert!(keystore_path.is_dir());
+});
+
+// tests that we can outputting multiple keys without a keystore path
+casttest!(new_wallet_multiple_keys, |_prj, cmd| {
+    cmd.args(["wallet", "new", "-n", "2"]).assert_success().stdout_eq(str![[r#"
+Successfully created new keypair.
+Address:     [..]
+Private key: [..]
+Successfully created new keypair.
+Address:     [..]
+Private key: [..]
+
+"#]]);
+});
+
 // tests that we can get the address of a keystore file
 casttest!(wallet_address_keystore_with_password_file, |_prj, cmd| {
     let keystore_dir = Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/keystore");
