@@ -1,5 +1,6 @@
 use clap::Parser;
 use eyre::Result;
+use std::env;
 
 use foundry_common::{fs, sh_err, sh_println};
 use foundry_config::Config;
@@ -25,6 +26,10 @@ pub struct ListArgs {
     #[arg(long, hide = !cfg!(feature = "aws-kms"))]
     aws: bool,
 
+    /// List accounts from Google Cloud KMS.
+    #[arg(long, hide = !cfg!(feature = "gcp-kms"))]
+    gcp: bool,
+
     /// List all configured accounts.
     #[arg(long, group = "hw-wallets")]
     all: bool,
@@ -37,7 +42,10 @@ pub struct ListArgs {
 impl ListArgs {
     pub async fn run(self) -> Result<()> {
         // list local accounts as files in keystore dir, no need to unlock / provide password
-        if self.dir.is_some() || self.all || (!self.ledger && !self.trezor && !self.aws) {
+        if self.dir.is_some() ||
+            self.all ||
+            (!self.ledger && !self.trezor && !self.aws && !self.gcp)
+        {
             let _ = self.list_local_senders();
         }
 
@@ -47,6 +55,7 @@ impl ListArgs {
             .mnemonic_indexes(Some(vec![0]))
             .trezor(self.trezor || self.all)
             .aws(self.aws || self.all)
+            .gcp(self.gcp || (self.all && gcp_env_vars_set()))
             .interactives(0)
             .build()
             .expect("build multi wallet");
@@ -107,4 +116,11 @@ impl ListArgs {
 
         Ok(())
     }
+}
+
+fn gcp_env_vars_set() -> bool {
+    let required_vars =
+        ["GCP_PROJECT_ID", "GCP_LOCATION", "GCP_KEY_RING", "GCP_KEY_NAME", "GCP_KEY_VERSION"];
+
+    required_vars.iter().all(|&var| env::var(var).is_ok())
 }

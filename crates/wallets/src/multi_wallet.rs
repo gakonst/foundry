@@ -221,6 +221,10 @@ pub struct MultiWalletOpts {
     /// Use AWS Key Management Service.
     #[arg(long, help_heading = "Wallet options - remote", hide = !cfg!(feature = "aws-kms"))]
     pub aws: bool,
+
+    /// Use Google Cloud Key Management Service.
+    #[arg(long, help_heading = "Wallet options - remote", hide = !cfg!(feature = "gcp-kms"))]
+    pub gcp: bool,
 }
 
 impl MultiWalletOpts {
@@ -237,6 +241,9 @@ impl MultiWalletOpts {
         }
         if let Some(aws_signers) = self.aws_signers().await? {
             signers.extend(aws_signers);
+        }
+        if let Some(gcp_signer) = self.gcp_signers().await? {
+            signers.extend(gcp_signer);
         }
         if let Some((pending_keystores, unlocked)) = self.keystores()? {
             pending.extend(pending_keystores);
@@ -391,6 +398,43 @@ impl MultiWalletOpts {
                 let aws_signer = WalletSigner::from_aws(key).await?;
                 wallets.push(aws_signer)
             }
+
+            return Ok(Some(wallets));
+        }
+
+        Ok(None)
+    }
+
+    /// Returns a list of GCP signers if the GCP flag is set.
+    ///
+    /// The GCP signers are created from the following environment variables:
+    /// - GCP_PROJECT_ID: The GCP project ID. e.g. `my-project-123456`.
+    /// - GCP_LOCATION: The GCP location. e.g. `us-central1`.
+    /// - GCP_KEY_RING: The GCP key ring name. e.g. `my-key-ring`.
+    /// - GCP_KEY_NAME: The GCP key name. e.g. `my-key`.
+    /// - GCP_KEY_VERSION: The GCP key version. e.g. `1`.
+    ///
+    /// For more information on GCP KMS, see the [official documentation](https://cloud.google.com/kms/docs).
+    pub async fn gcp_signers(&self) -> Result<Option<Vec<WalletSigner>>> {
+        #[cfg(feature = "gcp-kms")]
+        if self.gcp {
+            let mut wallets = vec![];
+
+            let project_id = std::env::var("GCP_PROJECT_ID")?;
+            let location = std::env::var("GCP_LOCATION")?;
+            let key_ring = std::env::var("GCP_KEY_RING")?;
+            let key_names = std::env::var("GCP_KEY_NAME")?;
+            let key_version = std::env::var("GCP_KEY_VERSION")?;
+
+            let gcp_signer = WalletSigner::from_gcp(
+                project_id,
+                location,
+                key_ring,
+                key_names,
+                key_version.parse()?,
+            )
+            .await?;
+            wallets.push(gcp_signer);
 
             return Ok(Some(wallets));
         }
