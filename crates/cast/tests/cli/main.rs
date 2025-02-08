@@ -543,6 +543,31 @@ casttest!(estimate_function_gas, |_prj, cmd| {
     assert!(output.ge(&0));
 });
 
+// tests that `cast estimate --cost` is working correctly.
+casttest!(estimate_function_cost, |_prj, cmd| {
+    let eth_rpc_url = next_http_rpc_endpoint();
+
+    // ensure we get a positive non-error value for cost estimate
+    let output: f64 = cmd
+        .args([
+            "estimate",
+            "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045", // vitalik.eth
+            "--value",
+            "100",
+            "deposit()",
+            "--rpc-url",
+            eth_rpc_url.as_str(),
+            "--cost",
+        ])
+        .assert_success()
+        .get_output()
+        .stdout_lossy()
+        .trim()
+        .parse()
+        .unwrap();
+    assert!(output.ge(&0.0));
+});
+
 // tests that `cast estimate --create` is working correctly.
 casttest!(estimate_contract_deploy_gas, |_prj, cmd| {
     let eth_rpc_url = next_http_rpc_endpoint();
