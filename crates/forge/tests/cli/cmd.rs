@@ -2962,10 +2962,17 @@ Compiler run successful!
 "#]]);
 });
 
-// checks `forge inspect <contract> irOptimized works
+// checks `forge inspect <contract> irOptimized works and does not strip comments
 forgetest_init!(can_inspect_ir_optimized, |_prj, cmd| {
     cmd.args(["inspect", TEMPLATE_CONTRACT, "irOptimized"]);
-    cmd.assert_success();
+    cmd.assert_success().stdout_eq(str![[r#"
+/// @use-src 0:"src/Counter.sol"
+object "Counter_21" {
+    code {
+        {
+            /// @src 0:65:257  "contract Counter {..."
+...
+"#]]);
 });
 
 // checks forge bind works correctly on the default project

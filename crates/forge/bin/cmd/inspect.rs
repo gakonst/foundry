@@ -17,9 +17,8 @@ use foundry_compilers::{
     info::ContractInfo,
     utils::canonicalize,
 };
-use regex::Regex;
 use serde_json::{Map, Value};
-use std::{collections::BTreeMap, fmt, sync::LazyLock};
+use std::{collections::BTreeMap, fmt};
 
 /// CLI arguments for `forge inspect`.
 #[derive(Clone, Debug, Parser)]
@@ -541,10 +540,7 @@ fn print_yul(yul: Option<&str>) -> Result<()> {
         eyre::bail!("Could not get IR output");
     };
 
-    static YUL_COMMENTS: LazyLock<Regex> =
-        LazyLock::new(|| Regex::new(r"(///.*\n\s*)|(\s*/\*\*.*\*/)").unwrap());
-
-    sh_println!("{}", YUL_COMMENTS.replace_all(yul, ""))?;
+    sh_println!("{yul}")?;
 
     Ok(())
 }
