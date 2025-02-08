@@ -1,6 +1,7 @@
 use crate::HeaderValue;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use std::str::FromStr;
+use std::collections::HashSet;
 
 /// Additional server options.
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -17,6 +18,10 @@ pub struct ServerConfig {
     /// Disable the default request body size limit. At time of writing the default limit is 2MB.
     #[cfg_attr(feature = "clap", arg(long))]
     pub no_request_size_limit: bool,
+
+    /// Blacklist of RPC methods to block.
+    #[cfg_attr(feature = "clap", arg(long, value_delimiter = ','))]
+    pub blacklist: HashSet<String>,
 }
 
 impl ServerConfig {
@@ -39,6 +44,7 @@ impl Default for ServerConfig {
             allow_origin: "*".parse::<HeaderValue>().unwrap().into(),
             no_cors: false,
             no_request_size_limit: false,
+            blacklist: HashSet::new(),
         }
     }
 }
