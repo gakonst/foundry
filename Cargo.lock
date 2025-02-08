@@ -1011,6 +1011,7 @@ dependencies = [
  "op-alloy-rpc-types",
  "parking_lot",
  "rand",
+ "regex",
  "revm",
  "serde",
  "serde_json",

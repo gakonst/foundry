@@ -1474,6 +1474,51 @@ async fn test_reset_dev_account_nonce() {
 }
 
 #[tokio::test(flavor = "multi_thread")]
+async fn test_reset_updates_cache_path_when_rpc_url_not_provided() {
+    let config: NodeConfig = fork_config();
+
+    let (mut api, _handle) = spawn(config).await;
+    let info = api.anvil_node_info().await.unwrap();
+    let number = info.fork_config.fork_block_number.unwrap();
+    assert_eq!(number, BLOCK_NUMBER);
+
+    async fn get_block_from_cache_path(api: &mut EthApi) -> u64 {
+        let db = api.backend.get_db().read().await;
+        let cache_debug = format!("{:?}", db.maybe_inner().unwrap().cache());
+        let re = regex::Regex::new(r#"JsonBlockCacheDB \{ cache_path: Some\("([^"]+)"\)"#).unwrap();
+        let cache_path = re
+            .captures_iter(&cache_debug)
+            .next()
+            .expect("must have JsonBlockCacheDB match")
+            .get(1)
+            .expect("must have matching path")
+            .as_str();
+
+        std::path::PathBuf::from(cache_path)
+            .parent()
+            .expect("must have filename")
+            .file_name()
+            .expect("must have block number as dir name")
+            .to_str()
+            .expect("must be valid string")
+            .parse::<u64>()
+            .expect("must be valid number")
+    }
+
+    assert_eq!(BLOCK_NUMBER, get_block_from_cache_path(&mut api).await);
+
+    // Reset to older block without specifying a new rpc url
+    api.anvil_reset(Some(Forking {
+        json_rpc_url: None,
+        block_number: Some(BLOCK_NUMBER - 1_000_000),
+    }))
+    .await
+    .unwrap();
+
+    assert_eq!(BLOCK_NUMBER - 1_000_000, get_block_from_cache_path(&mut api).await);
+}
+
+#[tokio::test(flavor = "multi_thread")]
 async fn test_fork_get_account() {
     let (_api, handle) = spawn(fork_config()).await;
     let provider = handle.http_provider();

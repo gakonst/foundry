@@ -113,6 +113,7 @@ alloy-transport-ws.workspace = true
 alloy-json-rpc.workspace = true
 alloy-pubsub.workspace = true
 foundry-test-utils.workspace = true
+regex = { workspace = true, default-features = false }
 similar-asserts.workspace = true
 tokio = { workspace = true, features = ["full"] }
 
