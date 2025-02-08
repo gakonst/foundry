@@ -37,13 +37,18 @@ pub struct InitArgs {
     #[arg(long, conflicts_with = "template")]
     pub vscode: bool,
 
+    /// Use the parent git repository instead of initializing a new one.
+    /// Only valid if the target is in a git repository.
+    #[arg(long, conflicts_with = "template")]
+    pub use_parent_git: bool,
+
     #[command(flatten)]
     pub install: DependencyInstallOpts,
 }
 
 impl InitArgs {
     pub fn run(self) -> Result<()> {
-        let Self { root, template, branch, install, offline, force, vscode } = self;
+        let Self { root, template, branch, install, offline, force, vscode, use_parent_git } = self;
         let DependencyInstallOpts { shallow, no_git, no_commit } = install;
 
         // create the root dir if it does not exist
@@ -141,7 +146,7 @@ impl InitArgs {
 
             // set up the repo
             if !no_git {
-                init_git_repo(git, no_commit)?;
+                init_git_repo(git, no_commit, use_parent_git)?;
             }
 
             // install forge-std
@@ -166,15 +171,22 @@ impl InitArgs {
     }
 }
 
-/// Initialises `root` as a git repository, if it isn't one already.
+/// Initialises `root` as a git repository, if it isn't one already, unless 'use_parent_git' is
+/// true.
 ///
 /// Creates `.gitignore` and `.github/workflows/test.yml`, if they don't exist already.
 ///
-/// Commits everything in `root` if `no_commit` is false.
-fn init_git_repo(git: Git<'_>, no_commit: bool) -> Result<()> {
+/// Commits everything if `no_commit` is false.
+fn init_git_repo(git: Git<'_>, no_commit: bool, use_parent_git: bool) -> Result<()> {
     // git init
+    // if not in a git repo, initialize one
     if !git.is_in_repo()? {
         git.init()?;
+    } else {
+        // if target is not the repo root init a new one unless `use_parent_git` is true
+        if !git.is_repo_root()? && !use_parent_git {
+            git.init()?;
+        }
     }
 
     // .gitignore

@@ -501,6 +501,53 @@ Warning: Target directory is not empty, but `--force` was specified
     assert_eq!(gitignore, "not foundry .gitignore");
 });
 
+// `forge init --use-parent-git` works on already initialized git repository
+forgetest!(can_init_using_parent_repo, |prj, cmd| {
+    let root = prj.root();
+
+    // initialize new git repo
+    let status = Command::new("git")
+        .arg("init")
+        .current_dir(root)
+        .stdout(Stdio::null())
+        .stderr(Stdio::null())
+        .status()
+        .expect("could not run git init");
+    assert!(status.success());
+    assert!(root.join(".git").exists());
+
+    prj.create_file("README.md", "non-empty dir");
+    prj.create_file(".gitignore", "not foundry .gitignore");
+
+    let folder = "foundry-folder";
+    cmd.arg("init").arg(folder).arg("--force").arg("--use-parent-git").assert_success().stdout_eq(
+        str![[r#"
+Initializing [..]...
+Installing forge-std in [..] (url: Some("https://github.com/foundry-rs/forge-std"), tag: None)
+    Installed forge-std[..]
+    Initialized forge project
+
+"#]],
+    );
+
+    assert!(root.join(folder).join("lib/forge-std").exists());
+
+    // not overwritten
+    let gitignore = root.join(".gitignore");
+    let gitignore = fs::read_to_string(gitignore).unwrap();
+    assert_eq!(gitignore, "not foundry .gitignore");
+
+    // submodules are registered at root
+    let gitmodules = root.join(".gitmodules");
+    let gitmodules = fs::read_to_string(gitmodules).unwrap();
+    assert!(gitmodules.contains(
+        "
+	path = foundry-folder/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+"
+    ));
+});
+
 // Checks that remappings.txt and .vscode/settings.json is generated
 forgetest!(can_init_vscode, |prj, cmd| {
     prj.wipe();
