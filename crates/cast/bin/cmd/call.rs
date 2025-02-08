@@ -1,4 +1,5 @@
 use crate::tx::{CastTxBuilder, SenderKind};
+use alloy_network::TransactionBuilder;
 use alloy_primitives::{TxKind, U256};
 use alloy_rpc_types::{BlockId, BlockNumberOrTag};
 use cast::{traces::TraceKind, Cast};
@@ -186,6 +187,14 @@ impl CallArgs {
             // modify settings that usually set in eth_call
             env.cfg.disable_block_gas_limit = true;
             env.block.gas_limit = U256::MAX;
+
+            // setting transaction opt
+            if let Some(gas_price) = tx.gas_price() {
+                env.tx.gas_price = U256::from(gas_price);
+            }
+            if let Some(gas_limit) = tx.gas_limit() {
+                env.tx.gas_limit = gas_limit;
+            }
 
             let trace_mode = TraceMode::Call
                 .with_debug(debug)
