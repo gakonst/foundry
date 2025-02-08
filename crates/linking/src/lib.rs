@@ -29,6 +29,8 @@ pub enum LinkerError {
     InvalidAddress(<Address as std::str::FromStr>::Err),
     #[error("cyclic dependency found, can't link libraries via CREATE2")]
     CyclicDependency,
+    #[error("linking failed for library at {file}")]
+    LinkingFailed { file: String },
 }
 
 pub struct Linker<'a> {
@@ -250,16 +252,25 @@ impl<'a> Linker<'a> {
         let mut contract =
             self.contracts.get(target).ok_or(LinkerError::MissingTargetArtifact)?.clone();
         for (file, libs) in &libraries.libs {
+            // Track if any linking succeeded
+            let mut linked = false;
             for (name, address) in libs {
                 let address = Address::from_str(address).map_err(LinkerError::InvalidAddress)?;
+
                 if let Some(bytecode) = contract.bytecode.as_mut() {
-                    bytecode.to_mut().link(&file.to_string_lossy(), name, address);
+                    linked |= bytecode.to_mut().link(&file.to_string_lossy(), name, address);
                 }
                 if let Some(deployed_bytecode) =
                     contract.deployed_bytecode.as_mut().and_then(|b| b.to_mut().bytecode.as_mut())
                 {
-                    deployed_bytecode.link(&file.to_string_lossy(), name, address);
+                    linked |= deployed_bytecode.link(&file.to_string_lossy(), name, address);
                 }
+            }
+
+            if !linked {
+                return Err(LinkerError::LinkingFailed {
+                    file: file.to_string_lossy().into_owned(),
+                });
             }
         }
         Ok(contract)
@@ -684,5 +695,37 @@ mod tests {
                     ),
                 );
         });
+    }
+
+    #[test]
+    fn linking_failure() {
+        let linker = LinkerTest::new("../../testdata/default/linking/simple", true);
+        let linker_instance =
+            Linker::new(linker.project.root(), linker.output.artifact_ids().collect());
+
+        // Create a libraries object with an incorrect library name that won't match any references
+        let mut libraries = Libraries::default();
+        libraries.libs.entry("default/linking/simple/Simple.t.sol".into()).or_default().insert(
+            "NonExistentLib".to_string(),
+            "0x5a443704dd4b594b382c22a083e2bd3090a6fef3".to_string(),
+        );
+
+        // Try to link the LibraryConsumer contract with incorrect library
+        let artifact_id = linker_instance
+            .contracts
+            .keys()
+            .find(|id| id.name == "LibraryConsumer")
+            .expect("LibraryConsumer contract not found");
+
+        // Attempt to link should fail
+        let result = linker_instance.link(artifact_id, &libraries);
+
+        // Verify we get a LinkingFailed error
+        match result {
+            Err(LinkerError::LinkingFailed { file }) => {
+                assert_eq!(file, "default/linking/simple/Simple.t.sol");
+            }
+            _ => panic!("Expected LinkingFailed error, got: {result:?}"),
+        }
     }
 }
